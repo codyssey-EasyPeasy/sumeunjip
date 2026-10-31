@@ -14,6 +14,9 @@
 - SELF_PROTECT(내 기록·내 안전) · AMBIGUOUS · THIRD_PARTY_LOCATE(분명한 타인 소재 탐색) 셋으로 나눈다.
   거절은 THIRD_PARTY_LOCATE 만. 거절에도 보호 제도 대안 2~3개 + 1366·132·112 를 붙인다.
   AMBIGUOUS 는 거절하지 않고 보호 안내를 덧붙여 진행한다. 초성만 쓴 글은 다시 써 달라고 한다.
+- 2026-10-31 오너 후속: 보호 안내가 너무 자주 붙었다(시뮬레이터 v3 사용자 대화 38/40). 거절도 본인 보호도
+  아닌 글은 이제 NEUTRAL(안내 없음)이 기본이고, 안내 근거가 있을 때만 AMBIGUOUS 다('11-1. 보호 안내 판정').
+  안내를 붙일지는 needs_notice() 한 곳에서 정한다.
 - 임베딩 의도 점수는 신호 하나일 뿐 혼자서는 거절하지 않는다(타인 지시어가 있고 본인 보호 맥락이 없을 때만).
 - 같은 파일에 intake 강화(특수 토큰·역할 머리말 제거, 지시문 문장 제거, flag 근거 단어 확인,
   위치·이름을 묻는 확인 질문 차단)도 둔다. gpu/guard.py 는 이 파일과 똑같은 사본이다.
@@ -436,7 +439,8 @@ def _looks_obfuscated(text: str) -> bool:
 # 11. 2단 판정 (SELF_PROTECT / AMBIGUOUS / THIRD_PARTY_LOCATE)
 # ===========================================================================
 SELF_PROTECT = "self_protect"
-AMBIGUOUS = "ambiguous"
+AMBIGUOUS = "ambiguous"          # 진행하되 보호 안내를 붙인다(needs_notice).
+NEUTRAL = "neutral"              # 진행, 안내 없음(제도·절차 질문, 상황 서술, 대답, 인사).
 THIRD_PARTY = "third_party_locate"
 REPHRASE = "rephrase"
 
@@ -627,9 +631,72 @@ EMB_REFUSE = 0.16
 EMB_AMBIG = 0.02
 
 
+# ---------------------------------------------------------------------------
+# 11-1. 보호 안내(AMBIGUOUS) 판정 — 거절도 본인 보호도 아닌 글 가운데 안내를 붙일 근거가 있는 것만.
+# 2026-10-31 오너: 시뮬레이터 v3 사용자 대화 40개 중 38개에 안내가 붙었다(너무 강함). 원인은
+# AMBIGUOUS 가 '나머지 전부'를 받는 기본값이었던 것. 이제 나머지는 NEUTRAL(안내 없음)이고,
+# 아래 조건일 때만 AMBIGUOUS 로 둔다. 조건은 data/eval/notice_calib.json 으로만 정했다.
+#   (b) 타인 지시어(내 아이·애 같은 본인 가족, 소유 표시 없는 아이·애는 빼고) + 다음 중 하나
+#       - 타인 소유 소재·기록('남편 회사', '그 사람 직장', '상대방 등본', '아이 아빠 사는 동네')
+#       - 탐색 표현 + 소재·기록 낱말
+#       - 소재·기록 낱말 + 임베딩 점수 > EMB_NOTICE
+#   (a) 디코딩·흩어 쓰기 흔적은 assess() 에서 따로 AMBIGUOUS 로 올린다.
+# 거절(THIRD_PARTY)·다시 쓰기(REPHRASE)·본인 보호(SELF_PROTECT) 판정은 이 절과 무관하다.
+# ---------------------------------------------------------------------------
+_REC_NOUN = (r"(?:등본|초본|기록|서류|증명서|등기부?|원부|가족\s*관계|명의|명부|조서|판결문|송달|"
+             r"열람|교부|보험|계좌)")
+# 본인 가족('제 아이', '우리 딸')과 소유 표시 없는 자녀 낱말('아이 학교를 옮기면')은 타인으로 보지 않는다.
+# 단 '아이 아빠·애 엄마'처럼 자녀를 거쳐 부르는 상대 부모 호칭은 남긴다.
+_OWN_KIN_RE = re.compile(
+    r"(?:제|내|저의|나의|저희|우리)\s*(?:아이|애|애들|딸|아들|자녀|동생|언니|누나|오빠)"
+    r"|(?<![가-힣])(?:아이|애들|애|딸|아들|자녀)(?!\s*(?:아빠|엄마|아버지|어머니|친권자))"
+    r"(?=\s|$|[이가은는을를도의랑와과한에])"
+)
+# 1인칭이 주어인 내포절('제가 간 데', '내가 사는 곳')은 타인 소재가 아니다.
+_SELF_PLACE_RE = re.compile(
+    r"(?<![가-힣])(?:제가|내가|저희가|제|내)\s*(?:지금\s*|자주\s*|새로\s*)?"
+    r"(?:간|가는|갔던|사는|살던|머무는|지내는|다니는|일하는|있는|옮긴|이사\s*간|이사한)\s*(?:곳|데|집|동네|쉼터|회사|학교)"
+)
+_NOTICE_POSS_RE = re.compile(
+    _POSS_SUBJ + r"\s*(?:의|네|쪽|측)?\s*"
+    r"(?:(?:새|현|현재|지금|요즘|최근|진짜|실제|바뀐|옮긴)\s*)?(?:" + _LOC_NOUN[3:-1] + r"|집|" + _REC_NOUN[3:-1] + r")"
+)
+_NOTICE_REL_RE = re.compile(
+    _AGENT + r"\s*(?:이|가|은|는)?\s*(?:(?:지금|현재|요즘|최근|몰래)\s*)?"
+    r"(?:사는|살고\s*있는|머무는|머무르는|지내는|숨어\s*사는|이사\s*간|이사한|옮긴|다니는|일하는|근무하는)\s*"
+    r"(?:곳|데|집|동네|주소|학교|회사|직장|쉼터|시설|지역|어린이집|유치원)"
+)
+_NOTICE_LOC_RE = re.compile(r"(?:" + _LOC_NOUN + r"|" + _REC_NOUN + r"|집|어디|어느)")
+# 소재·기록 낱말 + 타인 지시어가 있을 때 임베딩 점수로 안내를 붙이는 하한. notice_calib 의 no_notice 중
+# 타인 지시어·소재 낱말이 함께 있는 글의 최고점이 0.157(전 남친 … 가는 곳마다, 2026-10-31 실측)이라 그 위로 둔다.
+EMB_NOTICE = 0.16
+
+
+def _notice_reason(t: str, pre: str, c: str, score: float | None) -> str | None:
+    """거절·본인 보호가 아닌 글에 보호 안내를 붙일 근거(reason)를 돌려준다. 없으면 None."""
+    p = _SELF_PLACE_RE.sub(" ", _OWN_KIN_RE.sub(" ", pre))
+    if not re.search(_AGENT, p):
+        return None
+    if (_NOTICE_POSS_RE.search(p) or _NOTICE_REL_RE.search(p) or _OTHER_REL_RE.search(p)
+            or _OTHER_EMBEDDED_RE.search(p)):
+        return "other_place"
+    cc = _SELF_PLACE_RE.sub(" ", _OWN_KIN_RE.sub(" ", c))
+    loc = bool(_NOTICE_LOC_RE.search(cc))
+    if loc and (STRONG_SEEK_RE.search(cc) or _SEEK_EXTRA_RE.search(cc)):
+        return "other_seek"
+    if loc and score is not None and score > EMB_NOTICE:
+        return "other_embed"
+    return None
+
+
+def needs_notice(tier: str) -> bool:
+    """응답에 보호 안내를 붙일지. 앱의 모든 경로(/api/search·intake·answer)가 이 함수 하나로 정한다."""
+    return tier == AMBIGUOUS
+
+
 def _tier_one(t: str, score: float | None) -> tuple[str, str]:
     if not t:
-        return AMBIGUOUS, "empty"
+        return NEUTRAL, "empty"
     if SPECIAL_RE.search(t):
         return THIRD_PARTY, "special"
     pre = _pre_clean(t)
@@ -663,9 +730,10 @@ def _tier_one(t: str, score: float | None) -> tuple[str, str]:
         return THIRD_PARTY, "addr_seek"
     if selfp:
         return SELF_PROTECT, "self"
-    if score is not None and score > EMB_AMBIG:
-        return AMBIGUOUS, "embed_low"
-    return AMBIGUOUS, "none"
+    why = _notice_reason(t, pre, c, score)
+    if why:
+        return AMBIGUOUS, why
+    return NEUTRAL, "none"
 
 
 def assess(text: str, score: float | None = None) -> dict:
@@ -684,7 +752,7 @@ def assess(text: str, score: float | None = None) -> dict:
         dt, dr = _tier_one(normalize(d), None)
         if dt == THIRD_PARTY:
             return {"tier": THIRD_PARTY, "reason": "decoded_" + dr}
-        if tier == SELF_PROTECT:
+        if tier in (SELF_PROTECT, NEUTRAL):
             tier, reason = AMBIGUOUS, "decoded"
     sv = strip_variant(text)
     if sv and sv != t.replace(" ", ""):
@@ -701,6 +769,9 @@ def assess(text: str, score: float | None = None) -> dict:
             return {"tier": THIRD_PARTY, "reason": "stripped"}
     if chosung_only(text):
         return {"tier": REPHRASE, "reason": "chosung"}
+    if tier in (SELF_PROTECT, NEUTRAL) and _looks_obfuscated(text):
+        # 일부러 흩어 쓴 글은 거절 대상이 아니어도 보호 안내를 붙인다.
+        tier, reason = AMBIGUOUS, "obfuscated"
     return {"tier": tier, "reason": reason}
 
 

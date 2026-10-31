@@ -10,6 +10,7 @@ import asyncio
 import hmac
 import logging
 import os
+import re
 import sys
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -52,11 +53,10 @@ THIRD_PARTY_MESSAGE = (
     "대신 내 정보와 안전을 지키는 데 쓸 수 있는 제도를 아래에 안내합니다. "
     "혼자 하기 어려우면 1366(24시간)·법률구조공단 132, 위험이 급하면 112에 연락하세요."
 )
-# 애매한 질문은 거절하지 않고 이 안내와 보호 제도를 함께 보여 준다.
-PROTECTIVE_FRAMING = (
-    "이 서비스는 다른 사람을 찾는 데는 쓸 수 없고, 내 정보와 안전을 지키는 제도만 안내합니다. "
-    "혼자 하기 어려우면 1366(24시간)·법률구조공단 132, 위험이 급하면 112에 연락하세요."
-)
+# 보호 안내(_guard.needs_notice 가 True 인 글)는 거절하지 않고 이 안내와 보호 제도를 함께 보여 준다.
+PROTECTIVE_FRAMING_BASE = "이 서비스는 다른 사람을 찾는 데는 쓸 수 없고, 내 정보와 안전을 지키는 제도만 안내합니다."
+PROTECTIVE_CONTACTS = "혼자 하기 어려우면 1366(24시간)·법률구조공단 132, 위험이 급하면 112에 연락하세요."
+PROTECTIVE_FRAMING = PROTECTIVE_FRAMING_BASE + " " + PROTECTIVE_CONTACTS
 REPHRASE_MESSAGE = (
     "초성이나 줄임말만으로는 뜻을 정확히 알기 어렵습니다. 하고 싶은 말을 문장으로 다시 적어 주세요. "
     "급하면 1366(24시간)이나 112에 바로 연락하세요."
@@ -242,10 +242,16 @@ def create_app(
             score = float(r.json().get("score"))
         except (httpx.HTTPError, ValueError, KeyError, TypeError, AttributeError):
             score = None
-        return _guard.assess_turns(text, history_user, score)
+        a = _guard.assess_turns(text, history_user, score)
+        # 판정 근거만 남긴다(사용자 글은 남기지 않는다).
+        logger.info(f"guard tier={a['tier']} reason={a.get('reason')}")
+        return a
 
-    def _framing(text: str) -> dict:
-        return {"message": PROTECTIVE_FRAMING, "alternatives": _alternatives(text)}
+    def _framing(text: str, body: str = "") -> dict:
+        """보호 안내. 답 본문에 이미 1366·132 안내가 있으면 연락처 문장을 빼고 contacts=False 로 알린다."""
+        dup = bool(re.search(r"(?<!\d)(?:1366|132)(?!\d)", body))
+        return {"message": PROTECTIVE_FRAMING_BASE if dup else PROTECTIVE_FRAMING,
+                "alternatives": _alternatives(text), "contacts": not dup}
 
     @asynccontextmanager
     async def lifespan(app: FastAPI):
@@ -329,7 +335,7 @@ def create_app(
             return {**_rephrase(), "results": [], "fallback": False}
         results, fallback = await retriever.search(req.q, client, url, top_k=5)
         out = {"refused": False, "tier": a["tier"], "results": results, "fallback": fallback}
-        if a["tier"] == _guard.AMBIGUOUS:
+        if _guard.needs_notice(a["tier"]):
             out["protective"] = _framing(req.q)
         return out
 
@@ -396,7 +402,7 @@ def create_app(
         except _llm.LLMUnavailable as e:
             raise _llm_down(e)
         res = {"refused": False, "tier": a["tier"], **out}
-        if a["tier"] == _guard.AMBIGUOUS:
+        if _guard.needs_notice(a["tier"]):
             res["protective"] = _framing(req.text)
         return res
 
@@ -425,8 +431,8 @@ def create_app(
             # 생성문 가드에 걸린 경우도 거절만 하지 않고 보호 대안을 붙인다.
             return {**_refusal(req.question), "message": REFUSAL_MESSAGE}
         res = {"refused": False, "tier": a["tier"], **out}
-        if a["tier"] == _guard.AMBIGUOUS:
-            res["protective"] = _framing(req.question)
+        if _guard.needs_notice(a["tier"]):
+            res["protective"] = _framing(req.question, str(out.get("answer") or ""))
         return res
 
     @app.post("/api/rewrite")

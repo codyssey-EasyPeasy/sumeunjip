@@ -87,9 +87,11 @@ def test_ambiguous_proceeds_with_protective_framing(make_client, gpu):
     gpu.intent_scores = {q: 0.15}  # 예전 0.02 기준이면 거절됐던 점수
     with make_client(httpx.MockTransport(gpu)) as c:
         d = _answer(c, q).json()
-    assert d["refused"] is False and d["tier"] in ("ambiguous", "self_protect")
+    assert d["refused"] is False and d["tier"] in ("ambiguous", "self_protect", "neutral")
     if d["tier"] == "ambiguous":
-        assert "1366" in d["protective"]["message"] and d["protective"]["alternatives"]
+        assert d["protective"]["alternatives"]
+    else:
+        assert "protective" not in d
     assert len(gpu.llm_calls("answer")) == 1
 
 

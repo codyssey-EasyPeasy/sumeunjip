@@ -117,10 +117,19 @@
     return convo.map(function (t) { return { role: t.role, text: t.text }; });
   }
 
-  function clearHistory() { convo = []; }
+  // 보호 안내는 한 대화에 한 번만 보여 준다(새 대화를 시작하면 다시 보여 준다).
+  var noticeShown = false;
+  function clearHistory() { convo = []; noticeShown = false; }
+
+  // 서버가 붙인 보호 안내(protective)를 보여 줄지 정하고 상자를 만든다. 이미 보였으면 null.
+  function noticeBox(p) {
+    if (!p || noticeShown) return null;
+    noticeShown = true;
+    return protectiveBox(p.message, p.alternatives, false, p.contacts === false);
+  }
 
   // 거절·애매한 질문 안내: 메시지 + 보호 제도 대안(이름·막는 제도) + 1366·132·112.
-  function protectiveBox(message, alts, refused) {
+  function protectiveBox(message, alts, refused, noContacts) {
     var box = el('div', 'notice ' + (refused ? 'refusal-box' : 'protective-box'));
     if (message) box.appendChild(el('p', null, message));
     alts = Array.isArray(alts) ? alts : [];
@@ -139,7 +148,8 @@
       box.appendChild(el('p', 'meta', '내 정보와 안전을 지키는 데 쓸 수 있는 제도:'));
       box.appendChild(ul);
     }
-    box.appendChild(helpLine());
+    // 답 본문에 이미 1366·132 안내가 있으면 연락처 줄을 되풀이하지 않는다.
+    if (!noContacts) box.appendChild(helpLine());
     return box;
   }
 
@@ -531,7 +541,8 @@
           }
           pushTurn('user', q);
           pushTurn('assistant', (d && d.answer) || '');
-          if (d && d.protective) out.appendChild(protectiveBox(d.protective.message, d.protective.alternatives, false));
+          var nb = d && noticeBox(d.protective);
+          if (nb) out.appendChild(nb);
           var box = el('div', 'answer-box');
           var head = el('div', 'card-meta');
           // 답의 종류(mode): generated(AI 답, 문장별 근거 확인) · regenerated(한 번 고쳐 다시 확인) ·
@@ -894,7 +905,8 @@
           return;
         }
         setStatus('search-status', '');
-        if (data && data.protective) root.appendChild(protectiveBox(data.protective.message, data.protective.alternatives, false));
+        var nb = data && noticeBox(data.protective);
+        if (nb) root.appendChild(nb);
         if (data && data.fallback) {
           var notice = document.createElement('p');
           notice.className = 'notice';
@@ -1109,7 +1121,8 @@
         // 서버가 같은 확인 질문을 다시 묻지 않도록, 이번에 받은 확인 질문을 도우미 턴으로 남긴다.
         var asked = (d && Array.isArray(d.unclear)) ? d.unclear.join(' / ') : '';
         if (asked) pushTurn('assistant', asked);
-        if (slot && d && d.protective) slot.appendChild(protectiveBox(d.protective.message, d.protective.alternatives, false));
+        var nb = slot && d && noticeBox(d.protective);
+        if (nb) slot.appendChild(nb);
         applyIntake(d || {});
       })
       .catch(function (e) {
