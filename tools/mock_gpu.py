@@ -8,6 +8,9 @@
     uv run python tools/mock_gpu.py            # 127.0.0.1:18000
     GPU_URL=http://127.0.0.1:18000 uv run uvicorn app.main:app --port 8080
 
+인증: 실제 GPU 서버는 X-Internal-Token 헤더(GPU_TOKEN_FILE)를 요구하지만, 모의 서버는 개발용이라
+토큰을 보든 말든 받아들인다(검사하지 않음).
+
 답 종류(배지) 확인: 질문에 '발췌' → extractive, '재생성' → regenerated, '모름' → not_found, 그 밖 generated.
 """
 

@@ -39,8 +39,8 @@ def test_p1_07_threshold_record(make_client):
     assert out[3000]["gpu_bytes"] == 3 * 3000 + 11
     # 지금 동작 고정(로컬, httpx 0.28.1): 한글 6,823자까지 통과, 6,824자부터 GPU 413 → 조용한 available:false
     assert out[6823]["body"]["available"] is True
-    assert out[6824]["body"] == {"available": False}
-    assert out[20000]["body"] == {"available": False}
+    assert out[6824]["body"] == {"available": False, "offset_unit": "utf16"}
+    assert out[20000]["body"] == {"available": False, "offset_unit": "utf16"}
 
 
 @pytest.mark.xfail(strict=True, reason="결함 P1-07: 앱 상한(20000자) 안의 글이 GPU 413 을 받아 'GPU 꺼짐'과 같은 available:false 로 나온다")

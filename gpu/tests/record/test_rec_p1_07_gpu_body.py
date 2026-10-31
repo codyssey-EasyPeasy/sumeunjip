@@ -12,6 +12,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 import server
+from _auth import AUTH
 
 REPO = Path(__file__).resolve().parents[3]
 
@@ -19,7 +20,7 @@ REPO = Path(__file__).resolve().parents[3]
 @pytest.fixture()
 def gpu():
     server.M["gliner"] = None
-    with TestClient(server.app) as c:
+    with TestClient(server.app, headers=AUTH) as c:
         yield c
 
 

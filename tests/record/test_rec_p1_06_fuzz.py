@@ -194,11 +194,16 @@ def test_p1_06_answer_output_guard_intent_list(make_client):
 @pytest.mark.parametrize("spans", ["abc", {"a": 1}, [1, 2], [{"start": "0", "end": None}], 5],
                          ids=["str", "dict", "ints", "badtypes", "int"])
 def test_p1_06_doccheck_passes_malformed_spans_current(make_client, spans):
-    """지금 동작 고정(계획 단계 결함 4): /ner 의 spans 가 리스트·span 모양이 아니어도 200 available:true 로 그대로 넘긴다."""
+    """지금 동작 고정(계획 단계 결함 4): /ner 의 spans 가 span 모양이 아니어도 200 으로 넘긴다.
+    2026-11-01 P0-04 수정 뒤: 리스트가 아니면 available:false, 리스트면 숫자 위치가 없는 항목은 그대로 넘긴다
+    (브라우저 app.js 가 start/end 가 숫자가 아닌 항목을 버린다)."""
     def handler(request):
         return httpx.Response(200, json={"spans": spans})
 
     with make_client(httpx.MockTransport(handler)) as c:
         r = c.post("/api/doccheck", json={"text": TEXT})
     assert r.status_code == 200
-    assert r.json() == {"available": True, "spans": spans}
+    if isinstance(spans, list):
+        assert r.json() == {"available": True, "offset_unit": "utf16", "spans": spans}
+    else:
+        assert r.json() == {"available": False, "offset_unit": "utf16"}

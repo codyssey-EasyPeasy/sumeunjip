@@ -5,7 +5,8 @@
 GPU /llm/rewrite 와 앱 /api/rewrite 는 파이썬 str(코드포인트)로 자른다.
 
 모의 LLM 은 '받은 단서 목록을 그대로 가리는 순종 모델'로 흉내 낸다(단서 목록이 틀리면 틀린 곳을 가린다).
-결함이라 xfail(strict=True). 고쳐지면 XPASS 로 알린다.
+GPU 의 계약은 코드 포인트로 둔다(GPU 직접 호출 JS span 은 여전히 xfail). 변환은 앱이 한다(2026-11-01 수정):
+앱 경로 시험은 이제 통과해야 한다.
 """
 
 from __future__ import annotations
@@ -23,6 +24,7 @@ from fastapi.testclient import TestClient
 
 import llm
 import server
+from _auth import AUTH
 
 REPO = Path(__file__).resolve().parents[3]
 
@@ -75,7 +77,7 @@ def gpu(monkeypatch):
     server.M["seeds"] = {"locate": v[None, :], "protect": v[None, :]}
     monkeypatch.setattr(llm, "llm_alive", lambda timeout=1.0: True)
     monkeypatch.setattr(llm, "chat", obedient_chat)
-    with TestClient(server.app) as c:
+    with TestClient(server.app, headers=AUTH) as c:
         yield c
 
 
@@ -147,17 +149,10 @@ def gpu_models(monkeypatch):
     monkeypatch.setenv("GPU_URL", "http://gpu")
 
 
-def test_p0_04_app_current_behavior(gpu_models):
+def test_p0_04_app_js_spans_fixed(gpu_models):
+    """수정(2026-11-01): 앱이 UTF-16 span 을 코드 포인트로 바꿔 GPU 로 넘긴다 → 정확히 단서만 가려진다."""
     out = _app_rewrite(js_spans(TEXT))
-    res, dmg = _residual(out["rewritten"]), _outside_damage(TEXT, out["rewritten"])
-    print("P0-04 app js-span result:", json.dumps({"status": out["status"], "residual": res, "damage": dmg,
-          "remaining": out.get("remaining"), "method": out.get("method"), "rewritten": out["rewritten"]}, ensure_ascii=False))
     assert out["status"] == 200
-    assert res or dmg
-
-
-@pytest.mark.xfail(strict=True, reason="결함 P0-04: 앱 경로도 같은 오프셋 불일치")
-def test_p0_04_app_js_spans(gpu_models):
-    out = _app_rewrite(js_spans(TEXT))
+    assert out["offset_unit"] == "utf16"
     assert _residual(out["rewritten"]) == []
     assert _outside_damage(TEXT, out["rewritten"]) == []

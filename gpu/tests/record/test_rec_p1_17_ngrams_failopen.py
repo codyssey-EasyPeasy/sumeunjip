@@ -10,6 +10,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 import server
+from _auth import AUTH
 import verify
 
 
@@ -34,7 +35,8 @@ def test_p1_17_fail_open(fresh_guard, monkeypatch, tmp_path, content):
     g = verify.guard()
     assert g.excluded == set()
     assert g.issues("평범한 합성 문장입니다.") == []
-    with TestClient(server.app) as c:
+    with TestClient(server.app, headers=AUTH) as c:
         h = c.get("/health").json()
-    assert h["verify"]["excluded_ngrams"] == 0
+    # /health 는 인증 없이 열려 있어 참·거짓만 준다(2026-11-01 GPU 토큰 도입).
+    assert h["ngrams"] is False
     assert h["ok"] is True

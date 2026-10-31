@@ -12,6 +12,7 @@ from fastapi.testclient import TestClient
 
 import llm
 import server
+from _auth import AUTH
 
 ITEMS = [
     {"id": "J1", "measure": "소송관계인 개인정보 보호조치", "timing": "소장 접수 때 함께",
@@ -32,7 +33,7 @@ def client(monkeypatch):
     v = np.ones(4) / 2.0
     server.M["seeds"] = {"locate": v[None, :], "protect": v[None, :]}
     monkeypatch.setattr(llm, "llm_alive", lambda timeout=1.0: True)
-    with TestClient(server.app) as c:
+    with TestClient(server.app, headers=AUTH) as c:
         yield c
 
 

@@ -3,6 +3,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 import server
+from _auth import AUTH
 
 
 class FakeEmbedder:
@@ -37,7 +38,7 @@ def client():
         "locate": loc / np.linalg.norm(loc),
         "protect": pro / np.linalg.norm(pro),
     }
-    with TestClient(server.app) as c:
+    with TestClient(server.app, headers=AUTH) as c:
         yield c
 
 
