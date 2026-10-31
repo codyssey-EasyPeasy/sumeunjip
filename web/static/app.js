@@ -534,14 +534,23 @@
           if (d && d.protective) out.appendChild(protectiveBox(d.protective.message, d.protective.alternatives, false));
           var box = el('div', 'answer-box');
           var head = el('div', 'card-meta');
-          if (d && d.ai_generated === false) {
+          // 답의 종류(mode): generated(AI 답, 문장별 근거 확인) · regenerated(한 번 고쳐 다시 확인) ·
+          // extractive(AI 생성 없이 안내문 원문 발췌) · not_found(확인되지 않음).
+          var mode = d && d.mode;
+          if (d && d.ai_generated === false && d.source) {
             head.appendChild(badge('src-badge', '안내문 원문'));
             head.appendChild(el('span', 'meta', d.source === 'effect'
               ? '시점에 관한 질문은 AI가 만들지 않고 안내문의 신청 시점·처리 칸을 그대로 보여 드립니다.'
               : '알려지는지에 관한 질문은 AI가 만들지 않고 안내문의 통지 경고를 그대로 보여 드립니다.'));
+          } else if (mode === 'extractive') {
+            head.appendChild(badge('src-badge', '안내문 원문 발췌'));
+            head.appendChild(el('span', 'meta', 'AI 답이 근거로 확인되지 않아, 대신 안내문 원문을 그대로 보여 드립니다.'));
+          } else if (mode === 'not_found') {
+            head.appendChild(badge('mode-badge mode-none', '확인되지 않음'));
           } else {
             head.appendChild(badge('ai-badge', 'AI 생성'));
-            head.appendChild(el('span', 'meta', '안내문과 조문만 근거로 만든 답입니다. 틀릴 수 있으니 중요한 결정 전에는 꼭 확인해 주세요.'));
+            head.appendChild(badge('mode-badge', mode === 'regenerated' ? '고쳐서 다시 확인함' : '문장별 근거 확인'));
+            head.appendChild(el('span', 'meta', '안내문과 조문만 근거로 만들고 문장마다 근거를 대조한 답입니다. 그래도 틀릴 수 있으니 중요한 결정 전에는 꼭 확인해 주세요.'));
           }
           box.appendChild(head);
           box.appendChild(el('p', 'answer-text', (d && d.answer) || ''));
@@ -1022,8 +1031,13 @@
         }
         var after = (d && typeof d.rewritten === 'string') ? d.rewritten : '';
         var head = el('div', 'card-meta');
-        head.appendChild(badge('ai-badge', 'AI 생성'));
-        head.appendChild(el('span', 'meta', '제안일 뿐입니다. 뜻이 바뀌거나 없던 내용이 들어가지 않았는지 꼭 확인해 주세요.'));
+        if (d && d.method === 'rule') {
+          head.appendChild(badge('src-badge', '규칙으로 가림'));
+          head.appendChild(el('span', 'meta', 'AI 제안이 원래 문장과 맞지 않아, 찾은 단서만 안전 문구로 바꿨습니다. 빠진 단서가 없는지 꼭 확인해 주세요.'));
+        } else {
+          head.appendChild(badge('ai-badge', 'AI 생성'));
+          head.appendChild(el('span', 'meta', '제안일 뿐입니다. 뜻이 바뀌거나 없던 내용이 들어가지 않았는지 꼭 확인해 주세요.'));
+        }
         out.appendChild(head);
 
         var ops = diffTokens(tokenize(text), tokenize(after));

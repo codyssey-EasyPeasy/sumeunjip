@@ -461,3 +461,40 @@ def test_llm_endpoints_do_not_log_bodies(make_client, gpu):
     assert marker not in joined
     for p in ("intake", "answer", "rewrite"):
         assert f"POST /api/{p} 200" in joined
+
+
+# --- 답변 검증 루프의 결과 종류(mode) 표시 (2026-10-31 오너 결정) ---
+def test_answer_mode_passthrough_generated_and_regenerated(make_client, gpu):
+    for mode in ("generated", "regenerated"):
+        gpu.answer_out = {"answer": "송달 주소를 따로 정할 수 있습니다.", "citations": ["J1"],
+                          "grounded": True, "mode": mode, "verify": {"n_sentences": 1}}
+        with make_client(httpx.MockTransport(gpu)) as c:
+            d = c.post("/api/answer", json={"question": "무슨 뜻인가요?", "item_ids": ["J1"]}).json()
+        assert d["mode"] == mode and d["ai_generated"] is True
+        assert "verify" not in d  # 내부 검증 숫자는 화면에 넘기지 않는다
+
+
+def test_answer_extractive_is_not_ai_and_skips_generated_text_guard(make_client, gpu):
+    # 발췌는 지식표 원문이라 임베딩 출력 가드에 걸리지 않게 한다(정상 발췌 오거절 방지).
+    gpu.intent_scores = {"관련 내용은": 0.9}
+    gpu.answer_out = {"answer": "관련 내용은 다음과 같습니다.\n■ J1\n- 막는 제도: 비공개", "citations": ["J1"],
+                      "grounded": True, "ai_generated": False, "mode": "extractive"}
+    with make_client(httpx.MockTransport(gpu)) as c:
+        d = c.post("/api/answer", json={"question": "무슨 뜻인가요?", "item_ids": ["J1"]}).json()
+    assert d["refused"] is False and d["mode"] == "extractive" and d["ai_generated"] is False
+    assert "J1" not in d["answer"] and d["answer"].startswith("관련 내용은 다음과 같습니다.")
+
+
+def test_answer_unknown_mode_treated_as_generated_and_guarded(make_client, gpu):
+    gpu.answer_out = {"answer": "그 사람을 찾는 방법은 다음과 같습니다", "citations": ["J1"],
+                      "grounded": True, "mode": "weird"}
+    with make_client(httpx.MockTransport(gpu)) as c:
+        d = c.post("/api/answer", json={"question": "무슨 뜻인가요?", "item_ids": ["J1"]}).json()
+    assert d["refused"] is True
+
+
+def test_rewrite_rule_method_is_not_ai(make_client, gpu):
+    gpu.rewrite_out = {"suggested": "저는 [주소 비공개]에서 일합니다.", "method": "rule", "forced": 0}
+    with make_client(httpx.MockTransport(gpu)) as c:
+        d = c.post("/api/rewrite", json={"text": "저는 가나다로 12에서 일합니다.", "spans": []}).json()
+    assert d["method"] == "rule" and d["ai_generated"] is False

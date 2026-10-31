@@ -181,6 +181,142 @@ def eval_answer(gpu: str, knowledge: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+# ------------------------------------------------------------------ 답변 검증 루프 평가(45문항)
+def _verify_mod(llm_url: str):
+    """GPU 쪽 검증기(gpu/verify.py)를 eval 에서 그대로 쓴다. vLLM 은 ssh 터널(--llm-url)."""
+    gdir = str(ROOT / "gpu")
+    if gdir not in sys.path:
+        sys.path.insert(0, gdir)
+    import llm as gllm  # gpu/llm.py
+    import verify as gverify
+    gllm.LLM_URL = llm_url.rstrip("/")
+    return gllm, gverify
+
+
+def _judge(q: dict[str, Any], r: dict[str, Any]) -> bool:
+    text = r.get("answer") or ""
+    refused = bool(r.get("refused")) or r.get("mode") == "refused"
+    grounded = bool(r.get("grounded")) and not refused
+    cites = set(r.get("citations") or [])
+    ok_must = not q.get("must") or bool(re.search(q["must"], text))
+    ok_not = not q.get("must_not") or not re.search(q["must_not"], text)
+    e = q["expect"]
+    if e == "answer":
+        return grounded and bool(cites & set(q["gold"])) and ok_not
+    if e in ("notify_fixed", "effect_fixed"):
+        return grounded and r.get("mode") == "extractive" and ok_must and ok_not
+    if e == "no_unsupported_claim":
+        return not refused and ok_must and ok_not
+    if e == "not_found":
+        return not grounded and not refused and ok_not
+    return False
+
+
+def eval_answer_loop(gpu: str, llm_url: str | None, knowledge: dict[str, Any],
+                     cases: list[dict[str, Any]]) -> dict[str, Any]:
+    """data/eval/answer_eval.json 45문항: 결과 종류(mode) 분포, 정답률, 발췌 비율, 지연,
+    최종 답(생성·재생성)의 근거 없는 문장 비율(규칙 + qwen 검증기 재판정). 질문·답 본문은 저장하지 않는다."""
+    from app.engine import Engine
+    from app.llm import strip_amend_notes
+
+    items = {i["id"]: i for i in Engine(knowledge).items}
+    arts = {k: {**a, "text": strip_amend_notes(a.get("text") or ""),
+                "excerpt": strip_amend_notes(a["excerpt"]) if a.get("excerpt") else None}
+            for k, a in load_articles().items()}
+    gllm = gverify = None
+    if llm_url:
+        gllm, gverify = _verify_mod(llm_url)
+
+    def rerank(pairs):
+        if not pairs:
+            return []
+        out = []
+        for i in range(0, len(pairs), 90):  # GPU /rerank 문서 상한 100
+            chunk = pairs[i:i + 90]
+            # /rerank 는 질의 하나에 문서 여러 개라 질의별로 묶는다.
+            by_q: dict[str, list[int]] = {}
+            for j, (qq, _d) in enumerate(chunk):
+                by_q.setdefault(qq, []).append(j)
+            sc = [0.0] * len(chunk)
+            for qq, js in by_q.items():
+                rs = _post(f"{gpu}/rerank", {"query": qq, "docs": [chunk[j][1] for j in js]}, timeout=60)
+                for j, v in zip(js, rs.get("scores") or []):
+                    sc[j] = float(v)
+            out += sc
+        return out
+
+    per, lat = [], []
+    sent_total = sent_rule_bad = sent_llm_bad = sent_llm_checked = 0
+    first_total = first_bad = 0
+    for q in cases:
+        ctx = [build_item(items[i], arts) for i in q["context"]]
+        t0 = time.time()
+        try:
+            r = _post(f"{gpu}/llm/answer", {"question": q["q"], "items": ctx}, timeout=180)
+            err = None
+        except GpuDown as exc:
+            r, err = {}, str(exc)
+        dt = time.time() - t0
+        lat.append(dt)
+        mode = "error" if err else (r.get("mode") or ("refused" if r.get("refused") else "unknown"))
+        row = {"id": q["id"], "category": q["category"], "expect": q["expect"], "mode": mode,
+               "correct": (not err) and _judge(q, r), "latency_s": round(dt, 2),
+               "citations": r.get("citations") or [], "fallback": (r.get("verify") or {}).get("fallback"),
+               "refused_stage": r.get("refused_stage")}
+        vm = r.get("verify") or {}
+        if vm.get("first_unsupported") is not None and vm.get("first_n_sentences"):
+            first_total += vm["first_n_sentences"]
+            first_bad += vm["first_unsupported"]
+        row["first_unsupported"] = vm.get("first_unsupported")
+        if gverify is not None and mode in ("generated", "regenerated"):
+            text = r.get("answer") or ""
+            c = gverify.build_ctx(ctx)
+            sents = gllm.split_sentences(text)
+            rule_bad = sum(bool(gverify.rule_check(s_, c)) for s_ in sents)
+            deps = gverify.Deps(chat_json=gllm.chat_json, rerank=rerank)
+            try:
+                v = gverify.verify_answer(text, ctx, deps, timeout=60)
+                llm_bad = len(v.unsupported)
+                sent_llm_checked += len(sents)
+                sent_llm_bad += llm_bad
+            except gllm.LlmDown:
+                llm_bad = None
+            sent_total += len(sents)
+            sent_rule_bad += rule_bad
+            row.update(n_sentences=len(sents), rule_unsupported=rule_bad, verifier_unsupported=llm_bad)
+        per.append(row)
+    modes: dict[str, int] = {}
+    for p in per:
+        modes[p["mode"]] = modes.get(p["mode"], 0) + 1
+    by_cat: dict[str, str] = {}
+    for cat in ("answerable", "notify_timing_trap", "other_measure_trap", "out_of_context"):
+        rows = [p for p in per if p["category"] == cat]
+        by_cat[cat] = f"{sum(p['correct'] for p in rows)}/{len(rows)}"
+    not_in = [p for p in per if p.get("refused_stage") != "input"]
+    return {
+        "n": len(per),
+        "correct_rate": _ratio(sum(p["correct"] for p in per), len(per)),
+        "input_guard_refusals": len(per) - len(not_in),
+        "output_guard_refusals": sum(p.get("refused_stage") == "output" for p in per),
+        "correct_rate_excluding_input_refusals": _ratio(sum(p["correct"] for p in not_in), len(not_in)),
+        "correct_by_category": by_cat,
+        "mode_distribution": modes,
+        "extractive_rate": _ratio(modes.get("extractive", 0), len(per)),
+        "unsupported_sentence_rate": {
+            "final_rule": _ratio(sent_rule_bad, sent_total),
+            "final_verifier": _ratio(sent_llm_bad, sent_llm_checked),
+            "final_sentences": sent_total,
+            "first_draft_rule_or_verifier": _ratio(first_bad, first_total),
+            "first_draft_sentences": first_total,
+            "note": ("final_* 는 최종 생성·재생성 답을 서버와 같은 규칙·qwen 검증기로 다시 판정한 값(독립 판정 아님). "
+                     "first_draft 는 검증 루프 전 첫 생성문의 서버 판정(규칙 또는 검증기, 본문 없이 숫자만) = 루프가 없을 때의 근사."),
+        },
+        "latency_s": {"mean": round(sum(lat) / len(lat), 2), "max": round(max(lat), 2),
+                      "over_12s": sum(x > 12 for x in lat)},
+        "cases": per,
+    }
+
+
 def _residual(spans: list[dict[str, Any]]) -> list[dict[str, Any]]:
     # 안전 문구('[… 비공개]')는 단서가 아니다.
     return [s for s in spans if "비공개" not in (s.get("text") or "")]
@@ -235,22 +371,43 @@ def main() -> int:
     ap.add_argument("--gpu-url", default="http://127.0.0.1:18000")
     ap.add_argument("--node", default="node")
     ap.add_argument("--out", default=str(ROOT / "data/eval/results_llm.json"))
+    ap.add_argument("--llm-url", default="http://127.0.0.1:18001/v1",
+                    help="최종 답 재판정용 vLLM(ssh 터널). 빈 문자열이면 재판정 생략")
+    ap.add_argument("--sections", default="intake,answer,rewrite,answer_eval",
+                    help="일부만 돌리면 --out 의 기존 결과에 합친다")
     a = ap.parse_args()
     gpu = a.gpu_url.rstrip("/")
+    sections = {x.strip() for x in a.sections.split(",") if x.strip()}
+    out_path = Path(a.out)
+    res: dict[str, Any] = {}
+    if out_path.exists() and sections != {"intake", "answer", "rewrite", "answer_eval"}:
+        res = json.loads(out_path.read_text(encoding="utf-8"))
     try:
         health = _post(f"{gpu}/llm/answer", {"question": "점검", "items": []}, timeout=10)
         del health
-        res = {
-            "generated_at": _dt.datetime.now().astimezone().isoformat(timespec="seconds"),
-            "model": "qwen3-8b (Qwen/Qwen3-8B-AWQ, vLLM, thinking off)",
-            "intake": eval_intake(gpu, _load("data/eval/intake.json")["cases"]),
-            "answer": eval_answer(gpu, _load("data/knowledge.json")),
-            "rewrite": eval_rewrite(gpu, _load("data/eval/docs.json"), a.node),
-        }
+        res["generated_at"] = _dt.datetime.now().astimezone().isoformat(timespec="seconds")
+        res["model"] = "qwen3-8b (Qwen/Qwen3-8B-AWQ, vLLM, thinking off)"
+        if "intake" in sections:
+            res["intake"] = eval_intake(gpu, _load("data/eval/intake.json")["cases"])
+        if "answer" in sections:
+            res["answer"] = eval_answer(gpu, _load("data/knowledge.json"))
+        if "rewrite" in sections:
+            res["rewrite"] = eval_rewrite(gpu, _load("data/eval/docs.json"), a.node)
+        if "answer_eval" in sections:
+            res["answer_eval"] = eval_answer_loop(gpu, a.llm_url or None, _load("data/knowledge.json"),
+                                                  _load("data/eval/answer_eval.json")["questions"])
     except GpuDown as exc:
         print(f"GPU/LLM 불가: {exc}", file=sys.stderr)
         return 2
-    Path(a.out).write_text(json.dumps(res, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    out_path.write_text(json.dumps(res, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    if "answer_eval" in res:
+        ae = res["answer_eval"]
+        us = ae["unsupported_sentence_rate"]
+        print(f"answer_eval 정답률 {ae['correct_rate']} {ae['correct_by_category']} · mode {ae['mode_distribution']}"
+              f" · 발췌 {ae['extractive_rate']} · 근거 없는 문장(최종 규칙 {us['final_rule']} / 검증기 {us['final_verifier']},"
+              f" {us['final_sentences']}문장) · 지연 평균 {ae['latency_s']['mean']}s 최대 {ae['latency_s']['max']}s")
+    if not {"intake", "answer", "rewrite"} <= res.keys():
+        return 0
     i, an, rw = res["intake"], res["answer"], res["rewrite"]
     print(f"intake  flag F1 {i['flag_micro']['f1']} (P {i['flag_micro']['precision']} R {i['flag_micro']['recall']})"
           f" · victim_type acc {i['victim_type_accuracy']} · {i['latency_s']['mean']}s/건")

@@ -307,7 +307,7 @@ _NOTIFY_PROTECT_RE = re.compile(r"(?:알려지|알게\s*되)\s*지\s*(?:않게|�
 DENY_NOTIFY_RE = re.compile(
     r"(?:알려지|알려져|통지되|통지가\s*되|통보되|고지되|알게\s*되|알게\s*돼)\s*지\s*(?:않|않아|않습)"
     r"|(?:통지|통보|고지)(?:하지|는|가)?\s*(?:않|없)"
-    r"|모르게\s*(?:신청|할\s*수|돼|됩)"
+    r"|모르게\s*(?:신청|할\s*수|돼|됩|처리|진행)"
     r"|알\s*수\s*없(?:어요|습니다)"
 )
 NOTIFY_UNKNOWN_ANSWER = (
@@ -339,9 +339,9 @@ def notify_answer(ids: list[str], items_by_id: dict[str, dict[str, Any]]) -> dic
             cites.append(iid)
     if not texts:
         return {"answer": NOTIFY_UNKNOWN_ANSWER, "citations": [], "grounded": False,
-                "ai_generated": False, "source": "notify"}
+                "ai_generated": False, "source": "notify", "mode": "not_found"}
     return {"answer": " ".join(texts), "citations": cites, "grounded": True,
-            "ai_generated": False, "source": "notify"}
+            "ai_generated": False, "source": "notify", "mode": "extractive"}
 
 
 EFFECT_Q_RE = re.compile(
@@ -369,10 +369,15 @@ def effect_answer(ids: list[str], items_by_id: dict[str, dict[str, Any]]) -> dic
             parts.append(" / ".join(bits))
             cites.append(iid)
     if not parts:
-        return {"answer": NOT_FOUND_ANSWER, "citations": [], "grounded": False, "ai_generated": True}
+        return {"answer": NOT_FOUND_ANSWER, "citations": [], "grounded": False, "ai_generated": True,
+                "mode": "not_found"}
     return {"answer": "안내문에 적힌 시점입니다. " + " · ".join(parts)
             + ". 처리 기간이 적혀 있지 않으면 신청처에 꼭 확인하세요.",
-            "citations": cites, "grounded": True, "ai_generated": False, "source": "effect"}
+            "citations": cites, "grounded": True, "ai_generated": False, "source": "effect",
+            "mode": "extractive"}
+
+
+ANSWER_MODES = ("generated", "regenerated", "extractive", "not_found")
 
 
 def _with_sources(out: dict[str, Any], items_by_id: dict[str, dict[str, Any]]) -> dict[str, Any]:
@@ -400,7 +405,8 @@ async def answer(
         return _with_sources(effect_answer(ids, items_by_id), items_by_id)
     items = build_items(ids, items_by_id, articles)
     if not items:
-        return {"answer": NOT_FOUND_ANSWER, "citations": [], "grounded": False, "ai_generated": True}
+        return {"answer": NOT_FOUND_ANSWER, "citations": [], "grounded": False, "ai_generated": True,
+                "mode": "not_found"}
 
     data = await _post(
         client,
@@ -409,7 +415,9 @@ async def answer(
         timeout=90.0,
     )
     if data.get("refused") is True:
-        return {"refused": True}
+        return {"refused": True, "mode": "refused"}
+    # GPU 검증 루프의 결과 종류(생성 → 검증 → 1회 재생성 → 발췌). 모르는 값은 'generated' 로 본다.
+    mode = data.get("mode") if data.get("mode") in ANSWER_MODES else "generated"
     text = _clip(data.get("answer"), 2000)
     allowed = {it["id"] for it in items}
     citations: list[str] = []
@@ -421,24 +429,29 @@ async def answer(
     grounded = data.get("grounded") is True and bool(citations) and bool(text)
 
     if not text or not grounded:
-        return {"answer": NOT_FOUND_ANSWER, "citations": [], "grounded": False, "ai_generated": True}
+        return {"answer": NOT_FOUND_ANSWER, "citations": [], "grounded": False, "ai_generated": True,
+                "mode": "not_found"}
 
-    # 출력 가드: 생성문에 탐색 의도 표현이 섞이면 내보내지 않는다.
-    if answer_locate_intent(text) or await intent(text, client, gpu_url, out_thresh=out_thresh()):
-        return {"refused": True}
+    # 발췌(extractive)는 생성문이 아니라 지식표 행 원문이라 생성문 가드를 거치지 않는다
+    # (지식표 문구는 주소·기록 낱말이 많아 임베딩 가드가 정상 발췌를 거절할 수 있다).
+    if mode != "extractive":
+        # 출력 가드: 생성문에 탐색 의도 표현이 섞이면 내보내지 않는다.
+        if answer_locate_intent(text) or await intent(text, client, gpu_url, out_thresh=out_thresh()):
+            return {"refused": True, "mode": "refused"}
 
-    # 근거 없는 '상대에게 알려지지 않아요' 는 위험한 오답이다: 인용 행에 명시가 없으면 버린다.
-    if DENY_NOTIFY_RE.search(text) and not any(
-        _row_supports_denial(items_by_id[c]) for c in citations
-    ):
-        return {"answer": NOTIFY_UNKNOWN_ANSWER, "citations": [], "grounded": False,
-                "ai_generated": True}
+        # 근거 없는 '상대에게 알려지지 않아요' 는 위험한 오답이다: 인용 행에 명시가 없으면 버린다.
+        if DENY_NOTIFY_RE.search(text) and not any(
+            _row_supports_denial(items_by_id[c]) for c in citations
+        ):
+            return {"answer": NOTIFY_UNKNOWN_ANSWER, "citations": [], "grounded": False,
+                    "ai_generated": True, "mode": "not_found"}
 
     # 내부 id 를 사용자에게 보이지 않게: '[A1]' 인용 표시는 지우고 남은 id 는 제도 이름으로.
     names = _hz.name_map(list(items_by_id.values()))
     text = _hz.humanize_text(_hz.strip_bracket_ids(text), names)
     return _with_sources(
-        {"answer": text, "citations": citations, "grounded": True, "ai_generated": True},
+        {"answer": text, "citations": citations, "grounded": True,
+         "ai_generated": mode != "extractive", "mode": mode},
         items_by_id,
     )
 
@@ -479,4 +492,6 @@ async def rewrite(
         frag = text[s["start"] : s["end"]].strip()
         if len(frag) >= 2 and frag in out and frag not in remaining:
             remaining.append(frag)
-    return {"rewritten": out, "remaining": remaining, "ai_generated": True}
+    # method: llm(모델 제안이 검증을 통과) | rule(정렬 실패·새 사실·지시문 등으로 규칙 치환). 화면 배지용.
+    method = data.get("method") if data.get("method") in ("llm", "rule") else "llm"
+    return {"rewritten": out, "remaining": remaining, "ai_generated": method == "llm", "method": method}

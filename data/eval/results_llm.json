@@ -1,20 +1,20 @@
 {
- "generated_at": "2026-10-31T14:39:18+09:00",
+ "generated_at": "2026-10-31T16:44:08+09:00",
  "model": "qwen3-8b (Qwen/Qwen3-8B-AWQ, vLLM, thinking off)",
  "intake": {
   "n": 20,
   "flag_micro": {
    "tp": 34,
-   "fp": 8,
+   "fp": 4,
    "fn": 14,
-   "precision": 0.8095,
+   "precision": 0.8947,
    "recall": 0.7083,
-   "f1": 0.7555
+   "f1": 0.7907
   },
-  "victim_type_accuracy": 0.9,
+  "victim_type_accuracy": 0.95,
   "latency_s": {
-   "mean": 1.7,
-   "max": 2.36
+   "mean": 1.6,
+   "max": 2.29
   },
   "cases": [
    {
@@ -24,7 +24,7 @@
     "gold_victim_type": "family",
     "missed": [],
     "extra": [],
-    "n_unclear": 0
+    "n_unclear": 1
    },
    {
     "id": "in02",
@@ -37,10 +37,9 @@
      "workplace_known"
     ],
     "extra": [
-     "device_tampering_suspected",
      "shared_vehicle_or_abuser_owned"
     ],
-    "n_unclear": 0
+    "n_unclear": 1
    },
    {
     "id": "in03",
@@ -49,7 +48,7 @@
     "gold_victim_type": "dating",
     "missed": [],
     "extra": [],
-    "n_unclear": 0
+    "n_unclear": 1
    },
    {
     "id": "in04",
@@ -57,9 +56,7 @@
     "pred_victim_type": "sexual",
     "gold_victim_type": "sexual",
     "missed": [],
-    "extra": [
-     "mail_old_address"
-    ],
+    "extra": [],
     "n_unclear": 1
    },
    {
@@ -71,7 +68,7 @@
      "child_victim"
     ],
     "extra": [],
-    "n_unclear": 0
+    "n_unclear": 1
    },
    {
     "id": "in06",
@@ -89,16 +86,16 @@
     "gold_victim_type": "family",
     "missed": [],
     "extra": [],
-    "n_unclear": 0
+    "n_unclear": 1
    },
    {
     "id": "in08",
     "victim_type_ok": false,
-    "pred_victim_type": "sexual",
+    "pred_victim_type": "stalking",
     "gold_victim_type": null,
     "missed": [],
     "extra": [],
-    "n_unclear": 0
+    "n_unclear": 1
    },
    {
     "id": "in09",
@@ -119,9 +116,7 @@
     "missed": [
      "protection_order"
     ],
-    "extra": [
-     "criminal_case"
-    ],
+    "extra": [],
     "n_unclear": 1
    },
    {
@@ -142,7 +137,7 @@
     "gold_victim_type": "sexual",
     "missed": [],
     "extra": [],
-    "n_unclear": 0
+    "n_unclear": 1
    },
    {
     "id": "in13",
@@ -168,8 +163,8 @@
    },
    {
     "id": "in15",
-    "victim_type_ok": false,
-    "pred_victim_type": "family",
+    "victim_type_ok": true,
+    "pred_victim_type": null,
     "gold_victim_type": null,
     "missed": [],
     "extra": [],
@@ -184,8 +179,7 @@
      "children_school"
     ],
     "extra": [
-     "child_victim",
-     "vehicle"
+     "child_victim"
     ],
     "n_unclear": 0
    },
@@ -196,7 +190,7 @@
     "gold_victim_type": "dating",
     "missed": [],
     "extra": [],
-    "n_unclear": 0
+    "n_unclear": 1
    },
    {
     "id": "in18",
@@ -222,7 +216,7 @@
     "extra": [
      "shared_vehicle_or_abuser_owned"
     ],
-    "n_unclear": 0
+    "n_unclear": 1
    },
    {
     "id": "in20",
@@ -242,11 +236,11 @@
   "answerable_answered": "4/5",
   "answerable_cites_expected": "4/5",
   "citation_validity": 1.0,
-  "out_of_context_refusal": "3/5",
-  "guard_refusals": 3,
+  "out_of_context_refusal": "5/5",
+  "guard_refusals": 1,
   "latency_s": {
-   "mean": 2.89,
-   "max": 5.75
+   "mean": 3.9,
+   "max": 9.78
   },
   "note": "답변 본문의 근거 이탈(인용은 맞지만 내용이 근거 밖) 여부는 사람 판정 표본으로 따로 본다(SPEC §8).",
   "review_checks": "5/5",
@@ -354,8 +348,8 @@
     "id": "n1",
     "answerable": false,
     "answered": false,
-    "refused_by_guard": true,
-    "not_found": false,
+    "refused_by_guard": false,
+    "not_found": true,
     "citations": [],
     "citations_in_context": true,
     "cites_expected": null
@@ -394,8 +388,8 @@
     "id": "n5",
     "answerable": false,
     "answered": false,
-    "refused_by_guard": true,
-    "not_found": false,
+    "refused_by_guard": false,
+    "not_found": true,
     "citations": [],
     "citations_in_context": true,
     "cites_expected": null
@@ -407,15 +401,15 @@
   "rewritten": 30,
   "refused": 0,
   "rule_fallback": 0,
-  "forced_masks": 8,
+  "forced_masks": 12,
   "tier1_spans_before": 33,
   "tier1_spans_after": 0,
   "tier1_residual_rate": 0.0,
   "docs_with_tier1_residual": "0/30",
   "gold_span_text_left_rate": 0.1053,
   "latency_s": {
-   "mean": 3.26,
-   "max": 4.76
+   "mean": 2.4,
+   "max": 3.88
   },
   "cases": [
    {
@@ -576,7 +570,7 @@
     "tier1_before": 0,
     "tier1_after": 0,
     "gold_spans": 2,
-    "gold_left": 0
+    "gold_left": 1
    },
    {
     "id": "doc21",
@@ -584,7 +578,7 @@
     "tier1_before": 1,
     "tier1_after": 0,
     "gold_spans": 2,
-    "gold_left": 1
+    "gold_left": 0
    },
    {
     "id": "doc22",
@@ -657,6 +651,676 @@
     "tier1_after": 0,
     "gold_spans": 2,
     "gold_left": 0
+   }
+  ]
+ },
+ "answer_eval": {
+  "n": 45,
+  "correct_rate": 0.9778,
+  "input_guard_refusals": 0,
+  "output_guard_refusals": 1,
+  "correct_rate_excluding_input_refusals": 0.9778,
+  "correct_by_category": {
+   "answerable": "14/15",
+   "notify_timing_trap": "10/10",
+   "other_measure_trap": "10/10",
+   "out_of_context": "10/10"
+  },
+  "mode_distribution": {
+   "generated": 15,
+   "extractive": 7,
+   "refused": 1,
+   "not_found": 21,
+   "regenerated": 1
+  },
+  "extractive_rate": 0.1556,
+  "unsupported_sentence_rate": {
+   "final_rule": 0.0,
+   "final_verifier": 0.0,
+   "final_sentences": 49,
+   "first_draft_rule_or_verifier": 0.0364,
+   "first_draft_sentences": 55,
+   "note": "final_* 는 최종 생성·재생성 답을 서버와 같은 규칙·qwen 검증기로 다시 판정한 값(독립 판정 아님). first_draft 는 검증 루프 전 첫 생성문의 서버 판정(규칙 또는 검증기, 본문 없이 숫자만) = 루프가 없을 때의 근사."
+  },
+  "latency_s": {
+   "mean": 2.99,
+   "max": 11.91,
+   "over_12s": 0
+  },
+  "cases": [
+   {
+    "id": "a01",
+    "category": "answerable",
+    "expect": "answer",
+    "mode": "generated",
+    "correct": true,
+    "latency_s": 5.95,
+    "citations": [
+     "L3"
+    ],
+    "fallback": null,
+    "refused_stage": null,
+    "first_unsupported": 0,
+    "n_sentences": 3,
+    "rule_unsupported": 0,
+    "verifier_unsupported": 0
+   },
+   {
+    "id": "a02",
+    "category": "answerable",
+    "expect": "answer",
+    "mode": "extractive",
+    "correct": true,
+    "latency_s": 11.91,
+    "citations": [
+     "L4"
+    ],
+    "fallback": "unsupported_after_retry",
+    "refused_stage": null,
+    "first_unsupported": 1
+   },
+   {
+    "id": "a03",
+    "category": "answerable",
+    "expect": "answer",
+    "mode": "generated",
+    "correct": true,
+    "latency_s": 8.75,
+    "citations": [
+     "J1"
+    ],
+    "fallback": null,
+    "refused_stage": null,
+    "first_unsupported": 0,
+    "n_sentences": 5,
+    "rule_unsupported": 0,
+    "verifier_unsupported": 0
+   },
+   {
+    "id": "a04",
+    "category": "answerable",
+    "expect": "answer",
+    "mode": "generated",
+    "correct": true,
+    "latency_s": 3.98,
+    "citations": [
+     "A1"
+    ],
+    "fallback": null,
+    "refused_stage": null,
+    "first_unsupported": 0,
+    "n_sentences": 2,
+    "rule_unsupported": 0,
+    "verifier_unsupported": 0
+   },
+   {
+    "id": "a05",
+    "category": "answerable",
+    "expect": "answer",
+    "mode": "generated",
+    "correct": true,
+    "latency_s": 7.54,
+    "citations": [
+     "S1"
+    ],
+    "fallback": null,
+    "refused_stage": null,
+    "first_unsupported": 0,
+    "n_sentences": 4,
+    "rule_unsupported": 0,
+    "verifier_unsupported": 0
+   },
+   {
+    "id": "a06",
+    "category": "answerable",
+    "expect": "answer",
+    "mode": "generated",
+    "correct": true,
+    "latency_s": 5.28,
+    "citations": [
+     "P1"
+    ],
+    "fallback": null,
+    "refused_stage": null,
+    "first_unsupported": 0,
+    "n_sentences": 3,
+    "rule_unsupported": 0,
+    "verifier_unsupported": 0
+   },
+   {
+    "id": "a07",
+    "category": "answerable",
+    "expect": "answer",
+    "mode": "refused",
+    "correct": false,
+    "latency_s": 3.85,
+    "citations": [],
+    "fallback": null,
+    "refused_stage": "output",
+    "first_unsupported": null
+   },
+   {
+    "id": "a08",
+    "category": "answerable",
+    "expect": "answer",
+    "mode": "generated",
+    "correct": true,
+    "latency_s": 8.07,
+    "citations": [
+     "J19"
+    ],
+    "fallback": null,
+    "refused_stage": null,
+    "first_unsupported": 0,
+    "n_sentences": 4,
+    "rule_unsupported": 0,
+    "verifier_unsupported": 0
+   },
+   {
+    "id": "a09",
+    "category": "answerable",
+    "expect": "answer",
+    "mode": "generated",
+    "correct": true,
+    "latency_s": 6.05,
+    "citations": [
+     "D6"
+    ],
+    "fallback": null,
+    "refused_stage": null,
+    "first_unsupported": 0,
+    "n_sentences": 4,
+    "rule_unsupported": 0,
+    "verifier_unsupported": 0
+   },
+   {
+    "id": "a10",
+    "category": "answerable",
+    "expect": "answer",
+    "mode": "generated",
+    "correct": true,
+    "latency_s": 5.4,
+    "citations": [
+     "P6"
+    ],
+    "fallback": null,
+    "refused_stage": null,
+    "first_unsupported": 0,
+    "n_sentences": 3,
+    "rule_unsupported": 0,
+    "verifier_unsupported": 0
+   },
+   {
+    "id": "a11",
+    "category": "answerable",
+    "expect": "answer",
+    "mode": "generated",
+    "correct": true,
+    "latency_s": 4.85,
+    "citations": [
+     "J16"
+    ],
+    "fallback": null,
+    "refused_stage": null,
+    "first_unsupported": 0,
+    "n_sentences": 2,
+    "rule_unsupported": 0,
+    "verifier_unsupported": 0
+   },
+   {
+    "id": "a12",
+    "category": "answerable",
+    "expect": "answer",
+    "mode": "generated",
+    "correct": true,
+    "latency_s": 6.8,
+    "citations": [
+     "A11"
+    ],
+    "fallback": null,
+    "refused_stage": null,
+    "first_unsupported": 0,
+    "n_sentences": 4,
+    "rule_unsupported": 0,
+    "verifier_unsupported": 0
+   },
+   {
+    "id": "a13",
+    "category": "answerable",
+    "expect": "answer",
+    "mode": "generated",
+    "correct": true,
+    "latency_s": 5.83,
+    "citations": [
+     "P7"
+    ],
+    "fallback": null,
+    "refused_stage": null,
+    "first_unsupported": 0,
+    "n_sentences": 4,
+    "rule_unsupported": 0,
+    "verifier_unsupported": 0
+   },
+   {
+    "id": "a14",
+    "category": "answerable",
+    "expect": "answer",
+    "mode": "generated",
+    "correct": true,
+    "latency_s": 7.26,
+    "citations": [
+     "J2"
+    ],
+    "fallback": null,
+    "refused_stage": null,
+    "first_unsupported": 0,
+    "n_sentences": 4,
+    "rule_unsupported": 0,
+    "verifier_unsupported": 0
+   },
+   {
+    "id": "a15",
+    "category": "answerable",
+    "expect": "answer",
+    "mode": "generated",
+    "correct": true,
+    "latency_s": 2.75,
+    "citations": [
+     "A8"
+    ],
+    "fallback": null,
+    "refused_stage": null,
+    "first_unsupported": 0,
+    "n_sentences": 1,
+    "rule_unsupported": 0,
+    "verifier_unsupported": 0
+   },
+   {
+    "id": "t01",
+    "category": "notify_timing_trap",
+    "expect": "not_found",
+    "mode": "not_found",
+    "correct": true,
+    "latency_s": 0.08,
+    "citations": [],
+    "fallback": null,
+    "refused_stage": null,
+    "first_unsupported": null
+   },
+   {
+    "id": "t02",
+    "category": "notify_timing_trap",
+    "expect": "notify_fixed",
+    "mode": "extractive",
+    "correct": true,
+    "latency_s": 0.14,
+    "citations": [
+     "A1"
+    ],
+    "fallback": null,
+    "refused_stage": null,
+    "first_unsupported": null
+   },
+   {
+    "id": "t03",
+    "category": "notify_timing_trap",
+    "expect": "no_unsupported_claim",
+    "mode": "generated",
+    "correct": true,
+    "latency_s": 2.36,
+    "citations": [
+     "L3"
+    ],
+    "fallback": null,
+    "refused_stage": null,
+    "first_unsupported": 0,
+    "n_sentences": 1,
+    "rule_unsupported": 0,
+    "verifier_unsupported": 0
+   },
+   {
+    "id": "t04",
+    "category": "notify_timing_trap",
+    "expect": "no_unsupported_claim",
+    "mode": "generated",
+    "correct": true,
+    "latency_s": 3.87,
+    "citations": [
+     "D5"
+    ],
+    "fallback": null,
+    "refused_stage": null,
+    "first_unsupported": 0,
+    "n_sentences": 2,
+    "rule_unsupported": 0,
+    "verifier_unsupported": 0
+   },
+   {
+    "id": "t05",
+    "category": "notify_timing_trap",
+    "expect": "effect_fixed",
+    "mode": "extractive",
+    "correct": true,
+    "latency_s": 0.16,
+    "citations": [
+     "A1"
+    ],
+    "fallback": null,
+    "refused_stage": null,
+    "first_unsupported": null
+   },
+   {
+    "id": "t06",
+    "category": "notify_timing_trap",
+    "expect": "effect_fixed",
+    "mode": "extractive",
+    "correct": true,
+    "latency_s": 0.17,
+    "citations": [
+     "L3"
+    ],
+    "fallback": null,
+    "refused_stage": null,
+    "first_unsupported": null
+   },
+   {
+    "id": "t07",
+    "category": "notify_timing_trap",
+    "expect": "no_unsupported_claim",
+    "mode": "extractive",
+    "correct": true,
+    "latency_s": 9.75,
+    "citations": [
+     "J19"
+    ],
+    "fallback": "unsupported_after_retry",
+    "refused_stage": null,
+    "first_unsupported": 1
+   },
+   {
+    "id": "t08",
+    "category": "notify_timing_trap",
+    "expect": "notify_fixed",
+    "mode": "extractive",
+    "correct": true,
+    "latency_s": 0.22,
+    "citations": [
+     "A8"
+    ],
+    "fallback": null,
+    "refused_stage": null,
+    "first_unsupported": null
+   },
+   {
+    "id": "t09",
+    "category": "notify_timing_trap",
+    "expect": "effect_fixed",
+    "mode": "extractive",
+    "correct": true,
+    "latency_s": 0.23,
+    "citations": [
+     "J2"
+    ],
+    "fallback": null,
+    "refused_stage": null,
+    "first_unsupported": null
+   },
+   {
+    "id": "t10",
+    "category": "notify_timing_trap",
+    "expect": "no_unsupported_claim",
+    "mode": "regenerated",
+    "correct": true,
+    "latency_s": 8.37,
+    "citations": [
+     "P7"
+    ],
+    "fallback": null,
+    "refused_stage": null,
+    "first_unsupported": 0,
+    "n_sentences": 3,
+    "rule_unsupported": 0,
+    "verifier_unsupported": 0
+   },
+   {
+    "id": "c01",
+    "category": "other_measure_trap",
+    "expect": "not_found",
+    "mode": "not_found",
+    "correct": true,
+    "latency_s": 0.15,
+    "citations": [],
+    "fallback": null,
+    "refused_stage": null,
+    "first_unsupported": null
+   },
+   {
+    "id": "c02",
+    "category": "other_measure_trap",
+    "expect": "not_found",
+    "mode": "not_found",
+    "correct": true,
+    "latency_s": 0.23,
+    "citations": [],
+    "fallback": null,
+    "refused_stage": null,
+    "first_unsupported": null
+   },
+   {
+    "id": "c03",
+    "category": "other_measure_trap",
+    "expect": "not_found",
+    "mode": "not_found",
+    "correct": true,
+    "latency_s": 0.22,
+    "citations": [],
+    "fallback": null,
+    "refused_stage": null,
+    "first_unsupported": null
+   },
+   {
+    "id": "c04",
+    "category": "other_measure_trap",
+    "expect": "not_found",
+    "mode": "not_found",
+    "correct": true,
+    "latency_s": 0.28,
+    "citations": [],
+    "fallback": null,
+    "refused_stage": null,
+    "first_unsupported": null
+   },
+   {
+    "id": "c05",
+    "category": "other_measure_trap",
+    "expect": "not_found",
+    "mode": "not_found",
+    "correct": true,
+    "latency_s": 0.26,
+    "citations": [],
+    "fallback": null,
+    "refused_stage": null,
+    "first_unsupported": null
+   },
+   {
+    "id": "c06",
+    "category": "other_measure_trap",
+    "expect": "not_found",
+    "mode": "not_found",
+    "correct": true,
+    "latency_s": 0.18,
+    "citations": [],
+    "fallback": null,
+    "refused_stage": null,
+    "first_unsupported": null
+   },
+   {
+    "id": "c07",
+    "category": "other_measure_trap",
+    "expect": "not_found",
+    "mode": "not_found",
+    "correct": true,
+    "latency_s": 0.4,
+    "citations": [],
+    "fallback": null,
+    "refused_stage": null,
+    "first_unsupported": null
+   },
+   {
+    "id": "c08",
+    "category": "other_measure_trap",
+    "expect": "not_found",
+    "mode": "not_found",
+    "correct": true,
+    "latency_s": 0.25,
+    "citations": [],
+    "fallback": null,
+    "refused_stage": null,
+    "first_unsupported": null
+   },
+   {
+    "id": "c09",
+    "category": "other_measure_trap",
+    "expect": "not_found",
+    "mode": "not_found",
+    "correct": true,
+    "latency_s": 0.1,
+    "citations": [],
+    "fallback": null,
+    "refused_stage": null,
+    "first_unsupported": null
+   },
+   {
+    "id": "c10",
+    "category": "other_measure_trap",
+    "expect": "not_found",
+    "mode": "not_found",
+    "correct": true,
+    "latency_s": 0.12,
+    "citations": [],
+    "fallback": null,
+    "refused_stage": null,
+    "first_unsupported": null
+   },
+   {
+    "id": "o01",
+    "category": "out_of_context",
+    "expect": "not_found",
+    "mode": "not_found",
+    "correct": true,
+    "latency_s": 0.23,
+    "citations": [],
+    "fallback": null,
+    "refused_stage": null,
+    "first_unsupported": null
+   },
+   {
+    "id": "o02",
+    "category": "out_of_context",
+    "expect": "not_found",
+    "mode": "not_found",
+    "correct": true,
+    "latency_s": 1.15,
+    "citations": [],
+    "fallback": null,
+    "refused_stage": null,
+    "first_unsupported": null
+   },
+   {
+    "id": "o03",
+    "category": "out_of_context",
+    "expect": "not_found",
+    "mode": "not_found",
+    "correct": true,
+    "latency_s": 2.4,
+    "citations": [],
+    "fallback": null,
+    "refused_stage": null,
+    "first_unsupported": null
+   },
+   {
+    "id": "o04",
+    "category": "out_of_context",
+    "expect": "not_found",
+    "mode": "not_found",
+    "correct": true,
+    "latency_s": 1.23,
+    "citations": [],
+    "fallback": null,
+    "refused_stage": null,
+    "first_unsupported": null
+   },
+   {
+    "id": "o05",
+    "category": "out_of_context",
+    "expect": "not_found",
+    "mode": "not_found",
+    "correct": true,
+    "latency_s": 1.11,
+    "citations": [],
+    "fallback": null,
+    "refused_stage": null,
+    "first_unsupported": null
+   },
+   {
+    "id": "o06",
+    "category": "out_of_context",
+    "expect": "not_found",
+    "mode": "not_found",
+    "correct": true,
+    "latency_s": 0.51,
+    "citations": [],
+    "fallback": null,
+    "refused_stage": null,
+    "first_unsupported": null
+   },
+   {
+    "id": "o07",
+    "category": "out_of_context",
+    "expect": "not_found",
+    "mode": "not_found",
+    "correct": true,
+    "latency_s": 0.57,
+    "citations": [],
+    "fallback": null,
+    "refused_stage": null,
+    "first_unsupported": null
+   },
+   {
+    "id": "o08",
+    "category": "out_of_context",
+    "expect": "not_found",
+    "mode": "not_found",
+    "correct": true,
+    "latency_s": 3.23,
+    "citations": [],
+    "fallback": null,
+    "refused_stage": null,
+    "first_unsupported": null
+   },
+   {
+    "id": "o09",
+    "category": "out_of_context",
+    "expect": "not_found",
+    "mode": "not_found",
+    "correct": true,
+    "latency_s": 1.76,
+    "citations": [],
+    "fallback": null,
+    "refused_stage": null,
+    "first_unsupported": null
+   },
+   {
+    "id": "o10",
+    "category": "out_of_context",
+    "expect": "not_found",
+    "mode": "not_found",
+    "correct": true,
+    "latency_s": 0.53,
+    "citations": [],
+    "fallback": null,
+    "refused_stage": null,
+    "first_unsupported": null
    }
   ]
  }

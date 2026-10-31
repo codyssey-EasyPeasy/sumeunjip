@@ -15,6 +15,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
 import llm
+import verify
 from guard import THIRD_PARTY, answer_locate_intent, assess, embed_locate, rule_locate_intent
 
 MAX_BODY = 20 * 1024
@@ -218,6 +219,8 @@ def health():
         "models": {k: M.get(k) is not None for k in ("embedder", "reranker", "gliner")},
         "device": device,
         "llm": llm.llm_alive(),
+        "verify": {"excluded_ngrams": len(verify.guard().excluded),
+                   "budget_s": verify.ANSWER_BUDGET_S},
     }
 
 
@@ -425,38 +428,55 @@ def llm_intake(req: IntakeIn):
     res = llm.clean_intake(out, ids, text=text)
     # 확인 질문도 생성문이다: 탐색 표현이 섞이면 버린다.
     res["unclear"] = [q for q in res["unclear"] if not keyword_locate(q)]
+    # 공통 출력 가드(프롬프트·노출 금지 조문 n-gram, 단정 어휘, 인용 id, 반복).
+    res["unclear"] = [q for q in res["unclear"] if not verify.guard().issues(q, allowed_ids=[])]
     res["ai_generated"] = True
     return res
+
+
+def _rerank_pairs(pairs: list[tuple[str, str]]) -> list[float]:
+    """검증용 재순위(문장, 근거 조각). 모델이 없으면 글자 겹침."""
+    rer = M.get("reranker")
+    if rer is None or not pairs:
+        return verify.lexical_scores(pairs)
+    import torch
+
+    with torch.inference_mode():
+        scores = rer.predict(pairs, activation_fct=torch.nn.Sigmoid())
+    return [float(x) for x in scores]
+
+
+def _answer_locate(text: str) -> bool:
+    return answer_locate_intent(text) or locate_flagged(text, OUT_THRESH)
 
 
 @app.post("/llm/answer")
 def llm_answer(req: AnswerIn):
     if input_flagged(req.question):
-        return _refusal()
+        return _refusal() | {"mode": "refused", "refused_stage": "input"}
     items = [i.model_dump() for i in req.items]
     ids = [i["id"] for i in items]
     if not ids:
-        return llm.not_found()
+        return llm.not_found() | {"mode": "not_found"}
     # 통지 질문은 생성하지 않는다(notify_warning 원문만, 없으면 '확인되지 않음').
     if llm.is_notify_question(req.question):
-        return llm.notify_answer(items)
+        res = llm.notify_answer(items)
+        return res | {"mode": "extractive" if res["grounded"] else "not_found"}
     # 효과 시점 질문은 생성하지 않고 신청 시점·처리 칸을 그대로 보여 준다(제정일·통지 시점 오답 방지).
     if llm.is_effect_question(req.question):
-        return llm.effect_answer(items)
+        res = llm.effect_answer(items)
+        return res | {"mode": "extractive" if res["grounded"] else "not_found"}
     # 질문이 이름을 댄 제도가 근거 행에 없으면 답하지 않는다(다른 제도로 대신 설명 금지).
     if llm.topic_mismatch(req.question, items):
-        return llm.not_found()
+        return llm.not_found() | {"mode": "not_found"}
+    # 생성 → 검증(규칙 + 문장별 qwen 판정) → (1회 재생성) → 발췌. 12초 예산(verify.ANSWER_BUDGET_S).
+    deps = verify.Deps(chat_json=llm.chat_json, rerank=_rerank_pairs, locate=_answer_locate)
     try:
-        out = llm.chat_json(llm.answer_messages(req.question, items), llm.answer_schema(ids),
-                            max_tokens=700, temperature=0.1)
+        res = verify.run_answer(req.question, items, deps)
     except llm.LlmDown as exc:
         return _llm_down(exc)
-    res = llm.clean_answer(out, ids)
-    if res["grounded"] and (answer_locate_intent(res["answer"])
-                            or locate_flagged(res["answer"], OUT_THRESH)):
-        return _refusal()
-    if res["grounded"] and llm.unsupported_denial(res["answer"], items, res["citations"]):
-        return {"answer": llm.NOTIFY_UNKNOWN, "citations": [], "grounded": False, "ai_generated": True}
+    if res.get("mode") == verify.REFUSED:
+        return _refusal() | {"mode": "refused", "refused_stage": "output"}
     return res
 
 
@@ -474,10 +494,14 @@ def llm_rewrite(req: RewriteIn):
         return _llm_down(exc)
     spans = merge_spans(spans + [{**c, "score": 0.5} for c in llm.clue_spans(req.text, out.get("clues"))])
     res = llm.finalize_rewrite(req.text, spans, str(out.get("text") or ""))
+    # 공통 출력 가드: 원문에 없던 프롬프트·노출 금지 조문 조각, 단정 어휘, 반복이 생기면 규칙 치환.
+    if res["method"] == "llm" and verify.guard().issues(res["suggested"], context=req.text):
+        res = {"suggested": llm.fix_double_mask(llm.mask_spans(req.text, spans)), "method": "rule",
+               "forced": res["forced"]}
     # 생성문에 남은 정규식 단서는 규칙으로 한 번 더 가린다.
     left = regex_spans(res["suggested"]) + llm.routine_spans(res["suggested"])
     if left:
-        res["suggested"] = llm.mask_spans(res["suggested"], merge_spans(left))
+        res["suggested"] = llm.fix_double_mask(llm.mask_spans(res["suggested"], merge_spans(left)))
         res["forced"] += len(left)
     if rewrite_flagged(req.text, res["suggested"]):
         return _refusal() | {"suggested": None}

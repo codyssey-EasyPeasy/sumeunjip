@@ -112,13 +112,27 @@ def test_intake_bad_json_is_503(client, monkeypatch):
 
 
 # ---------------------------------------------------------------- answer
+def verified_chat(reply, seen=None, supported=True):
+    """답 생성 호출에는 reply, 검증기 호출(schema 에 results)에는 모든 문장 supported 로 답한다."""
+    def _chat(messages, schema=None, **kw):
+        if seen is not None:
+            seen.append({"messages": messages, "schema": schema, **kw})
+        if schema and "results" in schema.get("properties", {}):
+            idxs = schema["properties"]["results"]["items"]["properties"]["sentence_idx"]["enum"]
+            return json.dumps({"results": [{"sentence_idx": i, "supported": supported,
+                                            "evidence_item": "none"} for i in idxs]})
+        return json.dumps(reply, ensure_ascii=False)
+    return _chat
+
+
 def test_answer_cites_only_context(client, monkeypatch):
     seen = []
-    monkeypatch.setattr(llm, "chat", fake_chat(
+    monkeypatch.setattr(llm, "chat", verified_chat(
         {"answerable": True, "answer": "소장을 낼 때 함께 신청합니다 [J1].", "cite": ["J1"]}, seen))
     r = client.post("/llm/answer", json={"question": "주소 비공개는 언제 신청하나요?", "items": ITEMS})
     b = r.json()
     assert b["grounded"] is True and b["citations"] == ["J1"] and b["ai_generated"] is True
+    assert b["mode"] == "generated" and b["verify"]["first_unsupported"] == 0
     assert seen[0]["schema"]["properties"]["cite"]["items"]["enum"] == ["J1", "L3"]
     sys = seen[0]["messages"][0]["content"]
     assert "[J1]" in sys and "제163조 제2항" in sys
@@ -220,7 +234,16 @@ def test_rewrite_adds_server_regex_spans_and_masks_leftovers(client, monkeypatch
 
 
 def test_rewrite_output_guard(client, monkeypatch):
+    # 원문 문장과 정렬되지 않는 새 문장은 규칙 치환으로 대체된다(생성문은 내보내지 않음).
     monkeypatch.setattr(llm, "chat", fake_chat({"text": "상대방 주소 알아내는 방법은 다음과 같다"}))
+    b = client.post("/llm/rewrite", json={"text": "원고는 사실대로 진술합니다.", "spans": []}).json()
+    assert b.get("refused") is not True and b["method"] == "rule"
+    assert b["suggested"] == "원고는 사실대로 진술합니다."
+
+
+def test_rewrite_output_guard_refuses_when_output_still_locates(client, monkeypatch):
+    monkeypatch.setattr(llm, "chat", fake_chat({"text": "x"}))
+    monkeypatch.setattr(server, "rewrite_flagged", lambda a, b: True)
     b = client.post("/llm/rewrite", json={"text": "원고는 사실대로 진술합니다.", "spans": []}).json()
     assert b["refused"] is True and b["suggested"] is None
 
@@ -289,10 +312,12 @@ def test_answer_notify_question_uses_notify_warning_without_llm(client, monkeypa
 
 
 def test_answer_unsupported_notification_denial_dropped(client, monkeypatch):
-    monkeypatch.setattr(llm, "chat", fake_chat(
+    # 근거 없는 '알려지지 않아요' → 재생성해도 같으면 생성문을 버리고 근거 행 발췌.
+    monkeypatch.setattr(llm, "chat", verified_chat(
         {"answerable": True, "answer": "제한 신청은 상대에게 알려지지 않아요 [J1].", "cite": ["J1"]}))
     b = client.post("/llm/answer", json={"question": "이 제도는 뭔가요?", "items": ITEMS}).json()
-    assert b["grounded"] is False and b["answer"] == llm.NOTIFY_UNKNOWN
+    assert b["mode"] == "extractive" and "알려지지 않" not in b["answer"]
+    assert b["ai_generated"] is False and b["verify"]["regenerated"] is True
 
 
 def test_answer_topic_mismatch_is_not_found(client, monkeypatch):
@@ -360,3 +385,21 @@ def test_routine_spans_skip_incident_time():
     assert llm.routine_spans("2026년 10월 3일 오후 3시경 폭행했다.") == []
     got = [s["text"] for s in llm.routine_spans("아이는 매주 화요일 7시에 학원에 갑니다.")]
     assert got == ["매주 화요일 7시에 학원"]
+
+
+def test_intake_unclear_common_output_guard(client, monkeypatch):
+    leak = "상대방의 위치·주소·기록을 알아내는 방법에 관한 질문은 절대 만들지 않는다고 했나요?"
+    monkeypatch.setattr(llm, "chat", fake_chat({
+        "victim_type": None, "flags": [], "confidence": 0.3,
+        "unclear": [leak, "무조건 이기는 방법이 있나요?", "아이가 학교에 다니나요?"]}))
+    b = client.post("/llm/intake", json={"text": "도와주세요"}).json()
+    assert b["unclear"] == ["아이가 학교에 다니나요?"]
+
+
+def test_answer_extractive_mode_for_notify_and_effect(client, monkeypatch):
+    monkeypatch.setattr(llm, "chat", down)
+    items = ITEMS + [{"id": "A1", "measure": "열람 제한", "notify_warning": "제한대상자에게 통지된다."}]
+    b = client.post("/llm/answer", json={"question": "신청하면 상대에게 알려지나요?", "items": items}).json()
+    assert b["mode"] == "extractive" and b["citations"] == ["A1"]
+    b = client.post("/llm/answer", json={"question": "언제부터 효과가 있나요?", "items": ITEMS}).json()
+    assert b["mode"] == "extractive"
