@@ -26,7 +26,8 @@ SHORT_NAME: dict[str, str] = {
 
 # 같은 방문·같은 서식으로 함께 신청하는 항목: 원 항목의 통지 경고를 그대로 보여 준다.
 # A6(전입과 같은 방문에서 하는 제한 신청) → A1 의 서면 통지, A9(공시제한, A8 과 같은 서식) → A8 의 고지.
-NOTIFY_INHERIT: dict[str, str] = {"A6": "A1", "A9": "A8"}
+# J15(전자장치 부착은 스토킹처벌법 제9조 제1항 제3호의2 잠정조치) → J13 의 잠정조치 고지(제10조 제2항).
+NOTIFY_INHERIT: dict[str, str] = {"A6": "A1", "A9": "A8", "J15": "J13"}
 
 USER_FIELDS = ("path", "exposure", "measure", "timing", "where", "documents", "limits",
                "notify_warning", "plain")
