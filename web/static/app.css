@@ -1,4 +1,5 @@
 :root {
+  color-scheme: light;
   --navy: #202124;
   --navy-surface: #202124;
   --on-accent: #ffffff;
@@ -755,8 +756,7 @@ details > summary { min-height: 36px; display: list-item; padding: 6px 0; }
   html, body { min-width: 321px; }
 }
 
-@media screen and (prefers-color-scheme: dark) {
-  :root {
+:root[data-color-scheme="dark"] {
     color-scheme: dark;
     --bg: #202124;
     --card-bg: #303134;
@@ -768,7 +768,6 @@ details > summary { min-height: 36px; display: list-item; padding: 6px 0; }
     --teal-dark: #d2b48c;
     --quick-exit: #c2e7ff;
     --quick-exit-text: #202124;
-  }
 }
 
 /* print only the checklist */

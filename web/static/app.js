@@ -1355,8 +1355,20 @@
     setTimeout(go, 0);
   }
 
+  function initColorScheme() {
+    if (!window.matchMedia) return;
+    var preference = window.matchMedia('(prefers-color-scheme: dark)');
+    function applyPreference(event) {
+      document.documentElement.setAttribute('data-color-scheme', event.matches ? 'dark' : 'light');
+    }
+    applyPreference(preference);
+    if (preference.addEventListener) preference.addEventListener('change', applyPreference);
+    else if (preference.addListener) preference.addListener(applyPreference);
+  }
+
   /* ---------- init ---------- */
   function init() {
+    initColorScheme();
     initTabs();
 
     loadFlags().then(renderFlags);
