@@ -263,6 +263,24 @@ def test_doccheck_down(make_client):
         assert r.json()["available"] is False
 
 
+def test_doccheck_adds_contextual_living_area_without_gpu_model(make_client):
+    def ner_only(request: httpx.Request) -> httpx.Response:
+        if request.url.path == "/ner":
+            return httpx.Response(200, json={"spans": []})
+        return httpx.Response(503)
+
+    text = "피해자는 매일 ○○역 앞 가상마트에 들른 뒤 귀가합니다."
+    with make_client(httpx.MockTransport(ner_only)) as client:
+        r = client.post("/api/doccheck", json={"text": text})
+    assert r.status_code == 200
+    data = r.json()
+    assert data["available"] is True and data["offset_unit"] == "utf16"
+    clues = [s for s in data["spans"] if s["label"] == "생활권"]
+    assert len(clues) == 1
+    assert clues[0]["risk_type"] == "routine_location" and clues[0]["reason"]
+    assert text[clues[0]["start"]:clues[0]["end"]] == clues[0]["text"]
+
+
 def test_access_code(make_client, monkeypatch):
     # 기본 비활성(SPEC §7). REQUIRE_ACCESS_CODE=1 일 때만 검사한다.
     monkeypatch.setenv("REQUIRE_ACCESS_CODE", "1")
