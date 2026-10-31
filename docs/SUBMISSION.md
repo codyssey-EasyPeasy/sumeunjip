@@ -132,7 +132,7 @@
 | 서버·GPU·SSL-VPN | 주최 측 제공(NCP) |
 
 **개발에 쓴 AI 도구(서비스에는 들어가지 않음)** — 정직하게 밝힙니다.
-- **Anthropic Claude(Claude Code, Opus 모델)**: 오너의 지시 아래 코딩·법령 조사·문서 작성 보조로 **폭넓게** 썼습니다. 쉬운 말 설명 41건과 이후 수정 12건·J28 행도 Claude 가 썼습니다(`data/README.md`, `docs/SPEC.md` §11.7).
+- **Anthropic Claude(Claude Code, Opus 모델)**: 팀원의 지시 아래 코딩·법령 조사·문서 작성 보조로 **폭넓게** 썼습니다. 쉬운 말 설명 41건과 이후 수정 12건·J28 행도 Claude 가 썼습니다(`data/README.md`, `docs/SPEC.md` §11.7).
 - **DeepSeek-V4.1-Flash**: 쉬운 말 설명 84건 중 **42건(A1–J19) 초안**과 1차 코드 일부 초안. 공개 법령 정보만 입력.
 - **GLM-5.3-Flash**: 평가 때 **합성 사용자·공격자 역할만**(다턴 시뮬레이터·레드팀 자동 공격). 합성 카드와 서비스 응답만 보냄.
 - 세 모델 모두 **서비스 실행 중에는 호출하지 않습니다**(`app/`·`gpu/` 코드에 주소 0건, `docs/SPEC.md` §11.7). 쉬운 말 설명 84건은 모두 사람 검수 전이라 화면에 'AI 생성(검수 전)'으로 표시합니다.
@@ -184,57 +184,58 @@
 
 ## ⓔ 팀원별 역할 분담 (7쪽)
 
-> **오너 확정 필요.** 팀원 이름과 역할은 저장소에 기록이 없습니다. 아래 표는 채워 넣을 자리입니다. 저장소 커밋 58건(제출 문서 커밋 제외)은 모두 한 계정(`ashofrondol`)으로 들어가 있어 커밋으로 개인 기여를 나눌 수 없습니다(`git log`).
-
-| 이름 | 역할 | 담당 업무 | 기여 내용 |
+| 이름 | 역할 | 담당 업무 | 기여 내용 (저장소 산출물) |
 |---|---|---|---|
-| (기입) | | | |
-| (기입) | | | |
-| (기입) | | | |
-| (기입) | | | |
-| (기입) | | | |
+| **정세영** | 백엔드 및 AI | 운영 API·추론 API 설계와 구현, 내부 LLM 도입, 입력·출력 가드와 답 검증 루프, 서버 배포·운영 | 규칙 진단 엔진(`app/engine.py`), 2단 입력 가드(`app/guard.py`), 조문 검색과 BM25 대체(`app/retrieval.py`), 운영 API(`app/main.py`) · 추론 서버 `/embed`·`/rerank`·`/ner`·`/intent`·`/llm/*`(`gpu/server.py`), 생성→검증→재생성→발췌 루프와 출력 가드(`gpu/verify.py`, `gpu/llm.py`), Qwen3-8B-AWQ·vLLM 서빙(`gpu/llm_start.sh`), NCP 서버 2대 배포와 L4 메모리 배치(19,648/23,034MiB), GPU API 공유 토큰·실행 중 HF 오프라인, 시작·중지 스크립트(`scripts/`, `gpu/*.sh`) |
+| **김시현** | 기획 및 법령조사, 프런트엔드 | 문제 정의와 목표 사용자 설정, 주소 노출 경로 법령 조사, 지식표 기획, 웹 화면과 사용자 흐름 | 정보조사 문서(`research/2026-10-31-정보조사.md`): 6개 영역 **84개 노출 경로**, 막는 제도 없는 16개, 신청 시 통지 12개 정리 · 지식표 84행 기획(근거 조문·신청처·서류·한계·긴급도, `data/knowledge.json`) · 근거 조문 174건 범위 선정(`data/laws/`) · 사용자 흐름(안전 확인 → 상황 입력 → 진단 → 서류 점검)과 피해자 본인 직접 사용 전환 · 웹 화면(`web/`): 빠른 나가기, 통지 확인 잠금, 모바일 배치, 안전 안내 팝업 |
+| **김대웅** | 평가·보안 및 PT 자료 제작 | 합성 평가 데이터와 평가 하네스, 다턴 시뮬레이터, 레드팀·가드 평가, 시험 계획·결과, 발표 자료 | 합성 평가 세트(`data/eval/`: 시나리오 20·서류 30·서술 20·답 질문 45·검색 보류 60·가드 70·보정 60) · 평가 하네스(`tools/eval*.py`) · 다턴 시뮬레이터(`tools/sim/`) · **레드팀 121개 공격**으로 서비스 경로 성공률 5.4% → 2.7% 확인, 가드 평가(찾기 거절 35/35·정상 오거절 0/25) · 시험 계획·결과(`docs/TEST_PLAN.md`, `docs/TEST_RESULTS.md`) · 차트·화면 캡처(`tools/make_charts.py`, `docs/screens/`) · 발표 자료(`pt/`) |
 
-**역할 나눔 초안 — 실제 작업 영역 기준 (오너 확정 필요)**
-| 역할(안) | 실제 작업 영역 | 저장소 산출물 |
-|---|---|---|
-| 기획·법령 조사 | 문제 정의, 노출 경로 84개 조사·확인 수준 표시, 지식표 설계, 법적 경계 검토 | `research/2026-10-31-정보조사.md`, `data/knowledge.json`, `data/laws/` |
-| 백엔드·AI | 규칙 엔진, 2단 가드, 검색, 답 검증 루프, 출력 가드, 추론 서버, vLLM 배포 | `app/`, `gpu/`, `scripts/` |
-| 프런트엔드 (현재 별도 작업자) | 화면, 빠른 나가기, 브라우저 단서 탐지, 접근성·모바일 | `web/`, `docs/LOCAL_DEV.md` |
-| 평가·보안 | 합성 평가 데이터, 다턴 시뮬레이터, 레드팀, 시험 계획·기록 | `data/eval/`, `tools/`, `docs/redteam-summary.md`, `docs/TEST_PLAN.md` |
-| 발표 | 발표 자료, 화면 캡처, 증빙 정리 | `pt/`, `docs/screens/`, `docs/EVIDENCE.md` |
-
-- 표의 각 영역에서 AI 도구가 맡은 부분은 ⓒ·ⓕ 에 따로 적었습니다(코딩·조사·문서 보조 Claude, 설명 초안 DeepSeek, 평가 역할극 GLM).
+**협업 방식**
+- 브랜치: `main`(통합·배포 기준) / `feature/frontend`(화면 작업) / `docs`·`docs-v2`(제출 문서). 작업 브랜치에서 `main` 최신본을 합쳐 시험을 통과시킨 뒤 PR 로 `main` 에 합치는 규칙(`docs/LOCAL_DEV.md` 「브랜치·PR 흐름」). `main` 에 바로 push 하지 않습니다.
+- 백엔드 API 계약은 시험(`tests/`)으로 고정해 화면 작업과 서버 작업이 서로 깨지지 않게 했습니다. GPU 없이 화면 전체를 띄우는 모의 GPU 서버(`tools/mock_gpu.py`)를 프런트 작업용으로 제공했습니다.
+- 각 영역에서 AI 도구가 맡은 부분(코딩·조사·문서 보조 Claude, 설명 초안 DeepSeek, 평가 역할극 GLM)은 ⓒ·ⓕ 에 따로 적었습니다.
 
 ---
 
 ## ⓕ 외부 자원 활용 내역 (8쪽)
 
-> 표 형식 원문을 아직 받지 못해 임시 열로 작성했습니다(자원명 | 종류 | 제공처/출처 | 활용 목적·범위 | 라이선스/이용 조건 | 비고). **런타임** = 서비스 실행 중 사용, **개발** = 개발·평가·발표 때만.
+> 참가자 가이드의 표 형식(구분 | 명칭 | 용도 | 라이선스)을 그대로 씁니다. 버전은 `uv.lock`(운영 API)과 `docs/evidence/infra-2026-10-31-night.md` 5절(배포 서버 실측)을 따랐습니다. 라이선스는 `THIRD_PARTY_NOTICES.md`, 그리고 로컬에 설치된 패키지 메타데이터(`.venv`·`gpu/.venv` 의 `METADATA` `License`/`License-Expression`, 2026-10-31 확인)로 대조했고, 로컬에서 대조하지 못한 것은 '(공개 저장소 표기)'로 적었습니다.
 
-| 자원명 | 종류 | 제공처/출처 | 활용 목적·범위 | 라이선스/이용 조건 | 비고 |
-|---|---|---|---|---|---|
-| BAAI/bge-m3 | AI 모델(임베딩) | BAAI, https://huggingface.co/BAAI/bge-m3 | 조문 검색·가드 의도 점수 / 런타임 | MIT | GPU 서버 안에서만 실행, 외부 전송 없음. 미세조정 없음 |
-| BAAI/bge-reranker-v2-m3 | AI 모델(재순위) | BAAI, https://huggingface.co/BAAI/bge-reranker-v2-m3 | 검색 재순위·답 문장 근거 확인 / 런타임 | Apache-2.0 | 같음 |
-| urchade/gliner_multi-v2.1 | AI 모델(개체명 인식) | https://huggingface.co/urchade/gliner_multi-v2.1 | 서류 정밀 점검 / 런타임 | Apache-2.0 | 같음 |
-| Qwen/Qwen3-8B-AWQ | AI 모델(LLM) | Alibaba Qwen, https://huggingface.co/Qwen/Qwen3-8B-AWQ | 상황 정리·근거 답·다시 쓰기·답 검증 / 런타임 | Apache-2.0 | 같음. thinking 끔, 요청·생성 로그 끔 |
-| vLLM 0.32.0 | 서빙 소프트웨어 | https://github.com/vllm-project/vllm | Qwen 서빙 / 런타임 | Apache-2.0 (공개 저장소 표기) | 127.0.0.1 바인드 |
-| PyTorch 2.15.0 · transformers 5.16.1 · sentence-transformers 6.2.0 · gliner 0.2.29 · NumPy 2.5.4 | 라이브러리 | PyPI | 모델 실행 / 런타임 | BSD-3 · Apache-2.0 · Apache-2.0 · Apache-2.0 · BSD-3 (공개 저장소 표기, 배포본 메타데이터 미대조) | 버전: `infra-2026-10-31-night.md` 5절 |
-| FlagEmbedding 1.4.2 | 라이브러리 | PyPI | GPU 서버 의존성으로 설치 | MIT (공개 저장소 표기) | 코드에서 직접 import 하지 않음(`grep` 0건) |
-| FastAPI 0.162.0 · Starlette 1.10.0 · Uvicorn 0.54.0 · Pydantic 2.14.2 · HTTPX 0.28.1 | 라이브러리 | PyPI | 운영 API·추론 API / 런타임 | MIT · BSD-3 · BSD-3 · MIT · BSD-3 (개발 기기 `.venv` 패키지 메타데이터 확인) | 버전: `uv.lock` |
-| pytest 9.2.0 · uv · Node.js · Playwright(Chromium) | 개발 도구 | PyPI · Astral · OpenJS · Microsoft | 시험·의존성 관리·탐지기 평가·화면 캡처 / 개발 | MIT · MIT/Apache-2.0 · MIT · Apache-2.0 (공개 표기) | 서비스에 포함되지 않음 |
-| 국가법령정보센터 법령 원문 | 공공 데이터 | 법제처, https://www.law.go.kr | 조문 174건(65개 법령) 스냅샷, 근거 표시·검색 / 수집은 개발, 표시는 런타임 | 저작권법 제7조 비보호, 출처 표시 | 2026-10-31 수집(`tools/fetch_articles.py`, 웹 페이지). 법적 효력은 관보 기준 |
-| 정부·기관 공식 페이지, 언론 보도 | 조사 자료 | 경찰청·법무부·성평등가족부·개인정보보호위원회·건강보험공단 등 공식 페이지(1차), 경인일보·헤럴드경제·서울신문 등 보도(2차) | 법령 조사·문제 근거 / 개발 | 인용·출처 표시 | 목록: `research/2026-10-31-정보조사.md` 12절. 보도 수치는 원자료 미확인 |
-| 공공데이터포털 법제처 API | 외부 API | https://www.data.go.kr/data/15000115/openapi.do | 이용 조건만 확인, **사용 안 함** | 자동승인·무료·공공누리 제1유형 | 향후 법령 자동 갱신 후보(ⓖ) |
-| NCP 서버 2대·NVIDIA L4·SSL-VPN | 인프라 | 주최 측(이노베이션 아카데미) 제공, 네이버클라우드 | 배포·시연 / 런타임 | 대회 제공 조건 | 비용은 주최 측 부담. 실제 청구 조건 미확인(`docs/COST_LATENCY.md`) |
-| HuggingFace Hub | 모델 배포처 | https://huggingface.co | 모델 파일 내려받기 / 설치 때만 | 각 모델 라이선스 | 실행 중 `HF_HUB_OFFLINE=1`(커밋 `6672867`) |
-| Anthropic Claude (Claude Code, Opus) | AI 개발 도구 | Anthropic, https://www.anthropic.com | 코딩·법령 조사·문서 작성 보조, 쉬운 말 설명 41건+수정 12건·J28 작성 / **개발만** | Anthropic 이용약관 | 오너 지시 아래 폭넓게 사용. 런타임 호출 0 |
-| DeepSeek-V4.1-Flash | AI 개발 도구(LLM) | DeepSeek, 개발자 게이트웨이 경유 | 쉬운 말 설명 42건(A1–J19) 초안, 1차 코드 일부 초안 / **개발만** | 게이트웨이 이용 조건(모델 라이선스 미확인) | 공개 법령 정보만 입력. 런타임 호출 0 |
-| GLM-5.3-Flash | AI 개발 도구(LLM) | Zhipu AI(GLM), 개발자 게이트웨이 경유(제3자 서버) | 다턴 시뮬레이터 합성 사용자·공격자, 레드팀 자동 공격 / **평가만** | 게이트웨이 이용 조건(모델 라이선스 미확인) | 합성 카드·서비스 응답만 전송. 대화 원문 비공개. 런타임 호출 0 |
-| Pretendard | 글꼴 | https://github.com/orioncactus/pretendard | 발표 자료 / 개발 | SIL OFL 1.1 | jsDelivr CDN 으로 불러옴. 서비스 화면은 시스템 글꼴 |
-| 나눔고딕 | 글꼴 | 네이버 | 화면 캡처 렌더링 / 개발 | SIL OFL 1.1 | `docs/screens/` |
-| jsDelivr | CDN | https://www.jsdelivr.com | 발표 자료의 Pretendard 전달 / 개발 | 무료 공개 CDN | 서비스 화면은 외부 CDN 0 |
-| Google 검색 | 외부 링크 | https://www.google.com | 빠른 나가기 이동 대상('날씨' 검색) / 런타임 | — | 런타임 코드의 유일한 외부 주소. 사용자 입력 전송 없음 |
-| 112 · 1366 · 132 | 공공 안내 정보 | 경찰청 · 여성긴급전화 · 대한법률구조공단 | 결과·거절 화면 연락처 / 런타임 | 공개 정보 | 전화 연결 링크만 |
+| 구분 | 명칭 | 용도 | 라이선스 |
+|---|---|---|---|
+| 오픈소스 | BAAI/bge-m3 | 임베딩: 근거 조문 검색, 입력 가드 의도 점수(서비스 실행 중, GPU 서버 안) | MIT (HF 모델 카드) |
+| 오픈소스 | BAAI/bge-reranker-v2-m3 | 검색 재순위, 답 문장 근거 확인 | Apache-2.0 (HF 모델 카드) |
+| 오픈소스 | urchade/gliner_multi-v2.1 | 서류 위치 단서 개체명 인식(2단계 점검) | Apache-2.0 (HF 모델 카드) |
+| 오픈소스 | Qwen/Qwen3-8B-AWQ | 내부 LLM: 상황 정리·근거 답·문장 다시 쓰기·답 검증. 미세조정 없음 | Apache-2.0 (HF 모델 카드) |
+| 오픈소스 | vLLM 0.32.0 | 내부 LLM 서빙(OpenAI 호환, JSON 스키마 강제, 127.0.0.1) | Apache-2.0 (공개 저장소 표기) |
+| 오픈소스 | PyTorch 2.15.0 | 모델 실행 | BSD-3-Clause 계열 (메타데이터: Apache-2.0·BSD-3-Clause 등 복합 표기) |
+| 오픈소스 | transformers 5.16.1 | 모델 실행(sentence-transformers·GLiNER 의존) | Apache-2.0 |
+| 오픈소스 | sentence-transformers 6.2.0 | bge-m3·재순위 모델 로드·추론 | Apache-2.0 |
+| 오픈소스 | FlagEmbedding 1.4.2 | GPU 서버 의존성으로 설치(코드에서 직접 import 하지 않음) | MIT |
+| 오픈소스 | GLiNER 라이브러리 0.2.29 | GLiNER 모델 로드·추론 | Apache-2.0 |
+| 오픈소스 | FastAPI 0.162.0 · Starlette 1.10.0 | 운영 API·추론 API 웹 프레임워크 | MIT · BSD-3-Clause |
+| 오픈소스 | Uvicorn 0.54.0 | ASGI 서버 | BSD-3-Clause |
+| 오픈소스 | Pydantic 2.14.2 | 요청·응답 검증 | MIT |
+| 오픈소스 | HTTPX 0.28.1 | 운영 API → 추론 API 호출 | BSD-3-Clause |
+| 오픈소스 | NumPy 2.5.4 | 점수 계산 | BSD-3-Clause (메타데이터: BSD-3-Clause 외 번들 구성요소 표기) |
+| 오픈소스 | uv 0.12.7 | 파이썬 패키지·가상환경 관리(`uv.lock`) | MIT / Apache-2.0 (공개 저장소 표기) |
+| 오픈소스 | pytest 9.2.0 | 자동 시험 | MIT |
+| 오픈소스 | Playwright (Chromium) | 브라우저 시험·화면 캡처(개발 때만) | Apache-2.0 |
+| 오픈소스 | Node.js 22 | 서류 1단계 탐지기 평가(`tools/detect_cli.mjs`, 개발 때만) | MIT (공개 저장소 표기) |
+| 외부 API | Anthropic Claude (Claude Code) | 개발 보조: 코드·법령 조사·문서 작성, 쉬운 말 설명 41건+수정 12건·J28. **서비스 실행 중 호출 없음** | 상용 (Anthropic 이용약관) |
+| 외부 API | DeepSeek-V4.1-Flash | 개발 때 쉬운 말 설명 초안 42건(A1–J19)·1차 코드 일부 초안. 공개 법령 정보만 입력. **서비스 실행 중 호출 없음** | 상용 API (팀원 개인 게이트웨이 경유) |
+| 외부 API | GLM-5.3-Flash | 평가 시뮬레이터의 가상 사용자·공격자 역할(다턴 시뮬레이션·레드팀 자동 공격). 합성 데이터만 입력. **서비스 실행 중 호출 없음** | 상용 API (팀원 개인 게이트웨이 경유) |
+| 사전 보유 코드 | 해당 없음 | 저장소는 개회식 주제 공개(2026-10-30) 뒤 새로 만들었습니다. 첫 커밋 `d677ea0` 2026-10-31 11:04 KST(`git log --reverse`) | 해당 없음 |
+| 기타 | 법제처 국가법령정보센터 법령 원문 | 근거 조문 174건(65개 법령) 스냅샷, 근거 표시·검색. 2026-10-31 수집 | 공공저작물 — 저작권법 제7조 비보호, 출처 표시 |
+| 기타 | NAVER Cloud Platform 공공기관용 서버 2대 · NVIDIA L4 · SSL-VPN | 배포·시연 인프라(주최 측 제공) | 대회 제공 조건 |
+| 기타 | Hugging Face Hub | 모델 파일 배포처(설치 때만 내려받음, 실행 중 `HF_HUB_OFFLINE=1`) | 각 모델 라이선스(위 표) |
+| 기타 | Pretendard 글꼴 | 발표 자료 글꼴(jsDelivr CDN 으로 불러옴) | SIL OFL 1.1 |
+| 기타 | 나눔고딕 글꼴 | 화면 캡처 렌더링 | SIL OFL 1.1 |
+| 기타 | 공식 기관 페이지·언론 보도 | 법령 조사·문제 근거(목록 `research/…` 12절) | 인용·출처 표시 |
+| 기타 | 개인 보유 개발 도구(LLM 중계 게이트웨이 등) | 위 외부 API 를 개발 중 부르는 데 쓴 팀원 개인 도구. **저장소 코드에 포함되지 않고 서비스와 무관** | 해당 없음(개인 도구) |
+
+- 서비스 실행 중 외부로 나가는 것은 빠른 나가기의 Google '날씨' 검색 이동(사용자 입력 전송 없음)과 112·1366·132 전화 연결 링크뿐입니다.
+- 공공데이터포털 법제처 API 는 이용 조건(자동승인·무료·공공누리 제1유형)만 확인했고 **쓰지 않았습니다**(ⓖ 향후 후보).
 
 ---
 

@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>숨은집 지킴이 제출 문서</title>
+<!-- Pretendard 에 없는 원문자(ⓐ~ⓖ) 등은 Noto Sans KR 로 대체 -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;800&display=swap">
 <style>
 :root{
   --bg:#e9e5dc; --paper:#fffdf8; --ink:#1d2433; --sub:#5b6476; --line:#ded8cb; --faint:#8a8475;
@@ -12,7 +14,7 @@
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{background:var(--bg)}
-body{background:var(--bg);color:var(--ink);font-family:Pretendard,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic","NanumGothic",sans-serif;font-size:9.6pt;line-height:1.55;-webkit-font-smoothing:antialiased;padding:24px 16px}
+body{background:var(--bg);color:var(--ink);font-family:Pretendard,"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic","NanumGothic",sans-serif;font-size:9.6pt;line-height:1.55;-webkit-font-smoothing:antialiased;padding:24px 16px}
 .page{background:var(--paper);width:210mm;min-height:297mm;margin:0 auto 24px;padding:14mm 15mm 16mm;position:relative;box-shadow:0 6px 24px rgba(31,51,84,.12);display:flex;flex-direction:column;overflow:hidden}
 .pno{position:absolute;bottom:7mm;left:15mm;right:15mm;display:flex;justify-content:space-between;font-size:7.5pt;color:var(--faint);border-top:1px solid var(--line);padding-top:2mm}
 .req{display:inline-flex;align-items:center;gap:6px;font-size:8pt;font-weight:800;letter-spacing:.06em;color:var(--teal);margin-bottom:2mm}
@@ -24,7 +26,7 @@ p{margin:1mm 0}
 .lead{font-size:10.5pt;line-height:1.6}
 .sub{color:var(--sub)}
 .src{font-size:7.3pt;color:var(--faint);line-height:1.4}
-code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.88em;background:var(--grey-soft);padding:0 3px;border-radius:3px}
+code{font-family:ui-monospace,Menlo,Consolas,"DejaVu Sans Mono",Pretendard,"Noto Sans KR",monospace;font-size:.88em;background:var(--grey-soft);padding:0 3px;border-radius:3px}
 table{width:100%;border-collapse:collapse;margin:1.5mm 0;font-size:8.4pt}
 th,td{border-bottom:1px solid var(--line);padding:1.3mm 1.8mm;text-align:left;vertical-align:top;line-height:1.42}
 th{background:#f6f2e9;color:var(--sub);font-size:7.6pt;font-weight:700}
@@ -52,6 +54,7 @@ figcaption{font-size:7.4pt;color:var(--sub);margin-top:1mm;line-height:1.35}
 .note{border-left:3px solid var(--amber);background:#fffaf1;padding:1.6mm 3mm;font-size:8.2pt;margin:2mm 0;border-radius:0 4px 4px 0}
 .note.teal{border-color:var(--teal);background:#f3faf8}
 .placeholder td{color:#b0a998;height:9mm}
+table.ftab td[rowspan]{background:#f6f2e9;vertical-align:middle;border-right:1px solid var(--line)}
 .cover{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2px solid var(--navy);padding-bottom:3mm;margin-bottom:4mm}
 .cover .meta{font-size:7.6pt;color:var(--sub);text-align:right;line-height:1.5}
 .mt{margin-top:2.5mm}
@@ -303,7 +306,7 @@ svg text{font-family:Pretendard,"Noto Sans KR","NanumGothic",sans-serif}
       <div class="card amber" style="margin-top:2mm">
         <h3 style="color:var(--amber)">개발에 쓴 AI 도구 <span class="tag a">서비스엔 없음</span></h3>
         <ul class="clean" style="font-size:8pt">
-          <li><b>Anthropic Claude</b>(Claude Code, Opus): 오너 지시 아래 코딩·법령 조사·문서 작성 보조로 <b>폭넓게</b> 사용. 쉬운 말 설명 41건 + 수정 12건 + J28 작성</li>
+          <li><b>Anthropic Claude</b>(Claude Code, Opus): 팀원 지시 아래 코딩·법령 조사·문서 작성 보조로 <b>폭넓게</b> 사용. 쉬운 말 설명 41건 + 수정 12건 + J28 작성</li>
           <li><b>DeepSeek-V4.1-Flash</b>: 쉬운 말 설명 <b>42/84건</b>(A1–J19) 초안, 1차 코드 일부 초안. 공개 법령 정보만 입력</li>
           <li><b>GLM-5.3-Flash</b>: 평가 때 합성 사용자·공격자 역할만. 합성 카드·서비스 응답만 전송</li>
           <li>세 모델 모두 <b>런타임 호출 0</b>(<code>app/</code>·<code>gpu/</code> 주소 0건). 설명 84건은 사람 검수 전 → 화면에 'AI 생성(검수 전)'</li>
@@ -394,29 +397,23 @@ svg text{font-family:Pretendard,"Noto Sans KR","NanumGothic",sans-serif}
 <!-- ───────────── 7쪽 ⓔ ───────────── -->
 <section class="page" id="e">
   <div class="req"><b>ⓔ</b> 팀원별 역할 분담</div>
-  <h2>팀원별 담당 업무와 기여 내용</h2>
-  <div class="note"><b>오너 확정 필요.</b> 팀원 이름과 역할은 저장소에 기록이 없습니다. 아래 빈 칸을 채워 주세요. 저장소 커밋 58건(제출 문서 커밋 제외)은 모두 한 계정(<code>ashofrondol</code>)으로 들어가 있어 커밋으로 개인 기여를 나눌 수 없습니다(<code>git log</code>).</div>
-  <table class="placeholder">
-    <tr><th style="width:16%">이름</th><th style="width:18%">역할</th><th style="width:30%">담당 업무</th><th>기여 내용</th></tr>
-    <tr><td>(기입)</td><td></td><td></td><td></td></tr>
-    <tr><td>(기입)</td><td></td><td></td><td></td></tr>
-    <tr><td>(기입)</td><td></td><td></td><td></td></tr>
-    <tr><td>(기입)</td><td></td><td></td><td></td></tr>
-    <tr><td>(기입)</td><td></td><td></td><td></td></tr>
+  <h2>세 사람, 세 영역 — 담당 업무와 기여 내용</h2>
+  <table>
+    <tr><th style="width:11%">이름</th><th style="width:14%">역할</th><th style="width:25%">담당 업무</th><th>기여 내용 (저장소 산출물)</th></tr>
+    <tr><td><b>정세영</b></td><td><b>백엔드 및 AI</b></td><td>운영 API·추론 API 설계와 구현, 내부 LLM 도입, 입력·출력 가드와 답 검증 루프, 서버 배포·운영</td><td>규칙 진단 엔진 <code>app/engine.py</code> · 2단 입력 가드 <code>app/guard.py</code> · 조문 검색과 BM25 대체 <code>app/retrieval.py</code> · 운영 API <code>app/main.py</code> · 추론 서버 <code>/embed</code>·<code>/rerank</code>·<code>/ner</code>·<code>/intent</code>·<code>/llm/*</code> <code>gpu/server.py</code> · 생성→검증→재생성→발췌 루프와 출력 가드 <code>gpu/verify.py</code>·<code>gpu/llm.py</code> · Qwen3-8B-AWQ·vLLM 서빙 · NCP 서버 2대 배포, L4 메모리 배치 19,648/23,034MiB · GPU API 공유 토큰, 실행 중 HF 오프라인 · 시작·중지 스크립트</td></tr>
+    <tr><td><b>김시현</b></td><td><b>기획 및 법령조사, 프런트엔드</b></td><td>문제 정의와 목표 사용자 설정, 주소 노출 경로 법령 조사, 지식표 기획, 웹 화면과 사용자 흐름</td><td>정보조사 문서 <code>research/2026-10-31-정보조사.md</code> — 6개 영역 <b>84개 노출 경로</b>, 막는 제도 없는 16개, 신청 시 통지 12개 · 지식표 84행 기획(근거 조문·신청처·서류·한계·긴급도) <code>data/knowledge.json</code> · 근거 조문 174건 범위 선정 <code>data/laws/</code> · 사용자 흐름(안전 확인 → 상황 입력 → 진단 → 서류 점검)과 피해자 본인 직접 사용 전환 · 웹 화면 <code>web/</code> — 빠른 나가기, 통지 확인 잠금, 모바일 배치, 안전 안내 팝업</td></tr>
+    <tr><td><b>김대웅</b></td><td><b>평가·보안 및 PT 자료 제작</b></td><td>합성 평가 데이터와 평가 하네스, 다턴 시뮬레이터, 레드팀·가드 평가, 시험 계획·결과, 발표 자료</td><td>합성 평가 세트 <code>data/eval/</code>(시나리오 20·서류 30·서술 20·답 질문 45·검색 보류 60·가드 70·보정 60) · 평가 하네스 <code>tools/eval*.py</code> · 다턴 시뮬레이터 <code>tools/sim/</code> · <b>레드팀 121개 공격</b>으로 서비스 경로 성공률 5.4% → 2.7% 확인, 가드 평가(찾기 거절 35/35 · 정상 오거절 0/25) · 시험 계획·결과 <code>docs/TEST_PLAN.md</code>·<code>TEST_RESULTS.md</code> · 차트·화면 캡처 · 발표 자료 <code>pt/</code></td></tr>
   </table>
 
-  <h3>역할 나눔 초안 — 실제 작업 영역 기준 <span class="tag a">오너 확정 필요</span></h3>
-  <table>
-    <tr><th style="width:20%">역할(안)</th><th style="width:44%">실제 작업 영역</th><th>저장소 산출물</th></tr>
-    <tr><td><b>기획·법령 조사</b></td><td>문제 정의, 노출 경로 84개 조사·확인 수준 표시, 지식표 설계, 법적 경계(변호사법·인공지능기본법·개인정보) 검토</td><td><code>research/2026-10-31-정보조사.md</code>, <code>data/knowledge.json</code>, <code>data/laws/</code></td></tr>
-    <tr><td><b>백엔드·AI</b></td><td>규칙 엔진, 2단 가드, 조문 검색, 답 검증 루프, 출력 가드, 추론 서버, vLLM 배포</td><td><code>app/</code>, <code>gpu/</code>, <code>scripts/</code></td></tr>
-    <tr><td><b>프런트엔드</b><br><span class="src">현재 별도 작업자</span></td><td>화면, 빠른 나가기, 브라우저 단서 탐지, 모바일·접근성</td><td><code>web/</code>, <code>docs/LOCAL_DEV.md</code></td></tr>
-    <tr><td><b>평가·보안</b></td><td>합성 평가 데이터, 다턴 시뮬레이터, 레드팀, 시험 계획·기록</td><td><code>data/eval/</code>, <code>tools/</code>, <code>docs/redteam-summary.md</code>, <code>docs/TEST_PLAN.md</code></td></tr>
-    <tr><td><b>발표</b></td><td>발표 자료, 화면 캡처, 증빙 정리</td><td><code>pt/</code>, <code>docs/screens/</code>, <code>docs/EVIDENCE.md</code></td></tr>
-  </table>
+  <h3>협업 방식</h3>
+  <div class="grid3">
+    <div class="card"><h3>브랜치</h3><p style="font-size:8.2pt"><code>main</code> 통합·배포 기준 · <code>feature/frontend</code> 화면 작업 · <code>docs</code>·<code>docs-v2</code> 제출 문서</p></div>
+    <div class="card"><h3>PR 로 합치기</h3><p style="font-size:8.2pt">작업 브랜치에 <code>main</code> 최신본을 합치고 시험을 통과시킨 뒤 PR 로 <code>main</code> 에 병합. <code>main</code> 에 바로 push 하지 않음(<code>docs/LOCAL_DEV.md</code>)</p></div>
+    <div class="card"><h3>계약은 시험으로</h3><p style="font-size:8.2pt">화면·API 계약을 <code>tests/</code> 로 고정하고, GPU 없이 화면 전체를 띄우는 모의 GPU 서버(<code>tools/mock_gpu.py</code>)를 프런트 작업용으로 제공</p></div>
+  </div>
   <p class="src">각 영역에서 AI 도구가 맡은 부분(코딩·조사·문서 보조 Claude, 설명 초안 DeepSeek, 평가 역할극 GLM)은 ⓒ·ⓕ 에 따로 적었습니다.</p>
 
-  <h3>개발 이력 (하루, 커밋 58건)</h3>
+  <h3>개발 이력 (2026-10-31 하루)</h3>
   <table class="xs">
     <tr><th style="width:14%">2026-10-31</th><th style="width:52%">단계</th><th>대표 커밋</th></tr>
     <tr><td>11:04~12:02</td><td>조사·명세, 추론 서버, 웹, 규칙 엔진, 합성 평가 데이터, 지식표·조문 스냅샷</td><td><code>d677ea0</code> <code>7a4087f</code> <code>8452269</code> <code>1664b20</code> <code>0d9bd06</code></td></tr>
@@ -434,32 +431,42 @@ svg text{font-family:Pretendard,"Noto Sans KR","NanumGothic",sans-serif}
 <!-- ───────────── 8쪽 ⓕ ───────────── -->
 <section class="page" id="f">
   <div class="req"><b>ⓕ</b> 외부 자원 활용 내역</div>
-  <h2>외부 자원 — 무엇을, 어디서, 어디까지 썼나</h2>
-  <p class="src" style="margin-bottom:1mm">표 형식 원문을 아직 받지 못해 임시 열로 작성. <b>런타임</b> = 서비스 실행 중, <b>개발</b> = 개발·평가·발표 때만. 출처: <code>THIRD_PARTY_NOTICES.md</code>, <code>data/README.md</code>, <code>uv.lock</code>, <code>docs/evidence/infra-2026-10-31-night.md</code> 5절.</p>
-  <table class="xs" style="font-size:6.9pt">
-    <tr><th style="width:17%">자원명</th><th style="width:9%">종류</th><th style="width:17%">제공처/출처</th><th style="width:20%">활용 목적·범위</th><th style="width:14%">라이선스/이용 조건</th><th>비고</th></tr>
-    <tr><td><b>BAAI/bge-m3</b></td><td>AI 모델</td><td>BAAI · huggingface.co/BAAI/bge-m3</td><td>조문 검색·가드 의도 점수 / 런타임</td><td>MIT</td><td>GPU 서버 안에서만 실행, 외부 전송 없음, 미세조정 없음</td></tr>
-    <tr><td><b>BAAI/bge-reranker-v2-m3</b></td><td>AI 모델</td><td>BAAI · huggingface.co/BAAI/bge-reranker-v2-m3</td><td>재순위·답 문장 근거 확인 / 런타임</td><td>Apache-2.0</td><td>같음</td></tr>
-    <tr><td><b>urchade/gliner_multi-v2.1</b></td><td>AI 모델</td><td>huggingface.co/urchade/gliner_multi-v2.1</td><td>서류 정밀 점검 / 런타임</td><td>Apache-2.0</td><td>같음</td></tr>
-    <tr><td><b>Qwen/Qwen3-8B-AWQ</b></td><td>AI 모델(LLM)</td><td>Alibaba Qwen · huggingface.co/Qwen/Qwen3-8B-AWQ</td><td>상황 정리·근거 답·다시 쓰기·검증 / 런타임</td><td>Apache-2.0</td><td>같음. thinking 끔, 요청·생성 로그 끔</td></tr>
-    <tr><td><b>vLLM 0.32.0</b></td><td>서빙 SW</td><td>github.com/vllm-project/vllm</td><td>Qwen 서빙 / 런타임</td><td>Apache-2.0 (공개 표기)</td><td>127.0.0.1 바인드</td></tr>
-    <tr><td>PyTorch 2.15.0 · transformers 5.16.1 · sentence-transformers 6.2.0 · gliner 0.2.29 · NumPy 2.5.4</td><td>라이브러리</td><td>PyPI</td><td>모델 실행 / 런타임</td><td>BSD-3 · Apache-2.0 · Apache-2.0 · Apache-2.0 · BSD-3 (공개 표기)</td><td>배포본 메타데이터로는 미대조</td></tr>
-    <tr><td>FlagEmbedding 1.4.2</td><td>라이브러리</td><td>PyPI</td><td>GPU 서버 의존성으로 설치</td><td>MIT (공개 표기)</td><td>코드에서 직접 import 안 함</td></tr>
-    <tr><td>FastAPI 0.162.0 · Starlette 1.10.0 · Uvicorn 0.54.0 · Pydantic 2.14.2 · HTTPX 0.28.1</td><td>라이브러리</td><td>PyPI</td><td>운영·추론 API / 런타임</td><td>MIT · BSD-3 · BSD-3 · MIT · BSD-3</td><td>개발 기기 <code>.venv</code> 메타데이터 확인</td></tr>
-    <tr><td>pytest 9.2.0 · uv · Node.js · Playwright(Chromium)</td><td>개발 도구</td><td>PyPI · Astral · OpenJS · Microsoft</td><td>시험·의존성·탐지기 평가·캡처 / 개발</td><td>MIT · MIT/Apache-2.0 · MIT · Apache-2.0 (공개 표기)</td><td>서비스에 포함 안 됨</td></tr>
-    <tr><td><b>국가법령정보센터 법령 원문</b></td><td>공공 데이터</td><td>법제처 · law.go.kr</td><td>조문 174건(65개 법령) 스냅샷 / 수집은 개발, 표시는 런타임</td><td>저작권법 제7조 비보호, 출처 표시</td><td>2026-10-31 웹 수집(<code>tools/fetch_articles.py</code>). 효력은 관보 기준</td></tr>
-    <tr><td>공식 페이지·언론 보도</td><td>조사 자료</td><td>경찰청·법무부·성평등가족부·개인정보위 등(1차), 경인일보·헤럴드경제 등(2차)</td><td>법령 조사·문제 근거 / 개발</td><td>인용·출처 표시</td><td><code>research/…</code> 12절. 보도 수치 원자료 미확인</td></tr>
-    <tr><td>공공데이터포털 법제처 API</td><td>외부 API</td><td>data.go.kr/data/15000115</td><td>이용 조건만 확인, <b>사용 안 함</b></td><td>자동승인·무료·공공누리 제1유형</td><td>향후 법령 자동 갱신 후보</td></tr>
-    <tr><td><b>NCP 서버 2대 · NVIDIA L4 · SSL-VPN</b></td><td>인프라</td><td>주최 측(이노베이션 아카데미) 제공 · 네이버클라우드</td><td>배포·시연 / 런타임</td><td>대회 제공 조건</td><td>비용 주최 측 부담, 청구 조건 미확인</td></tr>
-    <tr><td>HuggingFace Hub</td><td>모델 배포처</td><td>huggingface.co</td><td>모델 파일 내려받기 / 설치 때만</td><td>각 모델 라이선스</td><td>실행 중 <code>HF_HUB_OFFLINE=1</code></td></tr>
-    <tr><td><b>Anthropic Claude</b> (Claude Code, Opus)</td><td>AI 개발 도구</td><td>Anthropic · anthropic.com</td><td>코딩·법령 조사·문서 작성 보조, 설명 41건+수정 12건·J28 / <b>개발만</b></td><td>Anthropic 이용약관</td><td>오너 지시 아래 폭넓게 사용. 런타임 호출 0</td></tr>
-    <tr><td><b>DeepSeek-V4.1-Flash</b></td><td>AI 개발 도구</td><td>DeepSeek · 개발자 게이트웨이 경유</td><td>설명 42건(A1–J19) 초안, 1차 코드 일부 초안 / <b>개발만</b></td><td>게이트웨이 조건 (모델 라이선스 미확인)</td><td>공개 법령 정보만 입력. 런타임 호출 0</td></tr>
-    <tr><td><b>GLM-5.3-Flash</b></td><td>AI 개발 도구</td><td>Zhipu AI · 개발자 게이트웨이 경유(제3자 서버)</td><td>합성 사용자·공격자 역할, 레드팀 자동 공격 / <b>평가만</b></td><td>게이트웨이 조건 (모델 라이선스 미확인)</td><td>합성 카드·서비스 응답만 전송, 대화 원문 비공개</td></tr>
-    <tr><td>Pretendard · 나눔고딕</td><td>글꼴</td><td>github.com/orioncactus/pretendard · 네이버</td><td>발표 자료 · 화면 캡처 / 개발</td><td>SIL OFL 1.1</td><td>서비스 화면은 시스템 글꼴</td></tr>
-    <tr><td>jsDelivr</td><td>CDN</td><td>jsdelivr.com</td><td>발표 자료의 Pretendard 전달 / 개발</td><td>공개 CDN</td><td>서비스 화면 외부 CDN 0</td></tr>
-    <tr><td>Google 검색</td><td>외부 링크</td><td>google.com</td><td>빠른 나가기 이동 대상('날씨') / 런타임</td><td>—</td><td>런타임 코드의 유일한 외부 주소, 입력 전송 없음</td></tr>
-    <tr><td>112 · 1366 · 132</td><td>공공 안내</td><td>경찰청 · 여성긴급전화 · 대한법률구조공단</td><td>결과·거절 화면 연락처 / 런타임</td><td>공개 정보</td><td>전화 연결 링크만</td></tr>
+  <h2>외부 자원 활용 내역</h2>
+  <p class="src" style="margin-bottom:1mm">참가자 가이드 표 형식 그대로. 버전: <code>uv.lock</code>, <code>docs/evidence/infra-2026-10-31-night.md</code> 5절(배포 서버 실측). 라이선스: <code>THIRD_PARTY_NOTICES.md</code> + 로컬 패키지 메타데이터(<code>METADATA</code> License/License-Expression, 2026-10-31). 로컬에서 대조 못 한 것은 '(공개 저장소 표기)'.</p>
+  <table class="xs ftab" style="font-size:7pt">
+    <tr><th style="width:12%">구분</th><th style="width:27%">명칭</th><th>용도</th><th style="width:24%">라이선스</th></tr>
+    <tr><td rowspan="19"><b>오픈소스</b></td><td>BAAI/bge-m3</td><td>임베딩: 근거 조문 검색, 입력 가드 의도 점수(GPU 서버 안)</td><td>MIT (HF 모델 카드)</td></tr>
+    <tr><td>BAAI/bge-reranker-v2-m3</td><td>검색 재순위, 답 문장 근거 확인</td><td>Apache-2.0 (HF 모델 카드)</td></tr>
+    <tr><td>urchade/gliner_multi-v2.1</td><td>서류 위치 단서 개체명 인식</td><td>Apache-2.0 (HF 모델 카드)</td></tr>
+    <tr><td>Qwen/Qwen3-8B-AWQ</td><td>내부 LLM: 상황 정리·근거 답·다시 쓰기·답 검증. 미세조정 없음</td><td>Apache-2.0 (HF 모델 카드)</td></tr>
+    <tr><td>vLLM 0.32.0</td><td>내부 LLM 서빙(JSON 스키마 강제, 127.0.0.1)</td><td>Apache-2.0 (공개 저장소 표기)</td></tr>
+    <tr><td>PyTorch 2.15.0</td><td>모델 실행</td><td>BSD-3-Clause 계열 (메타데이터 복합 표기)</td></tr>
+    <tr><td>transformers 5.16.1</td><td>모델 실행(의존)</td><td>Apache-2.0</td></tr>
+    <tr><td>sentence-transformers 6.2.0</td><td>bge-m3·재순위 모델 추론</td><td>Apache-2.0</td></tr>
+    <tr><td>FlagEmbedding 1.4.2</td><td>GPU 서버 의존성(직접 import 안 함)</td><td>MIT</td></tr>
+    <tr><td>GLiNER 라이브러리 0.2.29</td><td>GLiNER 모델 추론</td><td>Apache-2.0</td></tr>
+    <tr><td>FastAPI 0.162.0 · Starlette 1.10.0</td><td>운영·추론 API 웹 프레임워크</td><td>MIT · BSD-3-Clause</td></tr>
+    <tr><td>Uvicorn 0.54.0</td><td>ASGI 서버</td><td>BSD-3-Clause</td></tr>
+    <tr><td>Pydantic 2.14.2</td><td>요청·응답 검증</td><td>MIT</td></tr>
+    <tr><td>HTTPX 0.28.1</td><td>운영 API → 추론 API 호출</td><td>BSD-3-Clause</td></tr>
+    <tr><td>NumPy 2.5.4</td><td>점수 계산</td><td>BSD-3-Clause (번들 구성요소 별도 표기)</td></tr>
+    <tr><td>uv 0.12.7</td><td>패키지·가상환경 관리</td><td>MIT / Apache-2.0 (공개 저장소 표기)</td></tr>
+    <tr><td>pytest 9.2.0</td><td>자동 시험</td><td>MIT</td></tr>
+    <tr><td>Playwright (Chromium)</td><td>브라우저 시험·화면 캡처(개발 때만)</td><td>Apache-2.0</td></tr>
+    <tr><td>Node.js 22</td><td>서류 1단계 탐지기 평가(개발 때만)</td><td>MIT (공개 저장소 표기)</td></tr>
+    <tr><td rowspan="3"><b>외부 API</b></td><td>Anthropic Claude (Claude Code)</td><td>개발 보조: 코드·법령 조사·문서 작성, 쉬운 말 설명 41건+수정 12건·J28. <b>서비스 실행 중 호출 없음</b></td><td>상용 (Anthropic 이용약관)</td></tr>
+    <tr><td>DeepSeek-V4.1-Flash</td><td>개발 때 쉬운 말 설명 초안 42건·1차 코드 일부 초안(공개 법령 정보만). <b>서비스 실행 중 호출 없음</b></td><td>상용 API (팀원 개인 게이트웨이 경유)</td></tr>
+    <tr><td>GLM-5.3-Flash</td><td>평가 시뮬레이터의 가상 사용자·공격자 역할(합성 데이터만). <b>서비스 실행 중 호출 없음</b></td><td>상용 API (팀원 개인 게이트웨이 경유)</td></tr>
+    <tr><td><b>사전 보유 코드</b></td><td>해당 없음</td><td>개회식 주제 공개(2026-10-30) 뒤 새 저장소로 시작. 첫 커밋 <code>d677ea0</code> 2026-10-31 11:04 KST</td><td>해당 없음</td></tr>
+    <tr><td rowspan="7"><b>기타</b></td><td>법제처 국가법령정보센터 법령 원문</td><td>근거 조문 174건(65개 법령) 스냅샷, 근거 표시·검색</td><td>공공저작물 — 저작권법 제7조, 출처 표시</td></tr>
+    <tr><td>NAVER Cloud Platform 공공기관용 서버 2대 · NVIDIA L4 · SSL-VPN</td><td>배포·시연 인프라(주최 측 제공)</td><td>대회 제공 조건</td></tr>
+    <tr><td>Hugging Face Hub</td><td>모델 파일 배포처(설치 때만, 실행 중 오프라인)</td><td>각 모델 라이선스</td></tr>
+    <tr><td>Pretendard 글꼴</td><td>발표 자료(jsDelivr CDN)</td><td>SIL OFL 1.1</td></tr>
+    <tr><td>나눔고딕 글꼴</td><td>화면 캡처 렌더링</td><td>SIL OFL 1.1</td></tr>
+    <tr><td>공식 기관 페이지·언론 보도</td><td>법령 조사·문제 근거(<code>research/…</code> 12절)</td><td>인용·출처 표시</td></tr>
+    <tr><td>개인 보유 개발 도구(LLM 중계 게이트웨이 등)</td><td>개발 중 위 외부 API 호출에 쓴 팀원 개인 도구. 저장소 코드에 포함되지 않음</td><td>해당 없음(개인 도구)</td></tr>
   </table>
+  <p class="src" style="margin-top:1.5mm">서비스 실행 중 외부로 나가는 것은 빠른 나가기의 Google '날씨' 검색 이동(입력 전송 없음)과 112·1366·132 전화 연결 링크뿐. 공공데이터포털 법제처 API 는 이용 조건만 확인하고 쓰지 않음.</p>
   <div class="pno"><span>숨은집 지킴이 · 제출 문서</span><span>8 / 10 · ⓕ</span></div>
 </section>
 
