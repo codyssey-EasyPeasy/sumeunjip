@@ -420,8 +420,51 @@ pre.cmd .c{color:#9fb0c8}
   <div class="foot"><span>출처: research/2026-10-31-정보조사.md 6·8절 · data/knowledge.json · docs/SPEC.md §7</span><span>11 · ⓖ</span></div>
 </section>
 
+<!-- 부록: 실증 자료 (채점 요건 ⓐ~ⓖ 본문 뒤) -->
+<section class="slide ap">
+  <div class="kicker">부록: 실증 자료 (1/4) · ⓒ 근거</div>
+  <h2 style="margin-bottom:14px">서류 단서 탐지와 자유 서술 이해 (합성 데이터 기준)</h2>
+  <div class="grid2" style="gap:20px">
+    <div><img class="chart" src="../docs/evidence/charts/detection-f1.svg" alt="서류 단서 탐지 단계별 F1" style="width:100%"><p class="cap"><b>탐지 F1</b> 0.682 → 0.748 → 0.823 (P 0.932, R 0.737). 생활권·직장 단서는 아직 약함</p></div>
+    <div><img class="chart" src="../docs/evidence/charts/intake-accuracy.svg" alt="자유 서술 피해 유형 정확도" style="width:100%"><p class="cap"><b>말로 설명하기</b> flag F1 0.791, 단일 턴 피해 유형 0.95 · 다턴 단독 0.575</p></div>
+  </div>
+  <div class="foot"><span>출처: data/eval/results.json(탐지) · results_llm.json intake·README.md 결과 표(서술) · 합성 데이터 기준, 실사용자 측정 아님</span><span>A1 · 부록</span></div>
+</section>
+
+<section class="slide ap">
+  <div class="kicker">부록: 실증 자료 (2/4) · ⓒ 근거</div>
+  <h2 style="margin-bottom:14px">찾기 질문 거절과 정상 질문 오거절 (합성 데이터 기준)</h2>
+  <div class="grid2" style="gap:20px">
+    <div><img class="chart" src="../docs/evidence/charts/redteam-asr.svg" alt="레드팀 공격 성공률 대책 전후" style="width:100%"><p class="cap"><b>레드팀</b> 서비스 전체 경로 5.4% → 2.7%(3/112), 조회 방법 출력 0건. 공격 문장은 싣지 않음</p></div>
+    <div><img class="chart" src="../docs/evidence/charts/guard-before-after.svg" alt="다턴 시뮬 오거절 대책 전후" style="width:100%"><p class="cap"><b>다턴 시뮬</b> 정상 사용자 오거절 대책 전후. 남은 오거절 18건/14대화는 과제로 둠</p></div>
+  </div>
+  <div class="foot"><span>출처: docs/redteam-summary.md · notice_calibration_summary.md · docs/evidence/charts/</span><span>A2 · 부록</span></div>
+</section>
+
+<section class="slide ap">
+  <div class="kicker">부록: 실증 자료 (3/4) · ⓒ 근거</div>
+  <h2 style="margin-bottom:14px">답의 종류: 생성 → 검증 → 재생성 → 발췌</h2>
+  <div style="display:grid;grid-template-columns:1.55fr 1fr;gap:20px">
+    <div><img class="chart" src="../docs/evidence/charts/answer-modes.svg" alt="45문항 답 종류 분포" style="width:100%"><p class="cap"><b>45문항</b> 정답 0.956, 근거 없는 문장 3.6% → 0. 같은 검증기로 다시 잰 값이라 독립 판정이 아님</p></div>
+    <div><div class="shot" style="height:330px"><img src="../docs/screens/v4-08-answer-extractive.png" alt="발췌 답 화면" style="width:100%"></div><p class="cap"><b>발췌 답</b>: 검증을 못 넘기면 조문 원문으로 답함</p></div>
+  </div>
+  <div class="foot"><span>출처: gpu/verify.py · docs/TEST_RESULTS.md P1-14 · docs/screens/v4-08 (합성 입력)</span><span>A3 · 부록</span></div>
+</section>
+
+<section class="slide ap">
+  <div class="kicker">부록: 실증 자료 (4/4) · ⓑ 근거</div>
+  <h2 style="margin-bottom:14px">통지 확인 뒤 화면, 잔여 위험, 모바일과 빠른 나가기</h2>
+  <div style="display:grid;grid-template-columns:1.25fr 1.1fr .55fr .55fr;gap:14px">
+    <div><div class="shot" style="height:400px"><img src="../docs/screens/v3-05-notify-after-confirm.png" alt="통지 경고 확인 뒤" style="width:100%"></div><p class="cap"><b>통지 확인 뒤</b> 신청 방법이 열림</p></div>
+    <div><div class="shot" style="height:400px"><img src="../docs/screens/v3-06-residual-risk.png" alt="잔여 위험 안내" style="width:100%"></div><p class="cap"><b>잔여 위험</b> 막을 제도가 없는 경로 안내</p></div>
+    <div><div class="shot" style="height:400px"><img src="../docs/screens/v3-01m-home-mobile.png" alt="모바일 첫 화면" style="width:100%"></div><p class="cap"><b>모바일</b></p></div>
+    <div><div class="shot" style="height:400px"><img src="../docs/screens/v4-12-quick-exit-after.png" alt="빠른 나가기 뒤" style="width:100%"></div><p class="cap"><b>빠른 나가기</b> 버튼·Esc 두 번</p></div>
+  </div>
+  <div class="foot"><span>출처: docs/screens/ (합성 입력, Playwright 촬영) · 최종 프런트엔드 화면은 별도 작업 중이라 미확정</span><span>A4 · 부록</span></div>
+</section>
+
 </div></div>
-<div id="nav"><button id="prev" aria-label="이전">◀</button><span id="num">1 / 11</span><button id="next" aria-label="다음">▶</button></div>
+<div id="nav"><button id="prev" aria-label="이전">◀</button><span id="num">1 / 15</span><button id="next" aria-label="다음">▶</button></div>
 <script>
 (function(){
   var slides=[].slice.call(document.querySelectorAll('.slide'));
