@@ -183,5 +183,5 @@ v21 의 거절 103건 창구별: {'/api/intake': 32, '/api/answer': 71}
   ben04·ben06 은 첫 턴(각 2턴)에서 대안 동반 거절을 받았다.
 - intake 단독 정확도는 아직 낮다(유형 0.575, 상황 재현율 0.276). 최종 값은 체크 항목 화면에서 사용자가 고친 뒤라 높다.
 - v21 의 반복 확인 질문 2장·위치 되묻기 2장은 v3 에서 0 이다. 단, 시뮬레이터가 GLM 이라 같은 시드라도 대화가 달라진다(시드 1개·2개라 표본이 작다).
-- `card_consistency.json` 은 카드가 바뀌지 않아 다시 돌리지 않았다(v21 것 참조).
+- `card_consistency.json` 은 2026-10-31 21시에 이 폴더로 다시 돌렸다(`python3 tools/sim/card_consistency.py --seeds 2 --workers 2 --out data/eval/sim_results/v3-20261031/card_consistency.json`, GLM 중계, 첫 시도는 중계 TimeoutError 로 실패해 1회 재시도). 서비스 API 를 부르지 않는 검사라 배포본과 무관하고, 카드·시나리오·`fill_form` 은 v21 뒤로 바뀌지 않았다(`git diff d30b33c HEAD`). 결과: 40건 중 유형 정확도 0.975(v21 1.0), 상황 정밀도 0.961(0.962), 재현율 0.974(1.0), 완전 일치 34(37). 유형 오답 1건(uc15 시드 2 → stalking). 차이는 GLM 표본 변동으로 보며, 카드가 정답을 암시하는 정도는 v21 과 비슷하다.
 - `not_found` 판정 문구가 "근거에서 확인되지 않습니다"로 바뀌어 `judge.NO_INFO_RE` 를 함께 맞췄다(옛 문구도 인정).
