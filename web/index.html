@@ -4,30 +4,49 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="referrer" content="no-referrer">
-<title>숨은집 지킴이</title>
+<meta name="color-scheme" content="light dark">
+<title>보안 예보 | 내 주소를 더 안전하게</title>
+<link rel="icon" href="/favicon.ico" type="image/x-icon">
+<script>
+(function () {
+  try {
+    var darkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-color-scheme', darkMode ? 'dark' : 'light');
+  } catch (e) {
+    document.documentElement.setAttribute('data-color-scheme', 'light');
+  }
+})();
+</script>
 <link rel="stylesheet" href="/static/app.css">
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 
 <header class="site-header">
-  <h1>숨은집 지킴이</h1>
-  <p class="tagline">새 주소가 상대에게 알려지지 않도록, 지금 쓸 수 있는 보호 제도를 순서대로 정리해 드립니다.</p>
+  <div class="site-header-inner">
+    <h1>보안 예보</h1>
+    <p class="tagline">새 주소가 상대에게 알려지지 않도록, 지금 쓸 수 있는 보호 제도를 순서대로 정리해 드립니다.</p>
+  </div>
 </header>
 
-<button type="button" id="quick-exit" class="quick-exit" aria-label="빠른 나가기: 입력한 내용을 지우고 날씨 검색 화면으로 바로 이동합니다">빠른 나가기</button>
-
-<section id="safety" class="safety" aria-labelledby="safety-title">
-  <h2 id="safety-title" tabindex="-1">시작하기 전에 확인해 주세요</h2>
-
-  <div class="emergency" role="note" aria-label="긴급 연락처">
-    <p class="emergency-lead">지금 위험하면 바로 연락하세요.</p>
+<div class="emergency-bar" aria-label="긴급 연락처">
+  <div class="emergency-inner">
     <ul class="emergency-list">
       <li><a href="tel:112" class="emergency-call"><strong>112</strong><span>경찰 긴급신고</span></a></li>
       <li><a href="tel:1366" class="emergency-call"><strong>1366</strong><span>여성긴급전화 · 24시간</span></a></li>
       <li><a href="tel:132" class="emergency-call"><strong>132</strong><span>대한법률구조공단</span></a></li>
     </ul>
+    <button type="button" id="safety-reopen" class="safety-reopen">안전 안내 다시 보기</button>
   </div>
+</div>
+
+<button type="button" id="quick-exit" class="quick-exit" aria-label="빠른 나가기: 입력한 내용을 지우고 날씨 검색 화면으로 바로 이동합니다">빠른 나가기</button>
+<button type="button" id="scroll-top" class="scroll-top" aria-label="맨 위로 이동" title="맨 위로" hidden>↑</button>
+
+<button type="button" id="safety-backdrop" class="safety-backdrop" aria-label="팝업 닫기" hidden></button>
+
+<section id="safety" class="safety safety-dialog" aria-labelledby="safety-title" role="dialog" aria-modal="true" aria-describedby="safety-body" hidden>
+  <h2 id="safety-title" tabindex="-1">시작하기 전에 확인해 주세요</h2>
 
   <div id="safety-body">
     <h3 class="safety-sub">안전한 기기에서 보고 계신가요?</h3>
@@ -42,13 +61,15 @@
       1366(24시간)이나 대한법률구조공단 132에서 받을 수 있습니다.
     </p>
   </div>
-  <button type="button" id="safety-toggle" class="safety-toggle" aria-expanded="true" aria-controls="safety-body">안내 접기</button>
+  <button type="button" id="safety-toggle" class="safety-toggle">닫기</button>
 </section>
 
 <nav class="tabs" role="tablist" aria-label="기능 선택">
-  <button role="tab" id="tab-diagnose" aria-controls="panel-diagnose" aria-selected="true" tabindex="0">보호 제도 찾기</button>
-  <button role="tab" id="tab-docs" aria-controls="panel-docs" aria-selected="false" tabindex="-1">서류 점검</button>
-  <button role="tab" id="tab-search" aria-controls="panel-search" aria-selected="false" tabindex="-1">근거 조문</button>
+  <div class="tabs-inner">
+    <button role="tab" id="tab-diagnose" aria-controls="panel-diagnose" aria-selected="true" tabindex="0">보호 제도 찾기</button>
+    <button role="tab" id="tab-docs" aria-controls="panel-docs" aria-selected="false" tabindex="-1">서류 점검</button>
+    <button role="tab" id="tab-search" aria-controls="panel-search" aria-selected="false" tabindex="-1">근거 조문</button>
+  </div>
 </nav>
 
 <main id="main">
@@ -114,11 +135,11 @@
     <div id="doc-highlight" class="doc-highlight" role="region" aria-label="단서가 표시된 서류 내용"></div>
     <div id="doc-findings" class="doc-findings"></div>
     <div id="doc-rewrite-result" class="rewrite-result" tabindex="-1" hidden></div>
-    <p class="help-line">혼자 하기 어려우면 <a href="tel:1366">1366</a>(24시간) · <a href="tel:132">132</a> · 위험이 급하면 <a href="tel:112">112</a></p>
   </section>
 
   <section id="panel-search" role="tabpanel" aria-labelledby="tab-search" class="panel" hidden>
     <h2>근거 조문 찾기</h2>
+    <p class="lead">법 조항은 근거 확인용입니다. 실제로 받을 수 있는 도움과 신청 방법은 보호 제도 찾기에서 먼저 확인해 주세요.</p>
     <label for="search-q" class="field-label">궁금한 점을 적어 주세요</label>
     <div class="search-row">
       <input id="search-q" type="text" class="search-input" autocomplete="off" maxlength="500"
@@ -129,6 +150,12 @@
     <div id="search-results" class="results"></div>
   </section>
 </main>
+
+<footer class="help-footer">
+  <div class="help-footer-inner">
+    <p class="help-line">혼자 하기 어려우면 <a href="tel:1366">1366</a>(24시간) · <a href="tel:132">132</a> · 위험이 급하면 <a href="tel:112">112</a></p>
+  </div>
+</footer>
 
 <div id="live-region" class="sr-only" aria-live="polite" role="status"></div>
 

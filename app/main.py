@@ -488,6 +488,13 @@ def create_app(
     if static_dir.is_dir():
         app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
 
+    @app.get("/favicon.ico", include_in_schema=False)
+    async def favicon():
+        favicon_file = REPO_ROOT / "web" / "favicon_easyPeasy.ico"
+        if favicon_file.is_file():
+            return FileResponse(str(favicon_file), media_type="image/x-icon")
+        return JSONResponse({"detail": "Not Found"}, status_code=404)
+
     @app.get("/")
     async def index():
         index_file = REPO_ROOT / "web" / "index.html"
