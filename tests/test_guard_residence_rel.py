@@ -8,7 +8,7 @@ import pytest
 
 from app import guard
 
-NOUNS = ["거처", "거주지", "주소지", "체류지", "숙소", "위치"]
+NOUNS = ["거처", "거주지", "주소지", "체류지", "숙소"]
 
 
 @pytest.mark.parametrize("noun", NOUNS)
@@ -38,6 +38,17 @@ def test_third_party_residence_relative_clause_not_self_protect(noun):
     "남편이 지내는 숙소가 우리 집 근처예요. 보호명령을 받을 수 있나요?",
 ])
 def test_self_protect_with_residence_nouns_unchanged(t):
+    assert guard.assess(t, None)["tier"] == guard.SELF_PROTECT
+
+
+@pytest.mark.parametrize("t", [
+    "전 남친이 차에 있는 위치 공유를 볼 수 있나요? 끄고 싶어요.",
+    "남편이 앱에 있는 위치 기록으로 저를 찾을까 봐요.",
+    "남편이 폰에 있는 위치 기록을 볼까 봐 걱정돼요.",
+])
+def test_device_location_fear_stays_self_protect(t):
+    # '위치'는 목록에 넣지 않았다: '(타인)이 앱에 있는 위치 기록'은 거처가 아니라 기기·계정의 위치 정보다.
+    assert not guard._OTHER_REL_RE.search(t)
     assert guard.assess(t, None)["tier"] == guard.SELF_PROTECT
 
 
