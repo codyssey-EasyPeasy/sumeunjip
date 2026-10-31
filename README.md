@@ -85,3 +85,5 @@ cd gpu && uv run --with pytest python -m pytest -q tests          # 2026-10-31: 
 - 코드: MIT (`LICENSE`)
 - 데이터·문서(`data/`, `research/`, `docs/`, `pt/`): CC BY 4.0 (`LICENSE-DATA`)
 - 법령 본문은 저작권법 제7조에 따라 보호 대상이 아니며, 출처는 법제처 국가법령정보센터입니다.
+
+- 데이터 출처와 성격(법령 스냅샷·지식표·합성 평가 데이터): `data/README.md` · 모델·글꼴·외부 서비스 출처와 라이선스: `THIRD_PARTY_NOTICES.md`
