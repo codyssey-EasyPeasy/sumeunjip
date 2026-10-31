@@ -93,6 +93,23 @@ a { color: var(--teal-dark); }
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 .quick-exit:hover { background: var(--navy-surface); color: var(--on-accent); }
+.scroll-top {
+  position: fixed;
+  z-index: 80;
+  right: max(16px, calc((100vw - 920px) / 2 + 24px));
+  bottom: calc(88px + env(safe-area-inset-bottom));
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 1px solid var(--gray-border);
+  border-radius: 50%;
+  background: var(--navy-surface);
+  color: var(--on-accent);
+  font-size: 1.45rem;
+  line-height: 1;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .2);
+}
+.scroll-top:hover { background: var(--focus); border-color: var(--focus); color: var(--on-accent); }
 
 /* tabs */
 .tabs {
@@ -297,6 +314,7 @@ button.primary:hover { background: var(--teal-hover); border-color: var(--teal-h
   flex: 1 1 100%;
   padding-top: 2px;
 }
+.program-title { font-size: .98rem; font-weight: 650; }
 .card-pending .card-title { color: var(--muted); }
 .card-note {
   margin: 4px 0 10px;
@@ -351,6 +369,19 @@ button.primary:hover { background: var(--teal-hover); border-color: var(--teal-h
   font-size: 0.92rem;
 }
 .plain-box p { margin: 6px 0 0; }
+.card-exposure {
+  margin: 8px 0;
+  padding: 10px 12px;
+  border-left: 4px solid var(--amber-border);
+  border-radius: 6px;
+  background: var(--amber-bg);
+  color: var(--amber-text);
+}
+.card-exposure strong { display: block; margin-bottom: 4px; font-size: .82rem; }
+.card-exposure p { margin: 0; font-size: .92rem; }
+.practical-summary { border-style: solid; border-left: 4px solid var(--focus); }
+.practical-label { display: block; margin-bottom: 4px; color: var(--muted); font-size: .84rem; }
+.practical-summary p { color: var(--navy); font-size: .96rem; line-height: 1.6; }
 
 .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
 .chip {
@@ -454,6 +485,11 @@ mark.tier2 { background: #bfdbfe; }
 }
 
 .meta { font-size: 0.82rem; color: var(--muted); margin: 4px 0; }
+.law-excerpt-label { margin: 0 0 6px; color: var(--muted); font-size: .84rem; }
+.law-excerpt { margin: 0; color: var(--navy); font-size: .96rem; line-height: 1.65; }
+.law-source { margin-top: 12px; padding-top: 6px; }
+.law-source > summary { color: var(--muted); font-size: .78rem; }
+.law-source-info { margin: 6px 0 0; color: var(--muted); font-size: .8rem; }
 
 /* responsive */
 /* ---------- 일반 사용자 모드(SPEC §7) ---------- */
@@ -739,6 +775,7 @@ details > summary { min-height: 36px; display: list-item; padding: 6px 0; }
 @media print {
   body { background: var(--bg); color: var(--print-ink); }
   .quick-exit,
+  .scroll-top,
   .tabs,
   .site-header,
   .help-footer,

@@ -30,6 +30,7 @@
 </div>
 
 <button type="button" id="quick-exit" class="quick-exit" aria-label="빠른 나가기: 입력한 내용을 지우고 날씨 검색 화면으로 바로 이동합니다">빠른 나가기</button>
+<button type="button" id="scroll-top" class="scroll-top" aria-label="맨 위로 이동" title="맨 위로" hidden>↑</button>
 
 <button type="button" id="safety-backdrop" class="safety-backdrop" aria-label="팝업 닫기" hidden></button>
 
@@ -127,6 +128,7 @@
 
   <section id="panel-search" role="tabpanel" aria-labelledby="tab-search" class="panel" hidden>
     <h2>근거 조문 찾기</h2>
+    <p class="lead">법 조항은 근거 확인용입니다. 실제로 받을 수 있는 도움과 신청 방법은 보호 제도 찾기에서 먼저 확인해 주세요.</p>
     <label for="search-q" class="field-label">궁금한 점을 적어 주세요</label>
     <div class="search-row">
       <input id="search-q" type="text" class="search-input" autocomplete="off" maxlength="500"

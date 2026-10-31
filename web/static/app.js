@@ -342,10 +342,30 @@
     if (item.pending_effective) head.appendChild(badge('pending', '시행 예정 ' + item.pending_effective));
 
     var title = document.createElement('h3');
-    title.className = 'card-title';
+    title.className = 'card-title program-title';
     title.textContent = item.measure || item.id || '';
     head.appendChild(title);
     card.appendChild(head);
+
+    if (item.exposure) {
+      var exposure = el('div', 'card-exposure');
+      exposure.appendChild(el('strong', null, '이 상황에서 생길 수 있는 위험'));
+      exposure.appendChild(el('p', null, item.exposure));
+      card.appendChild(exposure);
+    }
+
+    var plainSummary = null;
+    if (item.plain) {
+      var plain = document.createElement('div');
+      plain.className = 'plain-box practical-summary';
+      plain.appendChild(el('strong', 'practical-label', '이 제도로 받을 수 있는 도움'));
+      if (!item.plain_reviewed) {
+        plain.appendChild(badge('ai-badge', 'AI 생성(검수 전)'));
+      }
+      plain.appendChild(el('p', null, item.plain));
+      plainSummary = plain;
+      if (!item.notify_warning) card.appendChild(plainSummary);
+    }
 
     if (item.note) {
       var note = document.createElement('p');
@@ -407,17 +427,7 @@
 
     // 통지 경고가 있으면 쉬운 설명(신청 방법이 섞여 있다)과 신청처·서류는 경고를 확인한 뒤에만 펼친다.
     var howto = el('div', 'howto');
-    if (item.plain) {
-      var plain = document.createElement('div');
-      plain.className = 'plain-box';
-      if (!item.plain_reviewed) {
-        plain.appendChild(badge('ai-badge', 'AI 생성(검수 전)'));
-      }
-      var pt = document.createElement('p');
-      pt.textContent = item.plain;
-      plain.appendChild(pt);
-      if (gate) howto.appendChild(plain); else card.appendChild(plain);
-    }
+    if (gate && plainSummary) howto.appendChild(plainSummary);
     if (item.where) howto.appendChild(detailsBlock('어디서 신청하나요', item.where));
     if (item.documents) howto.appendChild(detailsBlock('필요한 서류', item.documents));
     if (howto.childNodes.length) {
@@ -440,12 +450,11 @@
 
     // 경로·노출·근거 조문은 '근거·자세히' 안으로(첫 화면 부담 줄이기).
     var hasBasis = Array.isArray(item.basis) && item.basis.length;
-    if (item.path || item.exposure || hasBasis) {
+    if (item.path || hasBasis) {
       var more = document.createElement('details');
       more.className = 'more-detail';
       more.appendChild(el('summary', null, '근거·자세히'));
       if (item.path) more.appendChild(row('경로', item.path));
-      if (item.exposure) more.appendChild(row('노출', item.exposure));
       if (hasBasis) {
         var chips = document.createElement('div');
         chips.className = 'chips';
@@ -926,33 +935,36 @@
         for (var i = 0; i < list.length; i++) {
           var r = list[i] || {};
           var card = document.createElement('article');
-          card.className = 'card';
-          var h = document.createElement('h3');
-          h.className = 'card-title';
+          card.className = 'card law-card';
           var titleText = ((r.law || '') + ' ' + (r.article || '')).trim() || '근거';
           var url = safeUrl(r.url);
-          if (url) {
-            var a = document.createElement('a');
-            a.href = url;
-            a.target = '_blank';
-            a.rel = 'noopener noreferrer';
-            a.textContent = titleText;
-            h.appendChild(a);
-          } else {
-            h.textContent = titleText;
-          }
-          card.appendChild(h);
-          if (r.effective) {
-            var meta = document.createElement('p');
-            meta.className = 'meta';
-            meta.textContent = '시행 ' + r.effective;
-            card.appendChild(meta);
-          }
           if (r.text) {
+            card.appendChild(el('h3', 'law-excerpt-label', '찾은 조항 원문'));
             var body = document.createElement('p');
+            body.className = 'law-excerpt';
             body.textContent = r.text;
             card.appendChild(body);
           }
+
+          var source = document.createElement('details');
+          source.className = 'law-source';
+          source.appendChild(el('summary', null, '출처 및 시행일'));
+          var sourceInfo = el('p', 'law-source-info');
+          if (url) {
+            var sourceLink = document.createElement('a');
+            sourceLink.href = url;
+            sourceLink.target = '_blank';
+            sourceLink.rel = 'noopener noreferrer';
+            sourceLink.textContent = titleText;
+            sourceInfo.appendChild(sourceLink);
+          } else {
+            sourceInfo.appendChild(document.createTextNode(titleText));
+          }
+          if (r.effective) {
+            sourceInfo.appendChild(document.createTextNode(' · 시행 ' + r.effective));
+          }
+          source.appendChild(sourceInfo);
+          card.appendChild(source);
           root.appendChild(card);
         }
       })
@@ -1360,6 +1372,18 @@
       }
     });
     $('quick-exit').addEventListener('click', quickExit);
+    var scrollTop = $('scroll-top');
+    function updateScrollTop() {
+      var top = window.pageYOffset || document.documentElement.scrollTop || 0;
+      scrollTop.hidden = top < 480;
+    }
+    window.addEventListener('scroll', updateScrollTop, { passive: true });
+    window.addEventListener('resize', updateScrollTop);
+    scrollTop.addEventListener('click', function () {
+      var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
+    });
+    updateScrollTop();
     $('doc-rewrite').addEventListener('click', runRewrite);
     $('intake-btn').addEventListener('click', runIntake);
     $('auto-confirm').addEventListener('change', syncConfirmGate);
