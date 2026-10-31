@@ -77,9 +77,46 @@ ssh -F <해커톤 ssh 설정> -N -L 18080:127.0.0.1:8080 hk-ops &
 | 로그에 본문이 없다 | 앱 로그 3,362줄 → 숫자 치환 뒤 18모양(메서드·경로·상태), 표지 문자열 60회 송신 뒤 3개 로그 0건 | `docs/evidence/infra.md` §6 | 그 절의 `sed`·`grep -c` | 같음 |
 | 런타임은 외부 LLM 을 부르지 않는다 | `app/`·`gpu/` 에 GLM·중계 주소 0건, LLM_URL 미설정(기본 127.0.0.1:8001) | `docs/evidence/infra.md` §4·§5, `SPEC.md` §11.7 | `grep -rn "18090\|GLM" app gpu` | 같음 |
 | 엔드포인트 지연(서버 안) | 진단 0.005초, intake 1.83초, answer 5.75초(중앙값) 등 | `docs/evidence/infra.md` §7 | 측정 스크립트 비공개(같은 절 설명) | 같음 |
+| 서버 사양·OS | 운영 서버 Xeon Gold 5220 · 2 vCPU · 7.8Gi, GPU 서버 Xeon Silver 4416+ · 4 vCPU · 47Gi, 둘 다 Ubuntu 24.04.1 LTS · 커널 6.8.0-136 | `docs/evidence/infra-2026-10-31-night.md` 1절 | `lscpu; nproc; free -h; . /etc/os-release` | 2026-10-31 20:54 |
+| 서버 RAM 사용 | 운영 서버 547Mi(앱 RSS 약 66MiB), GPU 서버 6.9Gi(추론 API RSS 약 2.4GiB, vLLM 1.3+2.9GiB) | 같은 문서 3절 | `free -h; ps -o rss=,cmd= -p <pid>` | 2026-10-31 20:5x |
+| HF Hub 오프라인 | 추론 API(pid 533224, 18:56:50 기동)·vLLM 환경 모두 `HF_HUB_OFFLINE=1`. `gpu.log` 'HF Hub' 경고 22회는 그대로이고 마지막 경고(8351행)가 재기동(8833행) 앞이라 **재기동 뒤 새 경고 0** | 같은 문서 4절 | `/proc/<pid>/environ` grep, `grep -c` | 2026-10-31 21:0x |
+| 설치 버전 | vLLM 0.32.0; 추론 API venv fastapi 0.162.0 · uvicorn 0.54.0 · sentence-transformers 6.2.0 · FlagEmbedding 1.4.2 · gliner 0.2.29 · torch 2.15.0 · transformers 5.16.1(서버에만 `gpu/uv.lock`, 저장소엔 없음) | 같은 문서 5절 | `importlib.metadata.version` | 2026-10-31 21:0x |
+| 다시 쓰기가 정상 문서도 줄인다(한계) | 합성 장문 9건 중 규칙 치환 경로 4건이 원래 길이의 0.67~0.71, 595자 문서에서 두 문장이 `[일정 비공개]` 하나로 바뀜(단서 구간이 넓게 잡힘) | 같은 문서 10절, `data/eval/sim_results/pilot-v2-20261031/summary.md` | GPU `/llm/rewrite` 직접 호출(합성 입력) | 2026-10-31 21:0x |
 | 단위 시험 | 앱 230 passed(`2418ad9`) → 407 passed(`cf8d149`, 보호 안내 보정 시험 추가), GPU 120 passed (모델 없이). 21시 재실행(코드는 `6672867` 이후 동일)에서도 407·120, rc 0 | `docs/evidence/infra-2026-10-31-night.md` 11절 | `uv run --frozen pytest -q tests`; `cd gpu && uv run --with pytest python -m pytest -q tests` | 2026-10-31 18:1x, 21:1x |
 
 ## 7. 화면·차트·대화 발췌
-- 화면 14장: `docs/screens/v3-*.png` — 설명은 `docs/evidence/README.md`.
+- 화면 14장: `docs/screens/v3-*.png`, 현재 배포본 재촬영 3장: `docs/screens/v4-07`·`v4-08`·`v4-12`(빠른 나가기 뒤) — 설명은 `docs/evidence/README.md`.
 - 차트 5개: `docs/evidence/charts/*.svg` — `python3 tools/make_charts.py` 로 결과 파일에서 다시 그린다.
 - 합성 사용자 대화 발췌(공격자 아님): `docs/evidence/sample-conversation.md`.
+
+## 8. 미확인 정리(2026-10-31 밤)
+서버·VPN 재실측(`docs/evidence/infra-2026-10-31-night.md`), 현재 배포본 재실행, 법령 1차 원문 대조, 개발 기록(2026-10-31 빌드 보고)으로 문서의 `미확인` 을 다시 확인했다.
+
+**해소한 것**
+- 서버 사양·OS·RAM·설치 버전(vLLM 0.32.0 포함), GPU 메모리 값(20,480~20,912 MiB 범위로 통일), HF Hub 오프라인 재기동 뒤 새 경고 0 — 위 6절 행.
+- 배포본 = `6672867`(파일 23개 해시 일치) — 위 6절.
+- GPU API `0.0.0.0:8000` 의 도달 범위: **SSL-VPN 클라이언트에서 열려 있음(인증 없음)**. 8001·8080 은 VPN 에서 닫힘.
+- 2단 가드 임계값 0.16 근거 재현(최고 0.155, 최저는 주석과 달리 -0.108) — 3절.
+- 현재 배포본 오거절 값을 18건/14대화로 통일, '16건' 은 근거 없는 중간 값으로 내림 — 3절.
+- 레드팀 서비스 경로 재실행 3/112 = 2.7%(같은 결과), 대상별 분모 합이 4 큰 이유(공격 4개가 대상 2개) — `docs/redteam-summary.md`.
+- 카드 일관성 v3 재실행(유형 0.975, 상황 P/R 0.961/0.974) — `data/eval/sim_results/v3-20261031/summary.md`.
+- 다시 쓰기 길이 문제는 정상 문서에서도 재현(한계로 기록) — 6절.
+- 원문 발췌 답의 통지 경고 중복 원인(`NOTIFY_INHERIT` 접두 문구 + 완전 일치만 거르는 `notify_answer()`, 코드는 고치지 않음), 5번 답 'A2 통지' 문장의 법문 대조 — `docs/evidence/sample-conversation.md`.
+- 쉬운 설명 초안·코드 작성 주체(DeepSeek-V4.1-Flash 42건·Claude 41건, Claude 검토로 12건 재작성·J28 추가) — `docs/SPEC.md` §11.7, 출처 개발 기록(2026-10-31 빌드 보고).
+- 법령·공식 원문으로 해결: 전자소송 유출 규모(개인정보위 2025-01-09), 생활법령 API 존재(공공데이터포털), 민간경호 '2인'(관계부처 2026-07-13 첨부) — `research/2026-10-31-정보조사.md`.
+- 단위 시험 재실행 407·120 passed, 문서 기준 커밋·pt 5장 제목·HF 문구 주석 정리.
+
+**남은 것과 오너 조치**
+| 항목 | 상태 | 오너 조치 |
+|---|---|---|
+| GPU API 8000 VPN 노출 | 실측으로 확인, 미조치 | NCP 콘솔에서 ACG 인바운드 8000 을 `10.1.1.33/32` 로 좁히기. ACG 규칙 원문 확인 |
+| 실제 브라우저의 Esc 두 번 빠른 나가기 | headless 10/10 × 4 모드만 통과 | Chrome·Edge 에서 리허설 후 결과 알려 주기 |
+| 쉬운 말 설명 검수 | 0/84 | 법률 지식이 있는 사람의 검수 |
+| 레드팀 판정 44건 재검토 | AI(Claude)만 검토 | 사람이 다시 봤는지 답하거나 'AI 검토자만' 으로 확정 |
+| 사람이 읽은 환각 비율 2~4% | 원자료 없음 | 문구 삭제 또는 `answer_eval` 45문항 직접 판정 중 선택 |
+| 발표 시간 규정 | 외부 원자료 없음(웹 공지 없음) | 대회 공지·운영진 안내의 발표·질의응답 시간 |
+| `knowledge.json` 반영 후보(J18 '2인' 1차, A17 '장관 고시 위임' 정정, A2 신청인 통지, J9 limits) | 앱 동작이 바뀌는 데이터라 미반영 | 반영 여부 결정 |
+| 앱 API 지연 재측정 | 접근 코드가 필요해 health 만 재측정 | 필요하면 접근 코드로 재측정 허용 |
+| 모델 단독·PAIR-lite·GLM 레드팀, 정상 질문 오거절(공격 세트 밖) | 현재 배포본으로 재실행 안 함 | 필요 시 재실행 지시 |
+| 통계 원자료(스토킹·교제폭력·열람제한 신청 건수), 계류 법안 단계, 해바라기·스마일센터 번호, 가사비송 제163조 적용·결정서 주거 기재 실무, 민감정보·변호사법 해석 | 외부 원자료 없음 또는 기관 문의 필요 — `research/2026-10-31-정보조사.md` 10절 | 기관 문의·정보공개청구 |
+| 보호 안내 보정 재전송·지연 측정 스크립트 | 비공개 재현 | 없음(공개 필요 시 골격 추가 지시) |
