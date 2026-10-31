@@ -253,6 +253,12 @@ function stepDefs(page, ctxState) {
       const n = await find(page, 'autoNotice');
       await show(n, 'start');
       await sleep(1800);
+      // 상황 항목이 그룹별로 접혀 있으면(details) 그 그룹을 먼저 편다.
+      await page.evaluate((id) => {
+        const l = document.querySelector("label[data-flag='" + id + "']");
+        const d = l && l.closest('details');
+        if (d) d.open = true;
+      }, IN.manualFlagId).catch(() => {});
       const mf = await find(page, 'manualFlag', { timeout: 3000 });
       await check(page, mf);
       await sleep(600);

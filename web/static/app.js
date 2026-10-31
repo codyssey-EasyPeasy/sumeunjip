@@ -1277,12 +1277,8 @@
     btn.addEventListener('click', closeSafety);
     backdrop.addEventListener('click', closeSafety);
     reopen.addEventListener('click', openSafety);
-    try {
-      if (!window.localStorage.getItem('sumeunjip-safety-seen')) {
-        openSafety();
-        window.localStorage.setItem('sumeunjip-safety-seen', '1');
-      }
-    } catch (e) { openSafety(); }
+    // 방문 기록을 기기에 남기지 않도록(저장소 사용 금지) 들어올 때마다 안내를 연다.
+    openSafety();
   }
 
   /* ---------- tabs ---------- */
