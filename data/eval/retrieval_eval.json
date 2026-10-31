@@ -1,0 +1,1066 @@
+{
+ "name": "retrieval_eval",
+ "version": "2026-10-31",
+ "held_out": true,
+ "note": "보류 평가 세트(held-out). 학습·미세조정·프롬프트 예시·임계값 조정에 쓰지 않는다. 합성 질의만 담는다. gold_articles 는 data/laws/articles.jsonl 의 exposable=true (law, article) 키, gold_items 는 data/knowledge.json 항목 id. noanswer 범주는 노출 가능 조문에 정답이 없다(점수가 낮아야 한다).",
+ "categories": {
+  "plain": "일상 피해자 말투(법률 용어 없음)",
+  "legal": "법률 용어 질의",
+  "tricky": "바꿔 말하기·헷갈리는 쌍",
+  "noanswer": "정답 조문 없음"
+ },
+ "items": [
+  {
+   "id": "P01",
+   "category": "plain",
+   "q": "남편이 제 주민등록 초본을 떼서 새 집 주소를 알게 될까 봐 무서워요. 막을 수 있나요?",
+   "gold_articles": [
+    {
+     "law": "주민등록법",
+     "article": "제29조"
+    },
+    {
+     "law": "주민등록법 시행령",
+     "article": "제47조의2"
+    },
+    {
+     "law": "주민등록법 시행규칙",
+     "article": "제13조의2"
+    }
+   ],
+   "gold_items": [
+    "A1"
+   ]
+  },
+  {
+   "id": "P02",
+   "category": "plain",
+   "q": "가족관계증명서에 제 정보가 나오는 걸 전 남편이 못 보게 하고 싶어요",
+   "gold_articles": [
+    {
+     "law": "가족관계의 등록 등에 관한 법률",
+     "article": "제14조"
+    },
+    {
+     "law": "가족관계의 등록 등에 관한 법률",
+     "article": "제15조의2"
+    },
+    {
+     "law": "가족관계의 등록 등에 관한 규칙",
+     "article": "제25조의3"
+    },
+    {
+     "law": "가족관계등록예규 제653호",
+     "article": "제2조"
+    }
+   ],
+   "gold_items": [
+    "A8",
+    "A9"
+   ]
+  },
+  {
+   "id": "P03",
+   "category": "plain",
+   "q": "누가 내 등본을 떼 가면 나한테 알려주는 서비스가 있나요?",
+   "gold_articles": [
+    {
+     "law": "주민등록법 시행령",
+     "article": "제47조"
+    },
+    {
+     "law": "주민등록법 시행규칙",
+     "article": "제6조의2"
+    }
+   ],
+   "gold_items": [
+    "A3"
+   ]
+  },
+  {
+   "id": "P04",
+   "category": "plain",
+   "q": "이혼 소송 중인데 소장에 적힌 제 주소를 상대방이 못 보게 할 수 있을까요?",
+   "gold_articles": [
+    {
+     "law": "민사소송법",
+     "article": "제163조"
+    },
+    {
+     "law": "민사소송규칙",
+     "article": "제38조"
+    }
+   ],
+   "gold_items": [
+    "J1",
+    "J28"
+   ]
+  },
+  {
+   "id": "P05",
+   "category": "plain",
+   "q": "이사했는데 예전 집으로 우편물이 계속 가요. 새 주소로 받으려면 어떻게 해요?",
+   "gold_articles": [
+    {
+     "law": "우편법",
+     "article": "제31조의2"
+    },
+    {
+     "law": "우편법 시행규칙",
+     "article": "제110조"
+    }
+   ],
+   "gold_items": [
+    "L3"
+   ]
+  },
+  {
+   "id": "P06",
+   "category": "plain",
+   "q": "집 주소 말고 다른 곳에서 우편물을 받을 방법이 있을까요?",
+   "gold_articles": [
+    {
+     "law": "우편법",
+     "article": "제37조"
+    },
+    {
+     "law": "우편법 시행규칙",
+     "article": "제122조"
+    },
+    {
+     "law": "우편법 시행령",
+     "article": "제43조"
+    }
+   ],
+   "gold_items": [
+    "L4"
+   ]
+  },
+  {
+   "id": "P07",
+   "category": "plain",
+   "q": "법원에서 오는 서류를 집 말고 다른 곳으로 받고 싶어요",
+   "gold_articles": [
+    {
+     "law": "민사소송법",
+     "article": "제184조"
+    }
+   ],
+   "gold_items": [
+    "J2"
+   ]
+  },
+  {
+   "id": "P08",
+   "category": "plain",
+   "q": "아이가 전학 가면 아빠가 새 학교를 알게 될까 봐 걱정돼요. 주소지 말고 다른 곳으로 전학시킬 수 있나요?",
+   "gold_articles": [
+    {
+     "law": "가정폭력방지 및 피해자보호 등에 관한 법률",
+     "article": "제4조의4"
+    },
+    {
+     "law": "가정폭력방지 및 피해자보호 등에 관한 법률 시행령",
+     "article": "제1조의3"
+    }
+   ],
+   "gold_items": [
+    "S1"
+   ]
+  },
+  {
+   "id": "P09",
+   "category": "plain",
+   "q": "아이 아빠가 학교에 아이 생활기록부를 달라고 하면 학교가 그냥 주나요?",
+   "gold_articles": [
+    {
+     "law": "초·중등교육법",
+     "article": "제30조의6"
+    }
+   ],
+   "gold_items": [
+    "S6"
+   ]
+  },
+  {
+   "id": "P10",
+   "category": "plain",
+   "q": "피신 중인데 아이를 어린이집에 먼저 들어가게 해 줄 수 있나요?",
+   "gold_articles": [
+    {
+     "law": "영유아보육법",
+     "article": "제28조"
+    },
+    {
+     "law": "영유아보육법 시행규칙",
+     "article": "제29조"
+    }
+   ],
+   "gold_items": [
+    "S7"
+   ]
+  },
+  {
+   "id": "P11",
+   "category": "plain",
+   "q": "헤어진 사람이 집 앞에 계속 찾아와요. 경찰이 바로 해 줄 수 있는 게 있나요?",
+   "gold_articles": [
+    {
+     "law": "스토킹범죄의 처벌 등에 관한 법률",
+     "article": "제3조"
+    },
+    {
+     "law": "스토킹범죄의 처벌 등에 관한 법률",
+     "article": "제4조"
+    }
+   ],
+   "gold_items": [
+    "J13"
+   ]
+  },
+  {
+   "id": "P12",
+   "category": "plain",
+   "q": "남편이 집에 못 오게 법원에서 막아 줄 수 있나요?",
+   "gold_articles": [
+    {
+     "law": "가정폭력범죄의 처벌 등에 관한 특례법",
+     "article": "제29조"
+    },
+    {
+     "law": "가정폭력범죄의 처벌 등에 관한 특례법",
+     "article": "제55조의2"
+    },
+    {
+     "law": "가정폭력범죄의 처벌 등에 관한 특례법",
+     "article": "제8조"
+    }
+   ],
+   "gold_items": [
+    "J11",
+    "J12"
+   ]
+  },
+  {
+   "id": "P13",
+   "category": "plain",
+   "q": "스토킹인데 경찰이 접근금지를 신청 안 해 주면 제가 직접 법원에 낼 수 있나요?",
+   "gold_articles": [
+    {
+     "law": "스토킹범죄의 처벌 등에 관한 법률(법률 제21556호)",
+     "article": "제17조의6"
+    },
+    {
+     "law": "스토킹범죄의 처벌 등에 관한 법률(법률 제21556호)",
+     "article": "제17조의5"
+    }
+   ],
+   "gold_items": [
+    "J14"
+   ]
+  },
+  {
+   "id": "P14",
+   "category": "plain",
+   "q": "이사했는데 접근하지 말라고 정해진 장소를 새 집으로 바꿀 수 있나요?",
+   "gold_articles": [
+    {
+     "law": "가정폭력범죄의 처벌 등에 관한 특례법",
+     "article": "제29조의2"
+    },
+    {
+     "law": "스토킹범죄의 처벌 등에 관한 법률",
+     "article": "제7조"
+    },
+    {
+     "law": "스토킹범죄의 처벌 등에 관한 법률",
+     "article": "제10조"
+    }
+   ],
+   "gold_items": [
+    "J10"
+   ]
+  },
+  {
+   "id": "P15",
+   "category": "plain",
+   "q": "보호시설 직원이 제가 있는 곳을 남편한테 말하면 어떡해요?",
+   "gold_articles": [
+    {
+     "law": "가정폭력방지 및 피해자보호 등에 관한 법률",
+     "article": "제16조"
+    },
+    {
+     "law": "성폭력방지 및 피해자보호 등에 관한 법률",
+     "article": "제30조"
+    },
+    {
+     "law": "스토킹방지 및 피해자보호 등에 관한 법률",
+     "article": "제15조"
+    }
+   ],
+   "gold_items": [
+    "P2"
+   ]
+  },
+  {
+   "id": "P16",
+   "category": "plain",
+   "q": "상담소에서 제가 원하지 않는데 다른 기관에 제 얘기를 넘겨도 되나요?",
+   "gold_articles": [
+    {
+     "law": "가정폭력방지 및 피해자보호 등에 관한 법률",
+     "article": "제9조"
+    },
+    {
+     "law": "스토킹방지 및 피해자보호 등에 관한 법률",
+     "article": "제12조"
+    }
+   ],
+   "gold_items": [
+    "P2"
+   ]
+  },
+  {
+   "id": "P17",
+   "category": "plain",
+   "q": "스토킹 신고했다고 회사에서 저를 자를 수 있나요?",
+   "gold_articles": [
+    {
+     "law": "스토킹방지 및 피해자보호 등에 관한 법률",
+     "article": "제6조"
+    },
+    {
+     "law": "가정폭력방지 및 피해자보호 등에 관한 법률",
+     "article": "제4조의5"
+    }
+   ],
+   "gold_items": [
+    "P7"
+   ]
+  },
+  {
+   "id": "P18",
+   "category": "plain",
+   "q": "휴대폰에 몰래 감시 앱이 깔려 있는 것 같아요. 이거 불법 아닌가요?",
+   "gold_articles": [
+    {
+     "law": "위치정보의 보호 및 이용 등에 관한 법률",
+     "article": "제15조"
+    },
+    {
+     "law": "위치정보의 보호 및 이용 등에 관한 법률",
+     "article": "제40조"
+    },
+    {
+     "law": "정보통신망 이용촉진 및 정보보호 등에 관한 법률",
+     "article": "제48조"
+    },
+    {
+     "law": "통신비밀보호법",
+     "article": "제3조"
+    }
+   ],
+   "gold_items": [
+    "D1"
+   ]
+  },
+  {
+   "id": "P19",
+   "category": "plain",
+   "q": "예전에 가족끼리 내 위치 보이게 동의했던 걸 이제 끊고 싶어요",
+   "gold_articles": [
+    {
+     "law": "위치정보의 보호 및 이용 등에 관한 법률",
+     "article": "제24조"
+    }
+   ],
+   "gold_items": [
+    "D4"
+   ]
+  },
+  {
+   "id": "P20",
+   "category": "plain",
+   "q": "인터넷에 제 사는 곳이랑 사진이 올라왔어요. 지워 달라고 할 수 있나요?",
+   "gold_articles": [
+    {
+     "law": "정보통신망 이용촉진 및 정보보호 등에 관한 법률",
+     "article": "제44조의2"
+    },
+    {
+     "law": "성폭력방지 및 피해자보호 등에 관한 법률",
+     "article": "제7조의3"
+    },
+    {
+     "law": "성폭력방지 및 피해자보호 등에 관한 법률",
+     "article": "제7조의4"
+    }
+   ],
+   "gold_items": [
+    "D7",
+    "P6"
+   ]
+  },
+  {
+   "id": "P21",
+   "category": "plain",
+   "q": "몰래 찍힌 영상이 퍼졌는데 지우는 걸 도와주는 곳이 있나요?",
+   "gold_articles": [
+    {
+     "law": "성폭력방지 및 피해자보호 등에 관한 법률",
+     "article": "제7조의3"
+    },
+    {
+     "law": "성폭력방지 및 피해자보호 등에 관한 법률",
+     "article": "제7조의4"
+    }
+   ],
+   "gold_items": [
+    "P6"
+   ]
+  },
+  {
+   "id": "P22",
+   "category": "plain",
+   "q": "경찰서에서 진술할 때 제 주소를 안 적을 수 있나요? 나중에 그 사람이 볼까 봐요",
+   "gold_articles": [
+    {
+     "law": "특정범죄신고자 등 보호법",
+     "article": "제7조"
+    },
+    {
+     "law": "피해자 보호 및 지원에 관한 규칙(경찰청훈령)",
+     "article": "제23조"
+    },
+    {
+     "law": "성폭력범죄의 처벌 등에 관한 특례법",
+     "article": "제23조"
+    }
+   ],
+   "gold_items": [
+    "J19"
+   ]
+  },
+  {
+   "id": "P23",
+   "category": "plain",
+   "q": "재판에서 증언할 때 그 사람 앞에서 사생활 얘기를 하기 싫어요",
+   "gold_articles": [
+    {
+     "law": "형사소송법",
+     "article": "제294조의3"
+    },
+    {
+     "law": "특정범죄신고자 등 보호법",
+     "article": "제11조"
+    }
+   ],
+   "gold_items": [
+    "J23"
+   ]
+  },
+  {
+   "id": "P24",
+   "category": "plain",
+   "q": "법원 갔다 올 때 그 사람이 따라올까 봐 무서워요. 경찰이 같이 가 줄 수 있나요?",
+   "gold_articles": [
+    {
+     "law": "특정범죄신고자 등 보호법",
+     "article": "제13조"
+    },
+    {
+     "law": "특정범죄신고자 등 보호법",
+     "article": "제13조의2"
+    },
+    {
+     "law": "스토킹범죄의 처벌 등에 관한 법률",
+     "article": "제17조의2"
+    },
+    {
+     "law": "피해자 보호 및 지원에 관한 규칙(경찰청훈령)",
+     "article": "제29조"
+    }
+   ],
+   "gold_items": [
+    "J16"
+   ]
+  },
+  {
+   "id": "P25",
+   "category": "plain",
+   "q": "신고하고 나서 보복당할까 봐 당장 지낼 곳이 필요해요",
+   "gold_articles": [
+    {
+     "law": "피해자 보호 및 지원에 관한 규칙(경찰청훈령)",
+     "article": "제33조"
+    },
+    {
+     "law": "피해자 보호 및 지원에 관한 규칙(경찰청훈령)",
+     "article": "제28조"
+    },
+    {
+     "law": "범죄피해자 보호법",
+     "article": "제9조"
+    }
+   ],
+   "gold_items": [
+    "J17"
+   ]
+  },
+  {
+   "id": "P26",
+   "category": "plain",
+   "q": "가해자 쪽에서 합의하자며 제 연락처를 알려 달래요. 꼭 알려 줘야 하나요?",
+   "gold_articles": [
+    {
+     "law": "공탁법",
+     "article": "제5조의2"
+    }
+   ],
+   "gold_items": [
+    "J25"
+   ]
+  },
+  {
+   "id": "P27",
+   "category": "plain",
+   "q": "피해 보상을 재판에서 같이 신청하면 신청서에 적은 제 주소가 그 사람한테 가나요?",
+   "gold_articles": [
+    {
+     "law": "소송촉진 등에 관한 특례법",
+     "article": "제28조"
+    },
+    {
+     "law": "소송촉진 등에 관한 특례법",
+     "article": "제26조"
+    }
+   ],
+   "gold_items": [
+    "J24"
+   ]
+  },
+  {
+   "id": "P28",
+   "category": "plain",
+   "q": "남편 건강보험에 딸려 있는데 거기서 빠져서 따로 하고 싶어요",
+   "gold_articles": [
+    {
+     "law": "국민건강보험법 시행령",
+     "article": "제43조"
+    },
+    {
+     "law": "국민건강보험법 시행규칙",
+     "article": "제2조"
+    }
+   ],
+   "gold_items": [
+    "A11"
+   ]
+  },
+  {
+   "id": "P29",
+   "category": "plain",
+   "q": "그 사람이 제 주민번호를 알고 있어요. 번호를 아예 바꿀 수 있나요?",
+   "gold_articles": [
+    {
+     "law": "주민등록법",
+     "article": "제7조의4"
+    },
+    {
+     "law": "주민등록법",
+     "article": "제7조의5"
+    },
+    {
+     "law": "주민등록법 시행령",
+     "article": "제12조의3"
+    }
+   ],
+   "gold_items": [
+    "A5"
+   ]
+  },
+  {
+   "id": "P30",
+   "category": "plain",
+   "q": "남편이 아이 친권자라서 아이 일에 계속 끼어들어요. 그걸 막을 수 있나요?",
+   "gold_articles": [
+    {
+     "law": "민법",
+     "article": "제924조"
+    },
+    {
+     "law": "민법",
+     "article": "제924조의2"
+    }
+   ],
+   "gold_items": [
+    "S8"
+   ]
+  },
+  {
+   "id": "L01",
+   "category": "legal",
+   "q": "주민등록표 열람 및 등·초본 교부 제한 신청 요건",
+   "gold_articles": [
+    {
+     "law": "주민등록법",
+     "article": "제29조"
+    },
+    {
+     "law": "주민등록법 시행령",
+     "article": "제47조의2"
+    },
+    {
+     "law": "주민등록법 시행규칙",
+     "article": "제13조의2"
+    }
+   ],
+   "gold_items": [
+    "A1"
+   ]
+  },
+  {
+   "id": "L02",
+   "category": "legal",
+   "q": "가족관계등록부 기록사항 공시제한 신청",
+   "gold_articles": [
+    {
+     "law": "가족관계의 등록 등에 관한 법률",
+     "article": "제15조의2"
+    },
+    {
+     "law": "가족관계의 등록 등에 관한 규칙",
+     "article": "제25조의3"
+    },
+    {
+     "law": "가족관계등록예규 제653호",
+     "article": "제2조"
+    }
+   ],
+   "gold_items": [
+    "A9"
+   ]
+  },
+  {
+   "id": "L03",
+   "category": "legal",
+   "q": "가정폭력 피해자보호명령 청구서 기재사항",
+   "gold_articles": [
+    {
+     "law": "가정보호심판규칙",
+     "article": "제69조"
+    },
+    {
+     "law": "가정폭력범죄의 처벌 등에 관한 특례법",
+     "article": "제55조의2"
+    }
+   ],
+   "gold_items": [
+    "J8"
+   ]
+  },
+  {
+   "id": "L04",
+   "category": "legal",
+   "q": "임시보호명령의 기간",
+   "gold_articles": [
+    {
+     "law": "가정폭력범죄의 처벌 등에 관한 특례법",
+     "article": "제55조의4"
+    }
+   ],
+   "gold_items": [
+    "J12"
+   ]
+  },
+  {
+   "id": "L05",
+   "category": "legal",
+   "q": "스토킹 잠정조치로 전자장치 부착 집행",
+   "gold_articles": [
+    {
+     "law": "스토킹범죄의 처벌 등에 관한 법률",
+     "article": "제9조"
+    },
+    {
+     "law": "전자장치 부착 등에 관한 법률",
+     "article": "제31조의6"
+    }
+   ],
+   "gold_items": [
+    "J15"
+   ]
+  },
+  {
+   "id": "L06",
+   "category": "legal",
+   "q": "가정폭력 긴급임시조치 요건",
+   "gold_articles": [
+    {
+     "law": "가정폭력범죄의 처벌 등에 관한 특례법",
+     "article": "제8조의2"
+    }
+   ],
+   "gold_items": [
+    "J11"
+   ]
+  },
+  {
+   "id": "L07",
+   "category": "legal",
+   "q": "소송기록 비밀 기재부분 열람 제한 결정 신청",
+   "gold_articles": [
+    {
+     "law": "민사소송법",
+     "article": "제163조"
+    },
+    {
+     "law": "민사소송규칙",
+     "article": "제38조"
+    }
+   ],
+   "gold_items": [
+    "J3"
+   ]
+  },
+  {
+   "id": "L08",
+   "category": "legal",
+   "q": "판결서 비실명 처리",
+   "gold_articles": [
+    {
+     "law": "민사판결서 열람 및 복사에 관한 규칙",
+     "article": "제4조"
+    },
+    {
+     "law": "형사 판결서 등의 열람 및 복사에 관한 규칙",
+     "article": "제4조"
+    }
+   ],
+   "gold_items": [
+    "J6"
+   ]
+  },
+  {
+   "id": "L09",
+   "category": "legal",
+   "q": "정보공개청구 제3자 비공개 요청",
+   "gold_articles": [
+    {
+     "law": "공공기관의 정보공개에 관한 법률",
+     "article": "제21조"
+    },
+    {
+     "law": "공공기관의 정보공개에 관한 법률",
+     "article": "제11조"
+    }
+   ],
+   "gold_items": [
+    "A15"
+   ]
+  },
+  {
+   "id": "L10",
+   "category": "legal",
+   "q": "스토킹 피해자 변호사 선임의 특례",
+   "gold_articles": [
+    {
+     "law": "스토킹범죄의 처벌 등에 관한 법률",
+     "article": "제17조의4"
+    },
+    {
+     "law": "성폭력범죄의 처벌 등에 관한 특례법",
+     "article": "제27조"
+    }
+   ],
+   "gold_items": [
+    "J27"
+   ]
+  },
+  {
+   "id": "L11",
+   "category": "legal",
+   "q": "성폭력 피해자 신원과 사생활 비밀 누설 금지",
+   "gold_articles": [
+    {
+     "law": "성폭력범죄의 처벌 등에 관한 특례법",
+     "article": "제24조"
+    }
+   ],
+   "gold_items": [
+    "J26"
+   ]
+  },
+  {
+   "id": "L12",
+   "category": "legal",
+   "q": "임차권등기명령 신청",
+   "gold_articles": [
+    {
+     "law": "주택임대차보호법",
+     "article": "제3조의3"
+    }
+   ],
+   "gold_items": [
+    "A21"
+   ]
+  },
+  {
+   "id": "L13",
+   "category": "legal",
+   "q": "명의도용방지서비스 제공 의무",
+   "gold_articles": [
+    {
+     "law": "전기통신사업법",
+     "article": "제32조의6"
+    }
+   ],
+   "gold_items": [
+    "L7"
+   ]
+  },
+  {
+   "id": "L14",
+   "category": "legal",
+   "q": "형사공탁 공탁서 피공탁자 인적사항",
+   "gold_articles": [
+    {
+     "law": "공탁법",
+     "article": "제5조의2"
+    }
+   ],
+   "gold_items": [
+    "J25"
+   ]
+  },
+  {
+   "id": "L15",
+   "category": "legal",
+   "q": "가정보호사건 보도 금지 의무 위반 처벌",
+   "gold_articles": [
+    {
+     "law": "가정폭력범죄의 처벌 등에 관한 특례법",
+     "article": "제18조"
+    },
+    {
+     "law": "가정폭력범죄의 처벌 등에 관한 특례법",
+     "article": "제64조"
+    },
+    {
+     "law": "가사소송법",
+     "article": "제10조"
+    }
+   ],
+   "gold_items": [
+    "J26",
+    "J7"
+   ]
+  },
+  {
+   "id": "T01",
+   "category": "tricky",
+   "q": "소송 서류 송달받을 장소를 집이 아닌 곳으로 법원에 신고하기",
+   "gold_articles": [
+    {
+     "law": "민사소송법",
+     "article": "제184조"
+    }
+   ],
+   "gold_items": [
+    "J2"
+   ]
+  },
+  {
+   "id": "T02",
+   "category": "tricky",
+   "q": "우체국에 이사 신고해서 우편물을 새 주소로 전송받기",
+   "gold_articles": [
+    {
+     "law": "우편법",
+     "article": "제31조의2"
+    },
+    {
+     "law": "우편법 시행규칙",
+     "article": "제110조"
+    }
+   ],
+   "gold_items": [
+    "L3"
+   ]
+  },
+  {
+   "id": "T03",
+   "category": "tricky",
+   "q": "송달받던 곳을 바꾸고 법원에 알리지 않으면 예전 곳으로 서류가 가나요?",
+   "gold_articles": [
+    {
+     "law": "민사소송법",
+     "article": "제185조"
+    }
+   ],
+   "gold_items": [
+    "J2"
+   ]
+  },
+  {
+   "id": "T04",
+   "category": "tricky",
+   "q": "내가 전입신고하면 집주인이나 세대주가 통보를 받는 서비스가 있나요?",
+   "gold_articles": [
+    {
+     "law": "주민등록법",
+     "article": "제16조의2"
+    },
+    {
+     "law": "주민등록법 시행규칙",
+     "article": "제6조의2"
+    }
+   ],
+   "gold_items": [
+    "A7"
+   ]
+  },
+  {
+   "id": "T05",
+   "category": "tricky",
+   "q": "주민등록 등본 말고 가족관계증명서 쪽 교부 제한이요",
+   "gold_articles": [
+    {
+     "law": "가족관계의 등록 등에 관한 법률",
+     "article": "제14조"
+    },
+    {
+     "law": "가족관계의 등록 등에 관한 법률",
+     "article": "제14조의2"
+    },
+    {
+     "law": "가족관계의 등록 등에 관한 규칙",
+     "article": "제25조의3"
+    }
+   ],
+   "gold_items": [
+    "A8"
+   ]
+  },
+  {
+   "id": "T06",
+   "category": "tricky",
+   "q": "가정폭력 임시조치 말고 스토킹 잠정조치 청구 근거",
+   "gold_articles": [
+    {
+     "law": "스토킹범죄의 처벌 등에 관한 법률",
+     "article": "제8조"
+    },
+    {
+     "law": "스토킹범죄의 처벌 등에 관한 법률",
+     "article": "제9조"
+    }
+   ],
+   "gold_items": [
+    "J13"
+   ]
+  },
+  {
+   "id": "T07",
+   "category": "tricky",
+   "q": "피해자보호명령 기간을 늘리면 몇 개월 단위로 연장되나요?",
+   "gold_articles": [
+    {
+     "law": "가정폭력범죄의 처벌 등에 관한 특례법",
+     "article": "제55조의3"
+    }
+   ],
+   "gold_items": [
+    "J12"
+   ]
+  },
+  {
+   "id": "T08",
+   "category": "tricky",
+   "q": "이사한 뒤 경찰 긴급응급조치의 접근금지 장소를 바꿔 달라고 하기",
+   "gold_articles": [
+    {
+     "law": "스토킹범죄의 처벌 등에 관한 법률",
+     "article": "제7조"
+    }
+   ],
+   "gold_items": [
+    "J10"
+   ]
+  },
+  {
+   "id": "T09",
+   "category": "tricky",
+   "q": "등기사항증명서에 주민등록번호가 다 보이나요?",
+   "gold_articles": [
+    {
+     "law": "부동산등기규칙",
+     "article": "제32조"
+    }
+   ],
+   "gold_items": [
+    "A20"
+   ]
+  },
+  {
+   "id": "T10",
+   "category": "tricky",
+   "q": "내용증명 보낼 때 보내는 사람 주소를 꼭 적어야 하나요?",
+   "gold_articles": [
+    {
+     "law": "우편법 시행규칙",
+     "article": "제52조"
+    }
+   ],
+   "gold_items": [
+    "L5"
+   ]
+  },
+  {
+   "id": "N01",
+   "category": "noanswer",
+   "q": "자동차등록원부에 제 주소가 나오는데 가릴 수 있나요?",
+   "gold_articles": [],
+   "gold_items": [
+    "L1"
+   ]
+  },
+  {
+   "id": "N02",
+   "category": "noanswer",
+   "q": "선거 때 선거인명부 열람 기간에 제 주소가 공개되나요?",
+   "gold_articles": [],
+   "gold_items": [
+    "A18"
+   ]
+  },
+  {
+   "id": "N03",
+   "category": "noanswer",
+   "q": "제가 대표이사인 회사 법인 등기에 집 주소가 나오는데 어떻게 하죠?",
+   "gold_articles": [],
+   "gold_items": [
+    "A23"
+   ]
+  },
+  {
+   "id": "N04",
+   "category": "noanswer",
+   "q": "결혼이민자인데 외국인등록 사실증명이 남편에게 발급되나요?",
+   "gold_articles": [],
+   "gold_items": [
+    "A16"
+   ]
+  },
+  {
+   "id": "N05",
+   "category": "noanswer",
+   "q": "SNS에 올린 사진에 찍은 장소가 남는지 궁금해요",
+   "gold_articles": [],
+   "gold_items": [
+    "D6"
+   ]
+  }
+ ]
+}

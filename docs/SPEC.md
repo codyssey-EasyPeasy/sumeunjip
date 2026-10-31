@@ -1,4 +1,4 @@
-# 숨은집 지킴이 구현 명세 (v1, 2026-10-31 · 2026-10-31 18시 실제 구현 반영)
+# 보안 예보 구현 명세 (v1, 2026-10-31 · 2026-10-31 18시 실제 구현 반영)
 
 마감 2026-11-01 13:00 KST. 아키텍처: `architecture.md`. 근거: `../research/2026-10-31-정보조사.md`. 실증 자료 색인: `EVIDENCE.md`.
 
@@ -199,9 +199,23 @@ answer·intake 확인 질문·rewrite 에 모두 쓴다. 걸리면 answer 는 �
 | 앱 → GPU 시간 제한 | `/intent`·`/ner` 10초, intake 60초, answer·rewrite 90초, `/health` 3초(30초 캐시) | `app/main.py`, `app/llm.py` |
 | 재시도 | GPU 가 503 을 돌려준 경우만 1회. 504(시간 초과)는 재시도 없음 | `app/llm.py _post` |
 | GPU 본문 상한 | 20KB(413) | `gpu/server.py` |
+| GPU 인증 | `GET /health` 밖 모든 경로에 `X-Internal-Token`(없거나 틀리면 401, 토큰 파일 없으면 전부 401) | `gpu/server.py`, `app/main.py` (§11.10) |
+| GPU `/ner` 조각 | 700자, 겹침 100자 | `gpu/server.py` (§11.10) |
 | GPU → vLLM | 60초(`LLM_TIMEOUT`), 답변 전체 12초 예산, rewrite `max_tokens` = min(4096, 2×길이+512) | `gpu/llm.py`, `gpu/verify.py` |
 | vLLM | `--max-model-len 8192`, `--gpu-memory-utilization 0.6` | `gpu/llm_start.sh` |
 | 응답 머리글 | CSP `default-src 'self'`, `Cache-Control: no-store`, `X-Frame-Options: DENY`, `Referrer-Policy: no-referrer`, `nosniff` | `app/main.py` |
+
+### 11.10 GPU 토큰·위치 단위·NER 조각·메모리 가드 (2026-11-01, `642e5e1`)
+배포 기록 `docs/evidence/deploy-2026-11-01.md`, 시험 판정 `docs/TEST_RESULTS.md` 「2026-11-01 수정·배포·재측정」.
+- **GPU API 토큰 인증**: hk-gpu `0.0.0.0:8000` 은 SSL-VPN 클라이언트에서도 닿는다. NCP 콘솔(ACG)은 오너가 쓸 수 없으므로 애플리케이션 단계에서 막는다.
+  - `GET /health` 를 뺀 모든 경로에 `X-Internal-Token` 헤더가 필요하다. 토큰은 `GPU_TOKEN_FILE`(기본 `~/.config/sumeunjip/gpu_token`, 폴더 700·파일 600)에서 요청마다 읽고 `hmac.compare_digest` 로 비교한다. 파일이 없거나 비면 전부 401(fail-closed). 401 본문은 `{"detail":"unauthorized"}` 뿐이고 헤더 값은 로그하지 않는다.
+  - `/health` 는 참·거짓만 돌려준다: `ok`, `models{embedder,reranker,gliner}`, `cuda`, `llm`, `auth`(토큰 파일 있음), `ngrams`(노출 금지 n-gram 표 실림). 장치 이름·n-gram 개수·예산 값은 더 이상 내보내지 않는다.
+  - 앱은 GPU 를 부르는 `httpx.AsyncClient` 의 기본 헤더에 토큰을 싣는다(`app/main.py gpu_auth_headers`). 토큰 파일이 없으면 GPU 가 401 → 각 기능은 기존 실패 경로대로 체크박스 방식으로 동작한다. 개발용 `tools/mock_gpu.py` 는 토큰을 검사하지 않는다.
+  - 실측: 토큰 없음·틀린 토큰 401(hk-ops·VPN 노트북), 올바른 토큰 200, 로그 3개의 토큰 출현 0건.
+- **위치 단위 `offset_unit`** (`app/offsets.py`): 브라우저는 UTF-16 코드 단위, 파이썬은 코드 포인트로 센다. 앱은 `/api/rewrite` 로 받은 span 을 코드 포인트로 바꿔 GPU 로 넘기고, `/api/doccheck` 가 돌려주는 span 은 UTF-16 으로 바꾼다. 두 응답(거절·사용 불가 응답 포함)에 `offset_unit: "utf16"` 을 붙인다. 이모지·보충 평면 문자 뒤 단서가 덜 가려지던 결함(P0-04)을 고친다.
+- **NER 조각 분할** (`gpu/server.py chunk_text`): GLiNER 는 앞쪽 약 700자만 본다. `/ner` 는 글을 700자 조각(이웃과 100자 겹침, 가능하면 공백·줄바꿈에서 자름)으로 나눠 돌리고, 위치를 원문 기준으로 되돌려 `merge_spans` 로 합친다. 정규식 단서는 전처럼 전체 글에서 찾는다. 배포본 실측: 700자 뒤 합성 단서 0/8 → 8/8(P0-05).
+- **CUDA OOM → 503**: `RuntimeError` 처리기가 CUDA 메모리 부족(`torch.cuda.OutOfMemoryError` 또는 'out of memory')이면 캐시를 비우고 `503 {"detail":"gpu busy"}` 를 돌려준다(앱의 LLM 호출은 503 이면 1회 재시도, `/api/doccheck` 는 `available:false`). 다른 `RuntimeError` 는 그대로 500. 본문 4KB(`EMPTY_CACHE_BYTES`) 넘는 요청 뒤에는 `torch.cuda.empty_cache()`. `gpu/start.sh` 가 `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True` 로 기동한다. 재기동 뒤 GPU 서버 프로세스 5,686~5,790 MiB(OOM 직후 8,566).
+- 남은 것: `tools/eval*.py` 는 GPU 를 직접 부를 때 토큰을 보내지 않는다(운영 GPU 에서 401).
 
 ### 11.9 아직 남은 것 (2026-10-31 18시)
 - 다턴 시뮬레이션 v3(배포 `fc84eb4`)의 정상 질문 거절 23건 중 7건은 `2418ad9` 로 해소(같은 23문장 재전송 실측, 커밋 메시지). 16건이 남았다는 것은 커밋 메시지뿐인 중간 값이다(결과 파일 없음). **현행 값은 보정 뒤 배포본(`cf8d149`+`6672867`)으로 v3 사용자 대화를 다시 돌린 18건/14대화**다(`data/eval/notice_calibration_summary.md`; 방법이 달라 16과 직접 비교하지 않는다). 남은 유형: 아이 학교·위치 추적 의심 물건·'같이 산 적 없다'는 부정 답.

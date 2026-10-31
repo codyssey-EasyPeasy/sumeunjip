@@ -1,0 +1,510 @@
+{
+ "name": "latency_tokens_2026-11-01",
+ "measured_at_kst": "sequential 2026-10-31 23:53 ~ 2026-11-01 00:20, probe 00:21 ~ 00:30",
+ "deployed_commit": "642e5e1",
+ "sequential_100": {
+  "method": "one request at a time through tunnel 18080 -> app, 100 per endpoint, perf_counter wall time incl. tunnel/VPN; inputs synthetic (same pools as load test). rewrite uses 20 distinct texts of 102-474 chars (docs.json concatenations) cycled 5x, so prefix cache may help repeats; 1,500-char rewrite is covered by the probe below.",
+  "endpoints": {
+   "diagnose": {
+    "requests": 100,
+    "latency_s_200": {
+     "n": 100,
+     "p50": 0.076,
+     "p95": 0.143,
+     "p99": 0.155,
+     "max": 0.262,
+     "mean": 0.089
+    },
+    "status_counts": {
+     "200": 100
+    },
+    "first_call_s": 0.069
+   },
+   "search": {
+    "requests": 100,
+    "latency_s_200": {
+     "n": 100,
+     "p50": 1.037,
+     "p95": 1.09,
+     "p99": 1.116,
+     "max": 1.146,
+     "mean": 1.037
+    },
+    "status_counts": {
+     "200": 100
+    },
+    "first_call_s": 1.074
+   },
+   "doccheck": {
+    "requests": 100,
+    "latency_s_200": {
+     "n": 100,
+     "p50": 0.137,
+     "p95": 0.19,
+     "p99": 0.219,
+     "max": 0.297,
+     "mean": 0.131
+    },
+    "status_counts": {
+     "200": 100
+    },
+    "first_call_s": 0.174
+   },
+   "intake": {
+    "requests": 100,
+    "latency_s_200": {
+     "n": 100,
+     "p50": 1.557,
+     "p95": 1.94,
+     "p99": 2.261,
+     "max": 2.342,
+     "mean": 1.426
+    },
+    "status_counts": {
+     "200": 100
+    },
+    "first_call_s": 2.26
+   },
+   "answer": {
+    "requests": 100,
+    "latency_s_200": {
+     "n": 100,
+     "p50": 4.873,
+     "p95": 9.936,
+     "p99": 11.248,
+     "max": 12.027,
+     "mean": 4.84
+    },
+    "status_counts": {
+     "200": 100
+    },
+    "modes": {
+     "not_found": 38,
+     "extractive": 8,
+     "generated": 48,
+     "regenerated": 4,
+     "refused": 2
+    },
+    "extractive_rate": 0.08,
+    "extractive_fallback_rate": 0.03,
+    "extractive_fixed_count": 5,
+    "llm_path_answers": 55,
+    "extractive_fallback_rate_of_llm_path": 0.055,
+    "latency_by_mode": {
+     "not_found": {
+      "n": 38,
+      "p50": 1.782,
+      "p95": 4.358,
+      "p99": 6.655,
+      "max": 7.334,
+      "mean": 2.139
+     },
+     "extractive": {
+      "n": 8,
+      "p50": 0.14,
+      "p95": 9.916,
+      "p99": 9.925,
+      "max": 9.927,
+      "mean": 3.654
+     },
+     "generated": {
+      "n": 48,
+      "p50": 6.729,
+      "p95": 9.833,
+      "p99": 10.97,
+      "max": 11.24,
+      "mean": 6.846
+     },
+     "regenerated": {
+      "n": 4,
+      "p50": 9.27,
+      "p95": 11.838,
+      "p99": 11.989,
+      "max": 12.027,
+      "mean": 8.957
+     },
+     "refused": {
+      "n": 2,
+      "p50": 4.504,
+      "p95": 8.421,
+      "p99": 8.769,
+      "max": 8.856,
+      "mean": 4.505
+     }
+    },
+    "first_call_s": 0.686
+   },
+   "rewrite": {
+    "requests": 100,
+    "latency_s_200": {
+     "n": 100,
+     "p50": 9.492,
+     "p95": 12.269,
+     "p99": 14.306,
+     "max": 14.403,
+     "mean": 8.944
+    },
+    "status_counts": {
+     "200": 100
+    },
+    "methods": {
+     "llm": 95,
+     "rule": 5
+    },
+    "first_call_s": 10.562,
+    "input_chars": {
+     "min": 102,
+     "max": 474,
+     "mean": 287
+    }
+   }
+  }
+ },
+ "tokens": {
+  "method": "script piped over ssh stdin to hk-gpu (no files written), run in ~/sumeunjip/gpu/.venv importing deployed gpu/llm.py, gpu/verify.py, gpu/server.py (regex_spans/merge_spans only, no models). Same chat bodies/max_tokens/temperature as server; usage fields read from vLLM 127.0.0.1:8001 responses. Answer item lists built locally by app.llm.build_items exactly as the app sends them. Not counted: input_flagged and locate guards (model-backed, not callable outside the server process).",
+  "per_call_by_stage": {
+   "generate": {
+    "prompt_tokens": {
+     "n": 56,
+     "mean": 2918.0,
+     "p50": 2728.0,
+     "p95": 4810.0,
+     "max": 4881
+    },
+    "completion_tokens": {
+     "n": 56,
+     "mean": 85.7,
+     "p50": 82.5,
+     "p95": 174.75,
+     "max": 185
+    }
+   },
+   "intake": {
+    "prompt_tokens": {
+     "n": 30,
+     "mean": 1329.4,
+     "p50": 1322.0,
+     "p95": 1385.55,
+     "max": 1414
+    },
+    "completion_tokens": {
+     "n": 30,
+     "mean": 66.6,
+     "p50": 66.5,
+     "p95": 79.1,
+     "max": 92
+    }
+   },
+   "regenerate": {
+    "prompt_tokens": {
+     "n": 5,
+     "mean": 2859.2,
+     "p50": 1752.0,
+     "p95": 4870.2,
+     "max": 4987
+    },
+    "completion_tokens": {
+     "n": 5,
+     "mean": 74.2,
+     "p50": 73.0,
+     "p95": 94.4,
+     "max": 98
+    }
+   },
+   "verify_llm": {
+    "prompt_tokens": {
+     "n": 35,
+     "mean": 1254.6,
+     "p50": 1219.0,
+     "p95": 1804.0,
+     "max": 2134
+    },
+    "completion_tokens": {
+     "n": 35,
+     "mean": 74.1,
+     "p50": 69.0,
+     "p95": 128.2,
+     "max": 131
+    }
+   }
+  },
+  "answer_eval_per_request": {
+   "n": 45,
+   "llm_calls_mean": 1.16,
+   "prompt_tokens_mean": 1655.1,
+   "completion_tokens_mean": 94.3,
+   "total_tokens_mean": 1749.4,
+   "total_tokens_p95": 4666.6,
+   "modes": {
+    "generated": 16,
+    "regenerated": 2,
+    "notify_fixed": 3,
+    "effect_fixed": 3,
+    "extractive:unsupported_after_retry": 1,
+    "topic_mismatch": 11,
+    "not_found": 9
+   }
+  },
+  "answer_sim_per_request": {
+   "n": 30,
+   "llm_calls_mean": 1.47,
+   "prompt_tokens_mean": 4904.5,
+   "completion_tokens_mean": 117.4,
+   "total_tokens_mean": 5021.9,
+   "total_tokens_p95": 8102.8,
+   "modes": {
+    "not_found": 16,
+    "notify_fixed": 2,
+    "generated": 11,
+    "regenerated": 1
+   }
+  },
+  "intake_per_request": {
+   "n": 30,
+   "llm_calls_mean": 1,
+   "prompt_tokens_mean": 1329.4,
+   "completion_tokens_mean": 66.6,
+   "total_tokens_mean": 1396,
+   "total_tokens_p95": 1461.3,
+   "modes": {
+    "ok": 30
+   }
+  },
+  "intake_input_chars_mean": 103.8,
+  "rewrite_by_length": [
+   {
+    "chars": 331,
+    "s": 10.36,
+    "status": "ok",
+    "prompt_tokens": 929,
+    "completion_tokens": 470
+   },
+   {
+    "chars": 363,
+    "s": 9.201,
+    "status": "ok",
+    "prompt_tokens": 973,
+    "completion_tokens": 423
+   },
+   {
+    "chars": 102,
+    "s": 4.162,
+    "status": "ok",
+    "prompt_tokens": 734,
+    "completion_tokens": 193
+   },
+   {
+    "chars": 198,
+    "s": 6.76,
+    "status": "ok",
+    "prompt_tokens": 821,
+    "completion_tokens": 313
+   },
+   {
+    "chars": 314,
+    "s": 11.794,
+    "status": "ok",
+    "prompt_tokens": 989,
+    "completion_tokens": 543
+   },
+   {
+    "chars": 1478,
+    "s": 35.705,
+    "status": "ok",
+    "prompt_tokens": 2158,
+    "completion_tokens": 1568
+   },
+   {
+    "chars": 1436,
+    "s": 27.466,
+    "status": "ok",
+    "prompt_tokens": 2034,
+    "completion_tokens": 1211
+   },
+   {
+    "chars": 1484,
+    "s": 34.643,
+    "status": "ok",
+    "prompt_tokens": 2074,
+    "completion_tokens": 1525
+   },
+   {
+    "chars": 1475,
+    "s": 35.589,
+    "status": "ok",
+    "prompt_tokens": 2117,
+    "completion_tokens": 1564
+   },
+   {
+    "chars": 1446,
+    "s": 32.501,
+    "status": "ok",
+    "prompt_tokens": 2054,
+    "completion_tokens": 1430
+   }
+  ],
+  "per_session": {
+   "session_mix": {
+    "source": "data/eval/sim_results/v3-20261031/uc*.json (40 user-card sessions)",
+    "sessions": 40,
+    "calls_per_session_mean": {
+     "/api/intake": 1.62,
+     "/api/answer": 4,
+     "/api/diagnose": 1,
+     "/api/search": 0
+    },
+    "calls_per_session_max": {
+     "/api/intake": 3,
+     "/api/answer": 5,
+     "/api/diagnose": 1,
+     "/api/search": 0
+    }
+   },
+   "tokens_per_intake_call": 1396,
+   "tokens_per_answer_request_sim": 5021.9,
+   "llm_calls_per_answer_request_sim": 1.47,
+   "typical_session_tokens": 22349,
+   "typical_session_prompt_tokens": 21772,
+   "typical_session_completion_tokens": 577,
+   "typical_session_llm_calls": 7.5,
+   "rewrite_1500_tokens_mean": 3547,
+   "formula": "intake_calls_mean x tokens_per_intake + answer_calls_mean x tokens_per_answer_request(sim requests, 3-5 items, incl. verify/regenerate calls and GPU-free notify/topic paths)",
+   "previous_estimate_in_COST_LATENCY": {
+    "typical_session_tokens": 12400,
+    "llm_calls": 7.5,
+    "basis": "char-count conversion, not tokenizer"
+   }
+  }
+ },
+ "answer_stage_timing": {
+  "method": "instrumented copy of verify.run_answer deps (scratch, not committed) on the 45-question answer_eval: chat_json timed per stage (generate / regenerate / verify_llm), rerank via GPU /rerank on 127.0.0.1:8000 timed, extractive() wrapped. Ran on hk-gpu (vLLM via 127.0.0.1:8001, same as production) instead of a local 18001 tunnel so the real reranker could be used without moving the GPU token off the server. Sequential, no other load.",
+  "n": 45,
+  "total_s_sum": 113.78,
+  "time_share": {
+   "generate": 0.534,
+   "regenerate": 0.041,
+   "verify_llm": 0.354,
+   "rerank_verify": 0.071,
+   "extractive": 0.0,
+   "rerank_extractive": 0.0,
+   "other_rules_guard_python": 0.0
+  },
+  "stage_seconds_when_present": {
+   "generate": {
+    "n": 28,
+    "p50": 2.024,
+    "p95": 3.557,
+    "p99": 4.204,
+    "max": 4.419,
+    "mean": 2.17
+   },
+   "regenerate": {
+    "n": 3,
+    "p50": 1.59,
+    "p95": 1.813,
+    "p99": 1.833,
+    "max": 1.838,
+    "mean": 1.54
+   },
+   "verify_llm": {
+    "n": 19,
+    "p50": 1.963,
+    "p95": 3.526,
+    "p99": 4.411,
+    "max": 4.632,
+    "mean": 2.119
+   },
+   "rerank_verify": {
+    "n": 19,
+    "p50": 0.4,
+    "p95": 0.759,
+    "p99": 0.885,
+    "max": 0.916,
+    "mean": 0.425
+   },
+   "extractive": {
+    "n": 0
+   },
+   "rerank_extractive": {
+    "n": 0
+   }
+  },
+  "total_latency": {
+   "n": 45,
+   "p50": 1.032,
+   "p95": 7.435,
+   "p99": 9.587,
+   "max": 10.39,
+   "mean": 2.528
+  },
+  "mode_counts": {
+   "generated": 16,
+   "regenerated": 2,
+   "notify_fixed": 3,
+   "effect_fixed": 3,
+   "extractive:unsupported_after_retry": 1,
+   "topic_mismatch": 11,
+   "not_found": 9
+  },
+  "latency_by_mode": {
+   "generated": {
+    "n": 16,
+    "p50": 5.175,
+    "p95": 7.723,
+    "p99": 8.397,
+    "max": 8.565,
+    "mean": 5.092
+   },
+   "regenerated": {
+    "n": 2,
+    "p50": 8.031,
+    "p95": 10.154,
+    "p99": 10.343,
+    "max": 10.39,
+    "mean": 8.031
+   },
+   "notify_fixed": {
+    "n": 3,
+    "p50": 0.0,
+    "p95": 0.0,
+    "p99": 0.0,
+    "max": 0.0,
+    "mean": 0.0
+   },
+   "effect_fixed": {
+    "n": 3,
+    "p50": 0.0,
+    "p95": 0.0,
+    "p99": 0.0,
+    "max": 0.0,
+    "mean": 0.0
+   },
+   "extractive:unsupported_after_retry": {
+    "n": 1,
+    "p50": 7.09,
+    "p95": 7.09,
+    "p99": 7.09,
+    "max": 7.09,
+    "mean": 7.09
+   },
+   "topic_mismatch": {
+    "n": 11,
+    "p50": 0.0,
+    "p95": 0.0,
+    "p99": 0.0,
+    "max": 0.0,
+    "mean": 0.0
+   },
+   "not_found": {
+    "n": 9,
+    "p50": 0.992,
+    "p95": 1.363,
+    "p99": 1.405,
+    "max": 1.415,
+    "mean": 1.017
+   }
+  },
+  "regenerate_rate": 0.067,
+  "verify_calls_per_llm_answer": null
+ }
+}

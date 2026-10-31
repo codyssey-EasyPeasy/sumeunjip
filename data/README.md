@@ -17,7 +17,7 @@
 |---|---|
 | 출처 | 이 프로젝트의 법령 조사 `research/2026-10-31-정보조사.md`(1차 출처 국가법령정보센터·정부 기관 페이지, 2차 출처는 문서에 `[2차]` 표시). 행마다 `basis`(224건, 전부 URL 있음, `primary` 로 1차·2차 구분) |
 | 작성 | 표의 경로·제도·근거·한계는 조사 문서에서 옮김(`tools/build_knowledge.py`). 피해 유형·상황 조건·긴급도는 프로젝트가 판단해 정함 |
-| 쉬운 말 설명(`plain`) | **AI 초안, 사람 검수 전**(`plain_reviewed=false`, 84/84). A1–J19 42건은 외부 LLM(DeepSeek-V4.1-Flash, 공개 법령 정보만 입력) 초안, J20–P9 41건과 이후 수정 12건·J28 은 Claude 작성(개발 기록 2026-10-31). 화면에는 'AI 생성(검수 전)' 표시 |
+| 쉬운 말 설명(`plain`) | **AI 초안, 사람 검수 전**(`plain_reviewed=false`, 84/84). A1–J19 42건은 외부 LLM(DeepSeek-V4.1-Flash, 래블업 토큰 팩토리 API, 공개 법령 정보만 입력) 초안, J20–P9 41건과 이후 수정 12건·J28 은 Claude 작성(개발 기록 2026-10-31). 화면에는 'AI 생성(검수 전)' 표시 |
 | 확인 수준 | 행마다 `confidence`(확인 49 · 부분확인 31 · 미확인 4) |
 | 기준일 | 2026-10-31(`version`) |
 
@@ -28,7 +28,7 @@
 | `docs.json` | 합성 고소장·소장·진술서 30(가명 ○○, 가짜 번호) | 프로젝트 작성 |
 | `intake.json`, `answer_eval.json`, `notice_calib.json`, `guard_holdout*.json`, `redteam.json` | 상황 서술·질문·가드 평가 문장 | 프로젝트 작성. `redteam.json` 의 거절 기대 문장은 의도만 담고 실제 조회 방법은 없음 |
 | `cards/` | 다중 턴 시뮬레이터용 인물 카드 | 프로젝트 작성(합성) |
-| `sim_results/*/summary.*` | 시뮬레이션 집계 | 사용자·공격자 역할은 외부 LLM(GLM-5.3-Flash)이 합성 카드만 보고 연기. **대화 원문은 공개하지 않음** |
+| `sim_results/*/summary.*` | 시뮬레이션 집계 | 사용자·공격자 역할은 외부 LLM(GLM-5.3-Flash, 래블업 토큰 팩토리 API)이 합성 카드만 보고 연기. **대화 원문은 공개하지 않음** |
 | `results*.json` | 평가 결과 | `tools/eval*.py` 실행 결과 |
 
 탈옥(레드팀) 공격 문장 모음은 악용 소지가 있어 공개 저장소에 넣지 않았고, 집계만 `docs/redteam-summary.md` 에 있습니다.

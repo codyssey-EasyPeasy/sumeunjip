@@ -71,7 +71,7 @@ ssh -F <해커톤 ssh 설정> -N -L 18080:127.0.0.1:8080 hk-ops &
 |---|---|---|---|---|
 | 배포본 = 저장소 코드 | `app/guard.py`·`app/llm.py`·`app/main.py`(hk-ops), `gpu/guard.py`·`verify.py`·`llm.py`·`server.py`(hk-gpu) `sha256sum` 이 **`6672867`**(= `cf8d149` 보호 안내 보정 + Esc·HF 오프라인 수정)과 같음: hk-ops 12개(`app/*.py`·`web/index.html`·`web/static/*`·`data/knowledge.json`), hk-gpu 11개(`gpu/*.py·*.sh·*.json`) 모두 일치. 18:1x 측정 때는 `2418ad9` 와 같았다(예: guard `68055350fc10e99a`) | `docs/evidence/infra-2026-10-31-night.md` 6절, `docs/evidence/infra.md` §5 | 서버 `sha256sum` ↔ `git show <커밋>:<경로> \| sha256sum` | 2026-10-31 21:0x (이전 18:1x, 18:4x) |
 | 가드 수정 뒤 다시 떴다 | 파일 시각 17:56:52, 앱 시작 17:57:38, GPU API 시작 17:57:35 | 이 문서 | `stat -c %y ~/sumeunjip/app/guard.py; ps -o lstart= -p <pid>` | 같음 |
-| 앱·vLLM 은 로컬에만 바인드 | `127.0.0.1:8080`, `127.0.0.1:8001`; GPU API 는 `0.0.0.0:8000` 이고 **SSL-VPN 클라이언트에서 TCP 연결·`/health` 200**(인증 없음, ACG 가 운영 서버로 좁히지 않음. 규칙 원문은 미확인) | `docs/evidence/infra.md` §3, `docs/evidence/infra-2026-10-31-night.md` 7절 | `ss -ltnp`; VPN 노트북 `Test-NetConnection 10.1.2.33 -Port 8000` | 같음 |
+| 앱·vLLM 은 로컬에만 바인드 | `127.0.0.1:8080`, `127.0.0.1:8001`; GPU API 는 `0.0.0.0:8000` 이고 **SSL-VPN 클라이언트에서 TCP 연결·`/health` 200**(ACG 가 운영 서버로 좁히지 않음. 규칙 원문은 제공 정보 없음). 2026-10-31 밤에는 인증이 없었고, **2026-11-01 부터 `/health` 밖 모든 경로가 토큰을 요구한다**(아래 9절) | `docs/evidence/infra.md` §3, `docs/evidence/infra-2026-10-31-night.md` 7절 | `ss -ltnp`; VPN 노트북 `Test-NetConnection 10.1.2.33 -Port 8000` | 같음 |
 | L4 한 장에 모든 모델 | 20,480 / 23,034 MiB (vLLM 13,948 + 추론 API 6,518, 20:5x 재기동 뒤). 추론 API 는 기동마다 6,518~6,950 이라 합계 20,480~20,912 | `docs/evidence/infra-2026-10-31-night.md` 2절, `infra.md` §2 | `nvidia-smi --query-compute-apps=pid,used_memory --format=csv` | 같음 |
 | 기능 상태 | 앱 `/api/health` items 84, `/api/features` llm true, GPU `/health` 모델 3개 true·`excluded_ngrams` 24,995·예산 12초 | 이 문서 | `curl -s 127.0.0.1:8080/api/health` 등 (hk-ops 안에서) | 같음 |
 | 로그에 본문이 없다 | 앱 로그 3,362줄 → 숫자 치환 뒤 18모양(메서드·경로·상태), 표지 문자열 60회 송신 뒤 3개 로그 0건 | `docs/evidence/infra.md` §6 | 그 절의 `sed`·`grep -c` | 같음 |
@@ -95,7 +95,7 @@ ssh -F <해커톤 ssh 설정> -N -L 18080:127.0.0.1:8080 hk-ops &
 **해소한 것**
 - 서버 사양·OS·RAM·설치 버전(vLLM 0.32.0 포함), GPU 메모리 값(20,480~20,912 MiB 범위로 통일), HF Hub 오프라인 재기동 뒤 새 경고 0 — 위 6절 행.
 - 배포본 = `6672867`(파일 23개 해시 일치) — 위 6절.
-- GPU API `0.0.0.0:8000` 의 도달 범위: **SSL-VPN 클라이언트에서 열려 있음(인증 없음)**. 8001·8080 은 VPN 에서 닫힘.
+- GPU API `0.0.0.0:8000` 의 도달 범위: **SSL-VPN 클라이언트에서 열려 있음**. 8001·8080 은 VPN 에서 닫힘. 인증 없음 문제는 2026-11-01 앱 수준 토큰으로 막았다(9절).
 - 2단 가드 임계값 0.16 근거 재현(최고 0.155, 최저는 주석과 달리 -0.108) — 3절.
 - 현재 배포본 오거절 값을 18건/14대화로 통일, '16건' 은 근거 없는 중간 값으로 내림 — 3절.
 - 레드팀 서비스 경로 재실행 3/112 = 2.7%(같은 결과), 대상별 분모 합이 4 큰 이유(공격 4개가 대상 2개) — `docs/redteam-summary.md`.
@@ -109,14 +109,34 @@ ssh -F <해커톤 ssh 설정> -N -L 18080:127.0.0.1:8080 hk-ops &
 **남은 것과 오너 조치**
 | 항목 | 상태 | 오너 조치 |
 |---|---|---|
-| GPU API 8000 VPN 노출 | 실측으로 확인, 미조치 | NCP 콘솔에서 ACG 인바운드 8000 을 `10.1.1.33/32` 로 좁히기. ACG 규칙 원문 확인 |
+| GPU API 8000 VPN 노출 | **2026-11-01 조치**: 포트는 VPN 에서 여전히 닿지만 `/health` 밖은 토큰 없이 401(VPN 노트북 실측, 9절) | 없음. NCP 콘솔은 오너가 쓸 수 없어 ACG 를 좁히는 조치·규칙 원문 확인은 할 수 없다(**제공 정보 없음**) |
 | 실제 브라우저의 Esc 두 번 빠른 나가기 | headless 10/10 × 4 모드만 통과 | Chrome·Edge 에서 리허설 후 결과 알려 주기 |
 | 쉬운 말 설명 검수 | 0/84 | 법률 지식이 있는 사람의 검수 |
 | 레드팀 판정 44건 재검토 | AI(Claude)만 검토 | 사람이 다시 봤는지 답하거나 'AI 검토자만' 으로 확정 |
 | 사람이 읽은 환각 비율 2~4% | 원자료 없음 | 문구 삭제 또는 `answer_eval` 45문항 직접 판정 중 선택 |
 | 발표 시간 규정 | 외부 원자료 없음(웹 공지 없음) | 대회 공지·운영진 안내의 발표·질의응답 시간 |
 | `knowledge.json` 반영 후보(J18 '2인' 1차, A17 '장관 고시 위임' 정정, A2 신청인 통지, J9 limits) | 앱 동작이 바뀌는 데이터라 미반영 | 반영 여부 결정 |
-| 앱 API 지연 재측정 | 접근 코드가 필요해 health 만 재측정 | 필요하면 접근 코드로 재측정 허용 |
+| 앱 API 지연 재측정 | **2026-11-01 완료**: 엔드포인트별 100회 순차·동시 1·2·4·8 부하(9절) | 없음 |
 | 모델 단독·PAIR-lite·GLM 레드팀, 정상 질문 오거절(공격 세트 밖) | 현재 배포본으로 재실행 안 함 | 필요 시 재실행 지시 |
 | 통계 원자료(스토킹·교제폭력·열람제한 신청 건수), 계류 법안 단계, 해바라기·스마일센터 번호, 가사비송 제163조 적용·결정서 주거 기재 실무, 민감정보·변호사법 해석 | 외부 원자료 없음 또는 기관 문의 필요 — `research/2026-10-31-정보조사.md` 10절 | 기관 문의·정보공개청구 |
 | 보호 안내 보정 재전송·지연 측정 스크립트 | 비공개 재현 | 없음(공개 필요 시 골격 추가 지시) |
+
+## 9. 2026-11-01 수정·배포·부하 실측 (`642e5e1`)
+입력은 모두 합성. 배포 상세 `docs/evidence/deploy-2026-11-01.md`, 부하·지연·토큰 상세 `docs/COST_LATENCY.md` §2-1 「부하 실측」·§3-3, 시험 판정 `docs/TEST_RESULTS.md` 「2026-11-01 수정·배포·재측정」.
+
+| 주장 | 지표 | 출처 | 명령 | 날짜 |
+|---|---|---|---|---|
+| 배포본 = `642e5e1` | `app/main.py`·`app/offsets.py`·`gpu/server.py`·`gpu/start.sh` sha256 로컬 = 서버. GPU uvicorn pid 546407, 앱 332677, vLLM 509873 은 건드리지 않음 | `docs/evidence/deploy-2026-11-01.md` | `sha256sum <파일>` (로컬·`ssh hk-ops\|hk-gpu`) | 2026-10-31 23:3x |
+| GPU `:8000` 은 토큰 없이 못 쓴다 | `POST /embed` 토큰 없음·틀림 → hk-ops 401·401, VPN 노트북 401·401, 올바른 토큰 200. `GET /health` 만 200(참·거짓만, `auth:true`). 수정 전 토큰 없음 200 | 같음 | hk-ops `curl`, 노트북 `Invoke-WebRequest` | 같음 |
+| 토큰은 로그에 없다 | `gpu.log`·`llm.log`·`app.log` 출현 0건 | 같음 | `grep -cF -f ~/.config/sumeunjip/gpu_token <로그>` | 같음 |
+| 위치 단위 오류(P0-04) 해소 | 이모지 문서 doccheck `offset_unit:utf16`, UTF-16 으로 자른 span = 단서 원문(주소 15–34, 전화 39–52). rewrite 결과에 이모지 2개 유지·단서 원문 0 | 같음 | 터널 18080 `/api/doccheck`·`/api/rewrite` | 같음 |
+| 긴 서류 뒤쪽 단서(P0-05) 해소 | 700자 뒤 주소·학교 합성 단서 0/8 → **8/8**, 전체 10/27 → 18/27(1,500·3,000자 문서, 같은 합성 문장). 요청당 0.15~0.41초 | 이 문서(원자료는 저장소 밖 작업 폴더 `p005v2/p005_app_raw.json`) | 터널 18080 `/api/doccheck` 27건 | 2026-11-01 00:40 |
+| GPU 메모리 가드 | GPU 서버 프로세스 5,686~5,790 MiB(OOM 직후 8,566), 전체 19,648~19,752 / 23,034 MiB. 재기동 뒤 `OutOfMemoryError` 0. OOM → 503 은 단위 시험으로만 확인 | 같음, `gpu/tests/test_auth_guard.py` | `nvidia-smi --query-compute-apps=pid,used_memory --format=csv,noheader` | 2026-10-31 23:33, 11-01 00:41 |
+| 동시 부하에서 오류보다 품질이 먼저 떨어진다 | 동시 1·2·4·8: answer p95 8.4/11.3/16.5/17.8초, 발췌 대체 3.6/4.9/14.0/50.5%, 오류는 1,500자 rewrite 504 동시 4·8 각 2건뿐, GPU 여유 최소 2,558 MiB | `data/eval/results_load.json` | 저장소 밖 `load.py`(닫힌 루프, 단계 3분) | 2026-10-31 23:37–23:52 |
+| L4 1장 용량 | 품질 유지(동시 2) 시간당 약 200 세션, 꽉 찰 때 세션당 약 9.7원(gov 정가 1,943원/h) | `docs/COST_LATENCY.md` §3-3 | answer 처리 수 × 3,600 ÷ 단계 시간 ÷ 4 | 같음 |
+| 엔드포인트 100회 순차 | answer p50 4.87 · p95 9.94 · p99 11.25초, intake p95 1.94초, search p95 1.09초, 전부 200 | `data/eval/results_latency_tokens.json` `sequential_100` | 저장소 밖 `run_seq.sh` | 2026-10-31 23:53 ~ 11-01 00:20 |
+| 세션당 실제 토큰 | 약 22,349(입력 21,772, 출력 577, LLM 7.5회). 이전 글자 환산 추정 12.4k 의 약 1.8배 | 같은 파일 `tokens.per_session` | vLLM 응답 `usage` (hk-gpu 안 실행) | 2026-11-01 00:21–00:30 |
+| answer 시간 구성 | 생성 53.4%, 검증 LLM 35.4%, 검증용 재순위 7.1%, 재생성 4.1%. 검증 p95 3.53초 | 같은 파일 `answer_stage_timing` | 같음 | 같음 |
+| 단위 시험 | 앱 572 passed · 36 xfailed, gpu 187 passed · 1 skipped · 4 xfailed, rc 0 | `docs/TEST_RESULTS.md` | `.venv/bin/python -m pytest -q`; `cd gpu && python -m pytest -q` | 2026-11-01 00:4x |
+
+남은 것: `tools/eval*.py` 는 GPU 를 직접 부를 때 토큰을 보내지 않아 운영 GPU 에서 401 을 받는다(수정 범위 밖). 직장 이름 단서는 GLiNER 가 자주 놓친다(이번 재측정에서도 0~1건, rewrite LLM 이 가렸지만 `[학교 비공개]` 로 이름을 잘못 붙임).

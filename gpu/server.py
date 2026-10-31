@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import asyncio
+import hmac
 import json
 import os
 import re
@@ -19,6 +20,14 @@ import verify
 from guard import THIRD_PARTY, answer_locate_intent, assess, embed_locate, rule_locate_intent
 
 MAX_BODY = 20 * 1024
+# GLiNER 는 앞쪽 약 700자(토큰 상한)만 본다 → 700자 조각으로 나눠 돌리고 겹친 구간은 병합한다.
+NER_CHUNK = 700
+NER_OVERLAP = 100
+# 이 바이트를 넘는 요청 뒤에는 torch.cuda.empty_cache() 로 캐시 블록을 돌려준다(메모리 단편화 방지).
+EMPTY_CACHE_BYTES = int(os.environ.get("EMPTY_CACHE_BYTES", "4096"))
+# 공유 토큰(X-Internal-Token). NCP ACG 를 바꿀 수 없어 :8000 을 앱 수준에서 막는다.
+DEFAULT_TOKEN_FILE = "~/.config/sumeunjip/gpu_token"
+TOKEN_HEADER = "x-internal-token"
 MAX_TEXTS = 64
 MAX_DOCS = 100
 NER_THRESHOLD = 0.4
@@ -98,6 +107,65 @@ async def body_limit(request: Request, call_next):
     body = await request.body()
     if len(body) > MAX_BODY:
         return JSONResponse({"detail": "payload too large"}, status_code=413)
+    try:
+        return await call_next(request)
+    finally:
+        if len(body) > EMPTY_CACHE_BYTES:
+            _empty_cache()
+
+
+def _empty_cache() -> None:
+    try:
+        import torch
+
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+    except Exception:
+        pass
+
+
+def _is_oom(exc: BaseException) -> bool:
+    try:
+        import torch
+
+        oom = getattr(getattr(torch, "cuda", None), "OutOfMemoryError", None)
+        if oom is not None and isinstance(exc, oom):
+            return True
+    except Exception:
+        pass
+    return isinstance(exc, RuntimeError) and "out of memory" in str(exc).lower()
+
+
+@app.exception_handler(RuntimeError)
+async def runtime_error(request: Request, exc: RuntimeError):
+    # CUDA OOM 은 일시적 → 캐시를 비우고 503(앱은 503 을 '잠시 못 씀'으로 다룬다).
+    # 본문·입력은 응답에 싣지 않는다. OOM 이 아니면 그대로 다시 던져 기존처럼 500(추적은 로그).
+    if _is_oom(exc):
+        _empty_cache()
+        return JSONResponse({"detail": "gpu busy"}, status_code=503)
+    raise exc
+
+
+def load_token() -> str | None:
+    """GPU_TOKEN_FILE(기본 ~/.config/sumeunjip/gpu_token)의 토큰. 없거나 비면 None(→ 전부 거절)."""
+    path = Path(os.path.expanduser(os.environ.get("GPU_TOKEN_FILE") or DEFAULT_TOKEN_FILE))
+    try:
+        tok = path.read_text(encoding="utf-8").strip()
+    except OSError:
+        return None
+    return tok or None
+
+
+@app.middleware("http")
+async def require_token(request: Request, call_next):
+    """GET /health 를 뺀 모든 경로에 X-Internal-Token 필요. 토큰 파일이 없으면 fail-closed.
+    401 본문은 일반 문구만, 헤더 값은 로그하지 않는다(uvicorn 접근 로그는 메서드·경로·상태만)."""
+    if request.method == "GET" and request.url.path == "/health":
+        return await call_next(request)
+    tok = load_token()
+    given = request.headers.get(TOKEN_HEADER, "")
+    if tok is None or not hmac.compare_digest(tok.encode("utf-8"), given.encode("utf-8")):
+        return JSONResponse({"detail": "unauthorized"}, status_code=401)
     return await call_next(request)
 
 
@@ -221,16 +289,17 @@ def _require(name: str):
 # --- 엔드포인트 ---
 @app.get("/health")
 def health():
+    """인증 없이 열려 있으므로 참·거짓만 돌려준다(모델·장치·설정 수치를 드러내지 않음)."""
     import torch
 
-    device = "cuda" if torch.cuda.is_available() else "cpu"
     return {
         "ok": True,
         "models": {k: M.get(k) is not None for k in ("embedder", "reranker", "gliner")},
-        "device": device,
-        "llm": llm.llm_alive(),
-        "verify": {"excluded_ngrams": len(verify.guard().excluded),
-                   "budget_s": verify.ANSWER_BUDGET_S},
+        "cuda": bool(torch.cuda.is_available()),
+        "llm": bool(llm.llm_alive()),
+        "auth": load_token() is not None,
+        # 노출 금지 조문 n-gram 표가 실렸는지(비면 출력 가드가 fail-open, P1-17). 개수는 숨긴다.
+        "ngrams": len(verify.guard().excluded) > 0,
     }
 
 
@@ -256,6 +325,27 @@ def rerank(req: RerankIn):
     return {"scores": [float(s) for s in scores]}
 
 
+def chunk_text(text: str, size: int = NER_CHUNK, overlap: int = NER_OVERLAP) -> list[tuple[int, str]]:
+    """(시작 위치, 조각) 목록. 조각은 size 자 이하이고 이웃 조각과 overlap 자 겹친다.
+    가능하면 조각 끝을 공백·줄바꿈에서 자른다(단서가 경계에서 잘리지 않게). 위치는 코드 포인트."""
+    n = len(text)
+    if n <= size:
+        return [(0, text)]
+    out: list[tuple[int, str]] = []
+    start = 0
+    while start < n:
+        end = min(start + size, n)
+        if end < n:
+            cut = max(text.rfind(" ", start + overlap + 1, end), text.rfind("\n", start + overlap + 1, end))
+            if cut > start + overlap:
+                end = cut
+        out.append((start, text[start:end]))
+        if end >= n:
+            break
+        start = end - overlap
+    return out
+
+
 @app.post("/ner")
 def ner(req: NerIn):
     import torch
@@ -263,23 +353,21 @@ def ner(req: NerIn):
     spans = regex_spans(req.text)
     gliner = M.get("gliner")
     if gliner is not None:
-        with torch.inference_mode():
-            ents = gliner.predict_entities(
-                req.text, list(GLINER_LABELS.keys()), threshold=NER_THRESHOLD
-            )
-        for e in ents:
-            label = GLINER_LABELS.get(e["label"], e["label"])
-            if label not in LABELS:
-                continue
-            spans.append(
-                {
-                    "start": int(e["start"]),
-                    "end": int(e["end"]),
-                    "label": label,
-                    "text": e["text"],
-                    "score": float(e["score"]),
-                }
-            )
+        labels = list(GLINER_LABELS.keys())
+        for off, chunk in chunk_text(req.text):
+            with torch.inference_mode():
+                ents = gliner.predict_entities(chunk, labels, threshold=NER_THRESHOLD)
+            for e in ents:
+                label = GLINER_LABELS.get(e["label"], e["label"])
+                if label not in LABELS:
+                    continue
+                s, t = off + int(e["start"]), off + int(e["end"])
+                if not (0 <= s < t <= len(req.text)):
+                    continue
+                spans.append(
+                    {"start": s, "end": t, "label": label, "text": req.text[s:t],
+                     "score": float(e["score"])}
+                )
     return {"spans": merge_spans(spans)}
 
 

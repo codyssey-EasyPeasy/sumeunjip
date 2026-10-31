@@ -27,11 +27,26 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from . import guard as _guard
 from . import humanize as _hz
 from . import llm as _llm
+from . import offsets as _offsets
 from . import retrieval as _retrieval
 from .engine import VICTIM_LABEL, VICTIM_TYPES, Engine, load_knowledge
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_GPU_URL = "http://10.1.2.33:8000"
+# GPU API 공유 토큰(X-Internal-Token). GPU :8000 은 ACG 를 바꿀 수 없어 앱 수준에서 막는다.
+DEFAULT_GPU_TOKEN_FILE = "~/.config/sumeunjip/gpu_token"
+GPU_TOKEN_HEADER = "X-Internal-Token"
+
+
+def gpu_auth_headers() -> dict[str, str]:
+    """GPU_TOKEN_FILE(기본 ~/.config/sumeunjip/gpu_token)의 토큰을 헤더로. 파일이 없으면 빈 dict
+    (GPU 가 401 → 각 기능은 기존 실패 경로대로 체크박스 방식으로 동작). 토큰은 로그하지 않는다."""
+    path = Path(os.path.expanduser(os.environ.get("GPU_TOKEN_FILE") or DEFAULT_GPU_TOKEN_FILE))
+    try:
+        tok = path.read_text(encoding="utf-8").strip()
+    except OSError:
+        return {}
+    return {GPU_TOKEN_HEADER: tok} if tok else {}
 
 # 접근 로그: 메서드·경로·상태코드 한 줄만. 본문·쿼리스트링은 절대 남기지 않는다.
 logger = logging.getLogger("sumeunjip.access")
@@ -64,8 +79,8 @@ REPHRASE_MESSAGE = (
 
 PLACEHOLDER_HTML = (
     '<!doctype html><html lang="ko"><meta charset="utf-8">'
-    "<title>숨은집 지킴이</title>"
-    "<body><h1>숨은집 지킴이</h1>"
+    "<title>보안 예보</title>"
+    "<body><h1>보안 예보</h1>"
     "<p>프런트엔드가 아직 준비되지 않았습니다.</p></body></html>"
 )
 
@@ -255,7 +270,8 @@ def create_app(
 
     @asynccontextmanager
     async def lifespan(app: FastAPI):
-        client = httpx.AsyncClient(transport=transport)
+        # GPU 만 부르는 클라이언트라 기본 헤더로 토큰을 싣는다(main·llm·retrieval 의 모든 GPU 호출).
+        client = httpx.AsyncClient(transport=transport, headers=gpu_auth_headers())
         app.state.client = client
         app.state.retriever = retriever
         app.state.engine = engine
@@ -351,9 +367,14 @@ def create_app(
             r = await client.post(f"{url}/ner", json={"text": req.text}, timeout=10.0)
             r.raise_for_status()
             data = r.json()
-            return {"available": True, "spans": data.get("spans") or []}
-        except (httpx.HTTPError, ValueError, KeyError, TypeError):
-            return {"available": False}
+            spans = data.get("spans") or []
+            if not isinstance(spans, list):
+                raise TypeError("spans")
+            # GPU 는 파이썬 코드 포인트 위치를 준다 → 브라우저 문자열 위치(UTF-16)로 바꿔 돌려준다(P0-04).
+            return {"available": True, "offset_unit": _offsets.OFFSET_UNIT,
+                    "spans": _offsets.spans_to_client(req.text, spans)}
+        except (httpx.HTTPError, ValueError, KeyError, TypeError, AttributeError):
+            return {"available": False, "offset_unit": _offsets.OFFSET_UNIT}
 
     # --- 내부 LLM 기능(SPEC §8). 실패하면 503 → 화면은 체크박스 방식으로 동작. ---
     def _llm_down(e: _llm.LLMUnavailable) -> HTTPException:
@@ -447,7 +468,8 @@ def create_app(
         try:
             out = await _llm.rewrite(
                 req.text,
-                [s.model_dump() for s in req.spans],
+                # 브라우저 span 은 UTF-16 위치 → 코드 포인트로 바꿔 GPU 로 넘긴다(P0-04).
+                _offsets.spans_from_client(req.text, [s.model_dump() for s in req.spans]),
                 client=client,
                 gpu_url=url,
             )
@@ -458,12 +480,20 @@ def create_app(
             if rewrite_busy[who] <= 0:
                 rewrite_busy.pop(who, None)
         if out.get("refused"):
-            return {"refused": True, "message": REFUSAL_MESSAGE, "alternatives": _alternatives(req.text)}
-        return {"refused": False, **out}
+            return {"refused": True, "message": REFUSAL_MESSAGE, "alternatives": _alternatives(req.text),
+                    "offset_unit": _offsets.OFFSET_UNIT}
+        return {"refused": False, **out, "offset_unit": _offsets.OFFSET_UNIT}
 
     static_dir = REPO_ROOT / "web" / "static"
     if static_dir.is_dir():
         app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
+
+    @app.get("/favicon.ico", include_in_schema=False)
+    async def favicon():
+        favicon_file = REPO_ROOT / "web" / "favicon_easyPeasy.ico"
+        if favicon_file.is_file():
+            return FileResponse(str(favicon_file), media_type="image/x-icon")
+        return JSONResponse({"detail": "Not Found"}, status_code=404)
 
     @app.get("/")
     async def index():

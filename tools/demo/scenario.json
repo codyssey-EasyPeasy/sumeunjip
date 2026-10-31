@@ -1,0 +1,73 @@
+{
+  "_comment": [
+    "시연 영상 시나리오. 입력은 모두 합성 문장이다(실존 인물·주소 없음, 이름·지명은 ○○).",
+    "selectors: 키마다 후보 목록. 앞에서부터 시도해 처음 찾은 것을 쓴다.",
+    "  문자열 = Playwright 선택자(css 또는 'text=' 등), 객체 = {role,name} | {label} | {text} | {placeholder}.",
+    "  name/label/text 가 '/.../' 이면 정규식이다. 화면을 다시 만든 뒤에는 --check 로 빠진 키부터 고친다.",
+    "steps: 순서대로 실행. maxSec 을 넘기면 실패(녹화 모드), dwellMs 는 동작이 끝난 뒤 화면을 보여 주는 시간."
+  ],
+  "video": { "width": 1920, "height": 1080, "fps": 30, "totalCapSec": 118 },
+  "browser": { "viewport": { "width": 1920, "height": 1080 }, "deviceScaleFactor": 1, "zoom": 1.25, "locale": "ko-KR",
+    "_zoom": "녹화 프레임은 CSS 뷰포트 크기로 찍힌다(DSF 무시). 그래서 1920x1080 뷰포트에 body zoom 으로 125% 확대한다. 캡션 띠는 body 밖이라 확대되지 않는다." },
+  "typing": { "delayMs": 22 },
+
+  "inputs": {
+    "intake": "남편한테 몇 년 동안 맞다가 아이 둘 데리고 집을 나와서 친정 근처로 막 이사했어요. 큰애는 초등학생이라 전학해야 하고 작은애는 어린이집 다녀요. 남편이 먼저 이혼 소장을 냈다고 법원에서 서류가 왔어요.",
+    "manualFlagLabel": "옛 주소(가해자 거주지)로 우편물이 감",
+    "manualFlagId": "mail_old_address",
+    "askCardTitle": "/우편물/",
+    "askQuestion": "예전 집으로 가는 제 우편물을 새로 사는 곳으로 받을 수 있나요?",
+    "doc": "진술서\n신청인 김○○(1980년생)은 2026년 9월 서울특별시 ○○구 ○○로 12, ○○아파트 101동 1203호로 이사하였습니다.\n연락처는 010-0000-0000이며, 자녀 이○○는 ○○초등학교 3학년 2반에 다니고 있습니다.\n평일에는 ○○역 3번 출구 앞 ○○마트에서 오후 6시까지 근무하고, 매주 화요일에는 ○○동 주민센터 근처 소아과에 다닙니다.",
+    "locateQuestion": "남편이 지금 어디 사는지 알 수 있는 방법 있나요?",
+    "maskLocateInput": true
+  },
+
+  "selectors": {
+    "quickExit":      ["#quick-exit", {"role": "button", "name": "/빠른 나가기/"}],
+    "emergency":      [".emergency-list", "[aria-label='긴급 연락처']", "text=1366"],
+    "safetyNotice":   ["#safety:not([hidden])", {"role": "dialog", "name": "/시작하기 전에/"}, "text=시작하기 전에 확인해 주세요"],
+    "safetyClose":    ["#safety-toggle", {"role": "button", "name": "/^(안내 접기|닫기)$/"}],
+    "tabDiagnose":    ["#tab-diagnose", {"role": "tab", "name": "/보호 제도/"}],
+    "intakeText":     ["#intake-text", {"label": "/상황을 편하게/"}],
+    "intakeBtn":      ["#intake-btn", {"role": "button", "name": "/항목 골라/"}],
+    "autoNotice":     ["#auto-notice:not([hidden])", {"text": "/자동으로 고른 항목/"}],
+    "manualFlag":     ["label[data-flag='mail_old_address'] input", {"label": "옛 주소(가해자 거주지)로 우편물이 감"}],
+    "autoConfirm":    ["#auto-confirm", {"label": "/고른 항목을 확인했습니다/"}],
+    "diagnoseSubmit": ["#diagnose-submit", {"role": "button", "name": "/보호 제도 보기/"}],
+    "resultsHead":    ["#diagnose-results .results-head", {"role": "heading", "name": "/내게 맞는 보호 제도/"}],
+    "nowFirst":       [".now-list", {"role": "heading", "name": "/지금 먼저/"}],
+    "notifyAck":      [".notify-ack input[type=checkbox]", {"label": "/상대에게 알려질 수 있다는 점을 확인/"}],
+    "moreBlock":      ["details.more-block > summary", {"text": "/건 더 보기/"}],
+    "cards":          ["#diagnose-results article.card", "#diagnose-results article"],
+    "cardTitle":      [".card-title", "h3"],
+    "askToggle":      [".ask-toggle", {"role": "button", "name": "/무슨 뜻/"}],
+    "askInput":       [".ask-body input[type=text]", {"placeholder": "/궁금|예:/"}, "input[type=text]"],
+    "askSubmit":      [{"role": "button", "name": "/물어보기/"}],
+    "askOut":         [".ask-out", "[aria-live=polite]"],
+    "answerDone":     [".answer-box", ".refusal-box", ".notice"],
+    "tabDocs":        ["#tab-docs", {"role": "tab", "name": "/서류/"}],
+    "docText":        ["#doc-text", {"label": "/서류 내용/"}],
+    "docTier1":       ["#doc-tier1", {"role": "button", "name": "/기본 점검/"}],
+    "docTier2":       ["#doc-tier2", {"role": "button", "name": "/정밀 점검/"}],
+    "docStatus":      ["#doc-status"],
+    "docHighlight":   ["#doc-highlight", "[aria-label='단서가 표시된 서류 내용']"],
+    "docRewrite":     ["#doc-rewrite", {"role": "button", "name": "/안전한 문장/"}],
+    "rewriteResult":  ["#doc-rewrite-result:not([hidden])", ".rewrite-result:not([hidden])"],
+    "tabSearch":      ["#tab-search", {"role": "tab", "name": "/근거/"}],
+    "searchInput":    ["#search-q", {"label": "/궁금한 점/"}],
+    "searchBtn":      ["#search-btn", {"role": "button", "name": "/근거 찾기/"}],
+    "refusalBox":     [".refusal-box", "#search-results .notice"]
+  },
+
+  "steps": [
+    { "id": "intro",    "maxSec": 12, "dwellMs": 4000, "caption": "보안 예보 — 첫 화면: 안전 안내와 긴급 연락처, 오른쪽 위 ‘빠른 나가기’" },
+    { "id": "intake",   "maxSec": 22, "dwellMs": 2000,  "caption": "말로 설명하기 — 상황을 적으면 AI가 해당 항목을 미리 골라 줍니다 (합성 문장)" },
+    { "id": "confirm",  "maxSec": 12, "dwellMs": 2500, "caption": "자동 선택은 제출되지 않습니다 — 직접 고치고 ‘확인했습니다’를 체크해야 진행" },
+    { "id": "diagnose", "maxSec": 16, "dwellMs": 4000, "caption": "진단 결과 — 급한 것부터 ‘지금 먼저 할 일’, 상대에게 알려질 수 있는 제도는 경고 확인 뒤 펼침" },
+    { "id": "ask",      "maxSec": 28, "dwellMs": 6000, "caption": "‘이게 무슨 뜻인가요?’ — 안내문·조문만 근거로 답하고 배지로 답의 종류를 표시" },
+    { "id": "doccheck", "maxSec": 18, "dwellMs": 4500, "caption": "서류 점검 — 기본 점검은 브라우저 안에서만, 정밀 점검은 누를 때만 서버로" },
+    { "id": "rewrite",  "maxSec": 22, "dwellMs": 5000, "caption": "안전한 문장으로 바꾸기 — 주소 단서를 가린 제안 (본인이 확인 후 사용)" },
+    { "id": "locate",   "maxSec": 12, "dwellMs": 5000, "caption": "다른 사람의 위치를 찾는 질문은 거절하고, 내 정보를 지키는 제도를 안내합니다 (질문 입력칸은 가림)" },
+    { "id": "exit",     "maxSec": 10, "dwellMs": 3500, "caption": "Esc 두 번 → 입력을 지우고 날씨 검색 화면으로 즉시 이동" }
+  ]
+}
