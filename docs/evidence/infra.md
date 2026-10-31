@@ -4,7 +4,11 @@
 접속은 `ssh -F <해커톤 ssh 설정> hk-ops|hk-gpu` 로 했다(사설망 10.1.1.33 / 10.1.2.33, 노트북 VPN 경유).
 아래 출력은 명령 결과를 그대로 옮겼고, 길면 줄였다(줄인 곳은 `…` 로 표시).
 
+> **갱신(2026-10-31 20:54~21:15 KST 재실측)** — HF Hub 오프라인 배포·재기동(`6672867`) 뒤 다시 잰 원본은 [`infra-2026-10-31-night.md`](infra-2026-10-31-night.md)다. 바뀐 점: GPU 모델 서버 pid 529782→533224(18:56:50 재기동)·앱 pid 323019→325441(18:57:23), HF Hub 새 경고 0, 배포본=`6672867`, GPU 8000 이 VPN 클라이언트에서 열림. 아래 본문은 18:1x 측정 그대로 두고 바뀐 줄에만 표시했다.
+
 ## 1. 구성 요약
+
+하드웨어(20:54 실측, `lscpu`·`/etc/os-release`·`uname -r`·`nproc`·`free -h`): hk-ops Intel Xeon Gold 5220 2 vCPU·RAM 7.8Gi(사용 547Mi)·디스크 99G(4%), hk-gpu Intel Xeon Silver 4416+ 4 vCPU·RAM 47Gi(사용 6.9Gi)·디스크 99G(50%)·NVIDIA L4(드라이버 580.159.04, CUDA 13.0). 둘 다 Ubuntu 24.04.1 LTS, 커널 6.8.0-136-generic. 설치 버전: vLLM 0.32.0, 모델 서버 venv torch 2.15.0·transformers 5.16.1·sentence-transformers 6.2.0·FlagEmbedding 1.4.2·gliner 0.2.29·fastapi 0.162.0·uvicorn 0.54.0, 앱 venv fastapi 0.162.0·uvicorn 0.54.0·httpx 0.28.1·pydantic 2.14.2. 원본: [`infra-2026-10-31-night.md`](infra-2026-10-31-night.md) 1·5절.
 
 | 서버 | 프로세스 | 바인드 | 역할 |
 |---|---|---|---|
@@ -13,7 +17,7 @@
 | hk-gpu | `vllm serve Qwen3-8B-AWQ` | `127.0.0.1:8001` | 로컬 LLM(thinking 끔, 요청 로그 끔) |
 
 - 앱 서버는 GPU 서버를 `GPU_URL=http://10.1.2.33:8000`(사설망)으로 부른다. GPU 서버의 LLM 호출 주소 `LLM_URL` 은 설정돼 있지 않아 기본값 `http://127.0.0.1:8001/v1`(같은 서버의 vLLM)을 쓴다. 근거는 아래 4절.
-- GPU 서버 8000 은 `0.0.0.0` 에 열려 있다. 사설 서브넷 안에서만 닿는지(ACG·방화벽 규칙)는 이번에 확인하지 않았다(**미확인**).
+- GPU 서버 8000 은 `0.0.0.0` 에 열려 있다. **SSL-VPN 클라이언트(노트북, 172.16.0.26)에서 `10.1.2.33:8000` TCP 연결과 `GET /health` 200 이 된다**(2026-10-31 20:55 실측, [`infra-2026-10-31-night.md`](infra-2026-10-31-night.md) 7절). 즉 ACG 가 이 포트를 앱 서버로만 좁히지 않았고, 인증 없는 GPU API 가 VPN 사용자에게 열려 있다. vLLM 8001·앱 8080 은 `127.0.0.1` 바인드라 VPN 에서 닫혀 있다. ACG 규칙 원문은 보지 않았다(오너 콘솔, **미확인**).
 - 시뮬레이터용 GLM-5.3-Flash 경로(서버의 `127.0.0.1:18090`, 개발 기기 중계 역터널)는 합성 데모·시뮬레이터 전용이다. 운영 코드에는 이 주소가 없다(5절).
 
 ## 2. GPU
@@ -28,6 +32,8 @@ pid, process_name, used_gpu_memory [MiB]
 509919, VLLM::EngineCore, 13948 MiB
 529782, /home1/ncloud/sumeunjip/gpu/.venv/bin/python, 6950 MiB
 ```
+
+갱신(20:5x, 재기동 뒤): 사용 20,480 MiB = vLLM 13,948 + 모델 서버 6,518 MiB([`infra-2026-10-31-night.md`](infra-2026-10-31-night.md) 2절).
 
 L4 한 장(23,034 MiB ≈ 22.5 GiB)에 vLLM(약 13.6 GiB, `--gpu-memory-utilization 0.6`)과 임베딩·재순위·GLiNER 서버(약 6.8 GiB)가 함께 올라가 있다.
 
@@ -59,6 +65,14 @@ GPU_URL=http://10.1.2.33:8000
 
 hk-gpu$ tr "\0" "\n" < /proc/529782/environ | grep -E "^(LLM_URL|LLM_MODEL|GPU_URL|HF_HUB_OFFLINE|TRANSFORMERS_OFFLINE)="
 (출력 없음 — LLM_URL 미설정이라 gpu/llm.py 기본값 http://127.0.0.1:8001/v1 사용)
+
+# 갱신 2026-10-31 20:5x KST (재기동 뒤 pid 533224 / vLLM 509873)
+hk-gpu$ tr "\0" "\n" < /proc/533224/environ | grep -E "^(HF_HUB_OFFLINE|TRANSFORMERS_OFFLINE)="
+TRANSFORMERS_OFFLINE=1
+HF_HUB_OFFLINE=1
+hk-gpu$ tr "\0" "\n" < /proc/509873/environ | grep -E "^(HF_HUB_OFFLINE|VLLM_NO_USAGE_STATS)="
+VLLM_NO_USAGE_STATS=1
+HF_HUB_OFFLINE=1
 ```
 
 - vLLM: `--no-enable-log-requests --no-enable-log-outputs --disable-uvicorn-access-log` — 요청 본문·생성 결과·접속 로그를 남기지 않는다.
@@ -76,7 +90,7 @@ hk-gpu$ cd ~/sumeunjip && sha256sum gpu/*.py
 local$  (같은 목록을 저장소에서 sha256sum) → diff
 ```
 
-결과: 앱 서버 13개 파일, GPU 서버 `gpu/*.py` 전부 해시가 같다(파일 순서만 다름). 예: `app/guard.py 68055350…d317`, `gpu/server.py 68f35357…7a66`, `gpu/verify.py 29532ab1…00ae`.
+결과: 앱 서버 13개 파일, GPU 서버 `gpu/*.py` 전부 해시가 같다(파일 순서만 다름). **갱신(21:0x 재대조):** 앱 12개·GPU 11개(`gpu/*.py·*.sh·*.json`) 파일이 커밋 `6672867` 과 모두 같다([`infra-2026-10-31-night.md`](infra-2026-10-31-night.md) 6절). 예: `app/guard.py 68055350…d317`, `gpu/server.py 68f35357…7a66`, `gpu/verify.py 29532ab1…00ae`.
 
 ```console
 local$ grep -rnoE "https?://[A-Za-z0-9._:/-]+" app gpu/*.py web/index.html web/static | sort -u
@@ -86,7 +100,7 @@ web/static/app.js:1290:https://www.google.com/search   # '빠른 나가기' 이�
 ```
 
 - 사용자 입력을 외부 LLM·외부 API 로 보내는 주소는 없다. 브라우저가 외부로 가는 것은 '빠른 나가기'를 누를 때의 페이지 이동 하나뿐이다.
-- 예외로 확인된 외부 접속: GPU 서버 `gpu.log` 에 기동할 때마다 `Warning: You are sending unauthenticated requests to the HF Hub` 가 22번 남아 있다. 모델 서버가 **기동 시** Hugging Face Hub 에 모델 파일 확인 요청을 보낸다는 뜻이다(사용자 입력은 실리지 않음). 프로세스 환경에 `HF_HUB_OFFLINE` 이 없다. 기동 시 외부 접속까지 끊으려면 `HF_HUB_OFFLINE=1` 로 띄워야 한다(이번에는 바꾸지 않음).
+- 예외로 확인됐던 외부 접속(해소됨): GPU 서버 `gpu.log` 에 기동할 때마다 `Warning: You are sending unauthenticated requests to the HF Hub` 가 남았다(18:1x 기준 22번). 모델 서버가 **기동 시** Hugging Face Hub 에 모델 파일 확인 요청을 보낸다는 뜻이었다(사용자 입력은 실리지 않음). **적용 전 22회 → `HF_HUB_OFFLINE=1` 적용·재기동(`6672867`, 18:56:50) 뒤 새 경고 0회**: 20:5x 재측정에서 `grep -c` 는 22 그대로이고 마지막 경고(8351행)는 직전 프로세스 기동 때이며, 현재 모델 서버·vLLM 프로세스 환경에 `HF_HUB_OFFLINE=1` 이 있다([`infra-2026-10-31-night.md`](infra-2026-10-31-night.md) 4절).
 
 ## 6. 로그에 본문이 남지 않는다는 근거
 
