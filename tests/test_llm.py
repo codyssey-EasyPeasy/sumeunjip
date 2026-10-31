@@ -123,7 +123,7 @@ def test_features_off_by_env(make_client, monkeypatch, gpu):
 # --- intake -----------------------------------------------------------------
 def test_intake_filters_to_known_flags(make_client, gpu):
     with make_client(httpx.MockTransport(gpu)) as c:
-        r = c.post("/api/intake", json={"text": "최근 이사했고 소송이 걸려 있습니다"})
+        r = c.post("/api/intake", json={"text": "남편을 피해 최근 이사했고 소송이 걸려 있습니다"})
         assert r.status_code == 200
         d = r.json()
         assert d["refused"] is False
@@ -131,7 +131,7 @@ def test_intake_filters_to_known_flags(make_client, gpu):
         assert d["flags"] == ["moved_recently", "lawsuit"]
         assert d["ai_generated"] is True
         assert d["unclear"] == ["자녀가 학교에 다니나요?"]
-    assert gpu.llm_calls("intake") == [{"text": "최근 이사했고 소송이 걸려 있습니다"}]
+    assert gpu.llm_calls("intake") == [{"text": "남편을 피해 최근 이사했고 소송이 걸려 있습니다"}]
 
 
 def test_intake_drops_bad_victim_type_and_guarded_questions(make_client, gpu):
@@ -287,10 +287,10 @@ def test_input_guard_same_decision_on_all_endpoints(make_client, gpu):
     gpu.intent_scores = {other: 0.0429}
     with make_client(httpx.MockTransport(gpu)) as c:
         assert _three(c, other) == (True, True, True)
-    # 허용 목록이라도 0.15 를 넘으면 거절.
+    # 2단 가드(2026-10-31 오너 결정): 임베딩 점수만으로는 본인 보호 질문을 거절하지 않는다.
     gpu.intent_scores = {MAIL_Q: 0.2}
     with make_client(httpx.MockTransport(gpu)) as c:
-        assert _three(c, MAIL_Q) == (True, True, True)
+        assert _three(c, MAIL_Q) == (False, False, False)
 
 
 @pytest.mark.parametrize("q", [

@@ -15,7 +15,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
 import llm
-from guard import answer_locate_intent, embed_locate, rule_locate_intent
+from guard import THIRD_PARTY, answer_locate_intent, assess, embed_locate, rule_locate_intent
 
 MAX_BODY = 20 * 1024
 MAX_TEXTS = 64
@@ -393,9 +393,14 @@ def _llm_down(exc: Exception | None = None) -> JSONResponse:
 
 
 def input_flagged(text: str) -> bool:
-    """LLM 입력 질문 가드: 규칙 OR 임베딩(THRESH, 좁은 본인 보호 허용 목록 예외)."""
-    rule, score = locate_score(text)
-    return rule or embed_locate(text, score, THRESH)
+    """LLM 입력 질문 가드(2단, 2026-10-31 오너 결정): 분명한 타인 소재 탐색(THIRD_PARTY_LOCATE)만 거절.
+
+    앱(app/main.py)과 같은 guard.assess 를 쓴다. 임베딩 점수는 신호 하나일 뿐이고(타인 지시어가 있고 본인
+    보호 맥락이 없을 때 guard.EMB_REFUSE 초과), 본인 보호·애매한 질문은 통과시킨다. 초성 줄임(REPHRASE)은
+    앱이 먼저 걸러 여기까지 오지 않는다.
+    """
+    _rule, score = locate_score(text)
+    return assess(text, score)["tier"] == THIRD_PARTY
 
 
 def _refusal() -> dict:
@@ -407,12 +412,17 @@ def _refusal() -> dict:
 def llm_intake(req: IntakeIn):
     flags = [f.model_dump() for f in req.flags] if req.flags else llm.load_local_flags()
     ids = [f["id"] for f in flags]
+    # 특수 토큰·역할 머리말을 지우고, 도우미 지시문이 든 문장은 빼고 나서 모델에 보낸다(지시문이 있었으면
+    # 그 문장을 뺀 글로 한 번만 돌린다). 결과 flag 는 정리된 글에 근거 낱말이 있어야 남는다.
+    text, _injected = llm.prepare_intake(req.text)
+    if not text:
+        return {"victim_type": None, "flags": [], "confidence": 0.0, "unclear": [], "ai_generated": True}
     try:
-        out = llm.chat_json(llm.intake_messages(req.text, flags), llm.intake_schema(ids),
+        out = llm.chat_json(llm.intake_messages(text, flags), llm.intake_schema(ids),
                             max_tokens=512, temperature=0.0)
     except llm.LlmDown as exc:
         return _llm_down(exc)
-    res = llm.clean_intake(out, ids)
+    res = llm.clean_intake(out, ids, text=text)
     # 확인 질문도 생성문이다: 탐색 표현이 섞이면 버린다.
     res["unclear"] = [q for q in res["unclear"] if not keyword_locate(q)]
     res["ai_generated"] = True

@@ -37,7 +37,13 @@ from typing import Any
 import httpx
 
 from . import humanize as _hz
-from .guard import answer_locate_intent
+from .guard import (
+    answer_locate_intent,
+    filter_clarify,
+    sanitize_intake_text,
+    supported_flags,
+    supported_victim_type,
+)
 from .retrieval import intent
 
 # GPU 서버 본문 상한(20KB) 안쪽으로 컨텍스트를 자른다.
@@ -163,11 +169,23 @@ async def intake(
     gpu_url: str,
     known_flags: set[str],
     victim_types: tuple[str, ...],
+    asked: list[str] | None = None,
 ) -> dict[str, Any]:
-    data = await _post(client, f"{gpu_url}/llm/intake", {"text": text}, timeout=60.0)
+    """자유서술 → 체크 항목 후보(레드팀 고칠 곳 2·3 반영).
+
+    - 보내기 전: 채팅 템플릿 특수 토큰·역할 머리말을 지우고, 도우미 지시문이 든 문장('flags 에 … 넣어')은 뺀다.
+    - 받은 뒤: 사용자 글에 근거 낱말이 없는 flag·피해 유형은 버린다. 확인 질문은 위치·이름을 묻지 않는
+      범주 질문으로 바꾸고, 이미 물은 질문(asked: 이력의 도우미 턴)·사용자 글 되풀이는 뺀다.
+    """
+    clean, injected = sanitize_intake_text(text)
+    if not clean:
+        return {"victim_type": None, "flags": [], "confidence": 0.0, "unclear": [],
+                "ai_generated": True, "instructions_ignored": injected}
+    data = await _post(client, f"{gpu_url}/llm/intake", {"text": clean}, timeout=60.0)
 
     vt = data.get("victim_type")
     victim_type = vt if isinstance(vt, str) and vt in victim_types else None
+    victim_type = supported_victim_type(victim_type, clean)
 
     raw_flags = data.get("flags")
     flags: list[str] = []
@@ -175,6 +193,7 @@ async def intake(
         for f in raw_flags:
             if isinstance(f, str) and f in known_flags and f not in flags:
                 flags.append(f)
+    flags = supported_flags(flags, clean)
 
     conf = data.get("confidence")
     try:
@@ -193,6 +212,7 @@ async def intake(
             if await intent(q, client, gpu_url, out_thresh=out_thresh()):
                 continue
             unclear.append(q)
+    unclear = filter_clarify(unclear, user_text=clean, asked=asked, flags=flags)
 
     return {
         "victim_type": victim_type,
@@ -200,6 +220,7 @@ async def intake(
         "confidence": confidence,
         "unclear": unclear,
         "ai_generated": True,
+        "instructions_ignored": injected,
     }
 
 

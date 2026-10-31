@@ -20,9 +20,11 @@ from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 from starlette.middleware.base import BaseHTTPMiddleware
 
+from . import guard as _guard
+from . import humanize as _hz
 from . import llm as _llm
 from . import retrieval as _retrieval
 from .engine import VICTIM_LABEL, VICTIM_TYPES, Engine, load_knowledge
@@ -43,6 +45,21 @@ REFUSAL_MESSAGE = (
     "이 도구는 사람이나 주소를 찾는 용도로는 쓸 수 없습니다. "
     "피해자를 보호하는 제도에 대해서만 안내합니다. "
     "긴급한 경우 112, 1366으로 연락하세요."
+)
+# 2단 가드(2026-10-31 오너 결정): 거절은 분명한 타인 소재 탐색만, 거절에도 보호 대안을 붙인다.
+THIRD_PARTY_MESSAGE = (
+    "이 도구는 다른 사람의 주소·위치·연락처를 찾는 용도로는 쓸 수 없습니다. "
+    "대신 내 정보와 안전을 지키는 데 쓸 수 있는 제도를 아래에 안내합니다. "
+    "혼자 하기 어려우면 1366(24시간)·법률구조공단 132, 위험이 급하면 112에 연락하세요."
+)
+# 애매한 질문은 거절하지 않고 이 안내와 보호 제도를 함께 보여 준다.
+PROTECTIVE_FRAMING = (
+    "이 서비스는 다른 사람을 찾는 데는 쓸 수 없고, 내 정보와 안전을 지키는 제도만 안내합니다. "
+    "혼자 하기 어려우면 1366(24시간)·법률구조공단 132, 위험이 급하면 112에 연락하세요."
+)
+REPHRASE_MESSAGE = (
+    "초성이나 줄임말만으로는 뜻을 정확히 알기 어렵습니다. 하고 싶은 말을 문장으로 다시 적어 주세요. "
+    "급하면 1366(24시간)이나 112에 바로 연락하세요."
 )
 
 PLACEHOLDER_HTML = (
@@ -69,12 +86,40 @@ class DocCheckRequest(BaseModel):
     text: str = Field(max_length=20000)
 
 
-class IntakeRequest(BaseModel):
+# 다턴 이력(브라우저가 메모리에만 들고 보낸다. 서버는 저장·로깅하지 않는다: 무상태).
+HISTORY_MAX_TURNS = 6
+HISTORY_TURN_CHARS = 500
+HISTORY_TOTAL_CHARS = 3000
+
+
+class HistoryTurn(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    role: Literal["user", "assistant"]
+    text: str = Field(max_length=HISTORY_TURN_CHARS)
+
+
+class _WithHistory(BaseModel):
+    history: list[HistoryTurn] = Field(default_factory=list, max_length=HISTORY_MAX_TURNS)
+
+    @model_validator(mode="after")
+    def _history_total(self):
+        if sum(len(t.text) for t in self.history) > HISTORY_TOTAL_CHARS:
+            raise ValueError("history too long")
+        return self
+
+    def user_turns(self) -> list[str]:
+        return [t.text for t in self.history if t.role == "user" and t.text.strip()]
+
+    def assistant_turns(self) -> list[str]:
+        return [t.text for t in self.history if t.role == "assistant" and t.text.strip()]
+
+
+class IntakeRequest(_WithHistory):
     model_config = ConfigDict(extra="forbid")
     text: str = Field(min_length=1, max_length=2000)
 
 
-class AnswerRequest(BaseModel):
+class AnswerRequest(_WithHistory):
     model_config = ConfigDict(extra="forbid")
     question: str = Field(min_length=1, max_length=500)
     item_ids: list[Annotated[str, Field(pattern=_llm.ITEM_ID_RE)]] = Field(
@@ -158,6 +203,49 @@ def create_app(
     known_flags = set(engine.flag_ids())
     probe = _llm.FeatureProbe()
     rewrite_busy: dict[str, int] = {}
+    item_names = _hz.name_map(list(items_by_id.values()))
+
+    def _alternatives(text: str) -> list[dict[str, str]]:
+        """질문 낱말에 맞는 보호 제도 2~3개(이름·막는 제도). 지식표에 없는 id 는 건너뛴다."""
+        def usable(iid: str) -> bool:
+            return iid in items_by_id and items_by_id[iid].get("status") != "none"
+
+        ids = [i for i in _guard.protective_items(text) if usable(i)]
+        # 지식표에 빠진 id 가 있으면 기본 세트·다른 시행 중 항목으로 2개까지 채운다.
+        for iid in [*_guard.DEFAULT_PROTECTIVE, *items_by_id]:
+            if len(ids) >= 2:
+                break
+            if usable(iid) and iid not in ids:
+                ids.append(iid)
+        out = []
+        for iid in ids:
+            it = items_by_id[iid]
+            out.append({"id": iid, "label": item_names.get(iid, iid),
+                        "measure": str(it.get("measure") or "")[:200]})
+        return out[:3]
+
+    def _refusal(text: str) -> dict:
+        return {"refused": True, "tier": _guard.THIRD_PARTY, "message": THIRD_PARTY_MESSAGE,
+                "alternatives": _alternatives(text)}
+
+    def _rephrase() -> dict:
+        return {"refused": False, "rephrase": True, "tier": _guard.REPHRASE,
+                "message": REPHRASE_MESSAGE}
+
+    async def _assess(client: httpx.AsyncClient, url: str, text: str,
+                      history_user: list[str] | None = None) -> dict:
+        """입력 가드(2단). 임베딩 점수는 GPU /intent 에서 신호로만 받는다(실패하면 규칙만)."""
+        score: float | None = None
+        try:
+            r = await client.post(f"{url}/intent", json={"q": text}, timeout=10.0)
+            r.raise_for_status()
+            score = float(r.json().get("score"))
+        except (httpx.HTTPError, ValueError, KeyError, TypeError, AttributeError):
+            score = None
+        return _guard.assess_turns(text, history_user, score)
+
+    def _framing(text: str) -> dict:
+        return {"message": PROTECTIVE_FRAMING, "alternatives": _alternatives(text)}
 
     @asynccontextmanager
     async def lifespan(app: FastAPI):
@@ -234,11 +322,16 @@ def create_app(
     ):
         client: httpx.AsyncClient = request.app.state.client
         url: str = request.app.state.gpu_url
-        locator = await _retrieval.intent(req.q, client, url)
-        if locator:
-            return {"refused": True, "message": REFUSAL_MESSAGE}
+        a = await _assess(client, url, req.q)
+        if a["tier"] == _guard.THIRD_PARTY:
+            return _refusal(req.q)
+        if a["tier"] == _guard.REPHRASE:
+            return {**_rephrase(), "results": [], "fallback": False}
         results, fallback = await retriever.search(req.q, client, url, top_k=5)
-        return {"refused": False, "results": results, "fallback": fallback}
+        out = {"refused": False, "tier": a["tier"], "results": results, "fallback": fallback}
+        if a["tier"] == _guard.AMBIGUOUS:
+            out["protective"] = _framing(req.q)
+        return out
 
     @app.post("/api/doccheck")
     async def doccheck(
@@ -283,27 +376,40 @@ def create_app(
         req: IntakeRequest, request: Request, _: None = Depends(_require_access_code)
     ):
         client, url = await _llm_gate(request)
-        if await _retrieval.intent(req.text, client, url):
-            return {"refused": True, "message": REFUSAL_MESSAGE}
+        users = req.user_turns()
+        a = await _assess(client, url, req.text, users)
+        if a["tier"] == _guard.THIRD_PARTY:
+            return _refusal(req.text)
+        if a["tier"] == _guard.REPHRASE:
+            return _rephrase()
+        # 상황 정리는 최근 사용자 턴을 함께 본다(이전 턴에 말한 상황도 체크 항목에 반영).
+        joined = "\n".join([*users, req.text])[-3000:]
         try:
             out = await _llm.intake(
-                req.text,
+                joined,
                 client=client,
                 gpu_url=url,
                 known_flags=known_flags,
                 victim_types=VICTIM_TYPES,
+                asked=req.assistant_turns(),
             )
         except _llm.LLMUnavailable as e:
             raise _llm_down(e)
-        return {"refused": False, **out}
+        res = {"refused": False, "tier": a["tier"], **out}
+        if a["tier"] == _guard.AMBIGUOUS:
+            res["protective"] = _framing(req.text)
+        return res
 
     @app.post("/api/answer")
     async def answer_endpoint(
         req: AnswerRequest, request: Request, _: None = Depends(_require_access_code)
     ):
         client, url = await _llm_gate(request)
-        if await _retrieval.intent(req.question, client, url):
-            return {"refused": True, "message": REFUSAL_MESSAGE}
+        a = await _assess(client, url, req.question, req.user_turns())
+        if a["tier"] == _guard.THIRD_PARTY:
+            return _refusal(req.question)
+        if a["tier"] == _guard.REPHRASE:
+            return _rephrase()
         try:
             out = await _llm.answer(
                 req.question,
@@ -316,8 +422,12 @@ def create_app(
         except _llm.LLMUnavailable as e:
             raise _llm_down(e)
         if out.get("refused"):
-            return {"refused": True, "message": REFUSAL_MESSAGE}
-        return {"refused": False, **out}
+            # 생성문 가드에 걸린 경우도 거절만 하지 않고 보호 대안을 붙인다.
+            return {**_refusal(req.question), "message": REFUSAL_MESSAGE}
+        res = {"refused": False, "tier": a["tier"], **out}
+        if a["tier"] == _guard.AMBIGUOUS:
+            res["protective"] = _framing(req.question)
+        return res
 
     @app.post("/api/rewrite")
     async def rewrite_endpoint(
@@ -342,7 +452,7 @@ def create_app(
             if rewrite_busy[who] <= 0:
                 rewrite_busy.pop(who, None)
         if out.get("refused"):
-            return {"refused": True, "message": REFUSAL_MESSAGE}
+            return {"refused": True, "message": REFUSAL_MESSAGE, "alternatives": _alternatives(req.text)}
         return {"refused": False, **out}
 
     static_dir = REPO_ROOT / "web" / "static"

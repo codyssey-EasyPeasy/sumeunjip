@@ -738,3 +738,9 @@ details > summary { min-height: 36px; display: list-item; padding: 6px 0; }
   details[open] > summary::after { content: ""; }
   details > *:not(summary) { display: block; }
 }
+
+/* 2단 가드: 거절·애매한 질문 안내에 붙는 보호 제도 대안 */
+.refusal-box, .protective-box { margin-top: 10px; }
+.protective-box { background: #eff6ff; border-color: #93c5fd; color: #1e3a8a; }
+.alt-list { margin: 6px 0 4px 1.1em; padding: 0; }
+.alt-list li { margin: 4px 0; line-height: 1.5; }

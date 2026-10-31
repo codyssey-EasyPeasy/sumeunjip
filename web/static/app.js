@@ -57,6 +57,10 @@
   var LLM_DOWN_MSG = '지금은 이 기능을 쓸 수 없습니다. 체크 항목으로 계속 진행할 수 있습니다.';
   var REWRITE_MAX = 1500; // app/main.py REWRITE_MAX_CHARS 와 같게
   var intakePending = false; // '말로 설명하기'로 미리 고른 뒤 사용자가 확인하기 전까지 true
+  // 다턴 이력: 이 페이지 메모리에만 둔다(저장소·쿠키에 쓰지 않음). 새로 고침·빠른 나가기로 사라진다.
+  // 서버 상한(app/main.py HISTORY_*)과 같게: 최근 6턴, 턴당 500자, 합계 3000자.
+  var HISTORY_MAX_TURNS = 6, HISTORY_TURN_CHARS = 500, HISTORY_TOTAL_CHARS = 3000;
+  var convo = [];
 
   function $(id) { return document.getElementById(id); }
 
@@ -96,6 +100,61 @@
     if (!lr) return;
     lr.textContent = '';
     setTimeout(function () { lr.textContent = msg; }, 30);
+  }
+
+  function pushTurn(role, text) {
+    if (typeof text !== 'string') return;
+    text = text.trim();
+    if (!text) return;
+    convo.push({ role: role, text: text.slice(0, HISTORY_TURN_CHARS) });
+    while (convo.length > HISTORY_MAX_TURNS) convo.shift();
+    var total = 0;
+    for (var i = 0; i < convo.length; i++) total += convo[i].text.length;
+    while (convo.length && total > HISTORY_TOTAL_CHARS) total -= convo.shift().text.length;
+  }
+
+  function historyCopy() {
+    return convo.map(function (t) { return { role: t.role, text: t.text }; });
+  }
+
+  function clearHistory() { convo = []; }
+
+  // 거절·애매한 질문 안내: 메시지 + 보호 제도 대안(이름·막는 제도) + 1366·132·112.
+  function protectiveBox(message, alts, refused) {
+    var box = el('div', 'notice ' + (refused ? 'refusal-box' : 'protective-box'));
+    if (message) box.appendChild(el('p', null, message));
+    alts = Array.isArray(alts) ? alts : [];
+    var shown = 0;
+    var ul = el('ul', 'alt-list');
+    for (var i = 0; i < alts.length; i++) {
+      var a = alts[i] || {};
+      if (typeof a.label !== 'string' || !a.label) continue;
+      var li = el('li');
+      li.appendChild(el('strong', null, a.label));
+      if (typeof a.measure === 'string' && a.measure) li.appendChild(document.createTextNode(' — ' + a.measure));
+      ul.appendChild(li);
+      shown++;
+    }
+    if (shown) {
+      box.appendChild(el('p', 'meta', '내 정보와 안전을 지키는 데 쓸 수 있는 제도:'));
+      box.appendChild(ul);
+    }
+    box.appendChild(helpLine());
+    return box;
+  }
+
+  function extraSlot(statusId) {
+    var id = statusId + '-extra';
+    var slot = $(id);
+    if (!slot) {
+      var st = $(statusId);
+      if (!st || !st.parentNode) return null;
+      slot = el('div', 'status-extra');
+      slot.id = id;
+      st.parentNode.insertBefore(slot, st.nextSibling);
+    }
+    slot.textContent = '';
+    return slot;
   }
 
   function postJSON(url, payload) {
@@ -458,13 +517,21 @@
       if (!q) { out.appendChild(el('p', 'status', '질문을 적어 주세요.')); input.focus(); return; }
       btn.disabled = true;
       out.appendChild(el('p', 'status', '답을 만들고 있습니다...'));
-      postJSON('/api/answer', { question: q, item_ids: [itemId] })
+      var hist = historyCopy();
+      postJSON('/api/answer', { question: q, item_ids: [itemId], history: hist })
         .then(function (d) {
           out.textContent = '';
           if (d && d.refused) {
-            out.appendChild(el('p', 'notice', d.message || '이 질문에는 답할 수 없습니다.'));
+            out.appendChild(protectiveBox(d.message || '이 질문에는 답할 수 없습니다.', d.alternatives, true));
             return;
           }
+          if (d && d.rephrase) {
+            out.appendChild(el('p', 'notice', d.message || '문장으로 다시 적어 주세요.'));
+            return;
+          }
+          pushTurn('user', q);
+          pushTurn('assistant', (d && d.answer) || '');
+          if (d && d.protective) out.appendChild(protectiveBox(d.protective.message, d.protective.alternatives, false));
           var box = el('div', 'answer-box');
           var head = el('div', 'card-meta');
           if (d && d.ai_generated === false) {
@@ -809,10 +876,16 @@
       })
       .then(function (data) {
         if (data && data.refused) {
-          setStatus('search-status', data.message || '이 질문에는 답변을 제공할 수 없습니다.');
+          setStatus('search-status', '');
+          root.appendChild(protectiveBox(data.message || '이 질문에는 답변을 제공할 수 없습니다.', data.alternatives, true));
+          return;
+        }
+        if (data && data.rephrase) {
+          setStatus('search-status', data.message || '문장으로 다시 적어 주세요.');
           return;
         }
         setStatus('search-status', '');
+        if (data && data.protective) root.appendChild(protectiveBox(data.protective.message, data.protective.alternatives, false));
         if (data && data.fallback) {
           var notice = document.createElement('p');
           notice.className = 'notice';
@@ -1006,12 +1079,23 @@
     var btn = $('intake-btn');
     btn.disabled = true;
     setStatus('intake-status', '항목을 고르고 있습니다...');
-    postJSON('/api/intake', { text: text })
+    var slot = extraSlot('intake-status');
+    postJSON('/api/intake', { text: text, history: historyCopy() })
       .then(function (d) {
         if (d && d.refused) {
-          setStatus('intake-status', d.message || '이 내용으로는 항목을 고를 수 없습니다.');
+          setStatus('intake-status', '');
+          if (slot) slot.appendChild(protectiveBox(d.message || '이 내용으로는 항목을 고를 수 없습니다.', d.alternatives, true));
           return;
         }
+        if (d && d.rephrase) {
+          setStatus('intake-status', d.message || '문장으로 다시 적어 주세요.');
+          return;
+        }
+        pushTurn('user', text);
+        // 서버가 같은 확인 질문을 다시 묻지 않도록, 이번에 받은 확인 질문을 도우미 턴으로 남긴다.
+        var asked = (d && Array.isArray(d.unclear)) ? d.unclear.join(' / ') : '';
+        if (asked) pushTurn('assistant', asked);
+        if (slot && d && d.protective) slot.appendChild(protectiveBox(d.protective.message, d.protective.alternatives, false));
         applyIntake(d || {});
       })
       .catch(function (e) {
@@ -1190,6 +1274,7 @@
   /* ---------- quick exit ---------- */
   function quickExit() {
     var target = 'https://www.google.com/search?q=날씨';
+    clearHistory();
     try {
       var fields = document.querySelectorAll('input, textarea');
       for (var i = 0; i < fields.length; i++) {

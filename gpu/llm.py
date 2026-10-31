@@ -15,6 +15,9 @@ from typing import Any
 
 import httpx
 
+from guard import (filter_clarify, leaks_prompt, sanitize_intake_text, strip_special_tokens,
+                   supported_flags, supported_victim_type)
+
 LLM_URL = os.environ.get("LLM_URL", "http://127.0.0.1:8001/v1")
 LLM_MODEL = os.environ.get("LLM_MODEL", "qwen3-8b")
 LLM_TIMEOUT = float(os.environ.get("LLM_TIMEOUT", "60"))
@@ -59,8 +62,13 @@ def load_local_flags() -> list[dict[str, str]]:
 
 
 def wrap_user(text: str) -> str:
-    """구분자 위조를 막고 사용자 텍스트를 감싼다."""
-    clean = text.replace(OPEN, "").replace(CLOSE, "").replace("<<<", "").replace(">>>", "")
+    """구분자 위조를 막고 사용자 텍스트를 감싼다.
+
+    채팅 템플릿 특수 토큰(<|im_start|>·<|im_end|>·<|endoftext|>), <think>·</think>, 역할 머리말
+    ('### 시스템', 'system:' 등)도 지운다(레드팀 고칠 곳 2: ChatML·think 위조).
+    """
+    clean = text.replace(OPEN, "").replace(CLOSE, "")
+    clean = strip_special_tokens(clean).replace("<<<", "").replace(">>>", "")
     return f"{OPEN}\n{clean}\n{CLOSE}"
 
 
@@ -131,6 +139,7 @@ INTAKE_SYS = """너는 가정폭력·스토킹·교제폭력·성폭력 피해�
   사용자는 법률 용어 대신 일상 표현을 쓴다. 뜻이 같으면 해당 항목을 고른다(예: '경찰에 신고했어요' = 고소·신고 후 수사 중). 한 문장에 여러 항목이 들어 있을 수 있으니 문장마다 빠짐없이 확인한다.
 - confidence: 0~1, 전체 판단의 확신 정도.
 - unclear: 판단에 꼭 필요한데 텍스트에 없는 것을 묻는 짧은 존댓말 질문 0~3개(예: "가해자와 주민등록 주소가 아직 같나요?"). 상대방의 위치·주소·기록을 알아내는 방법에 관한 질문은 절대 만들지 않는다.
+  학교·어린이집·쉼터·회사 이름, 주소·사는 곳, 전화번호, 사람 이름도 묻지 않는다. 대신 "자녀가 학교에 다니나요?"처럼 예/아니오로 답할 수 있는 범주 질문만 쓴다. 사용자 문장을 그대로 되풀이하지 않는다.
 
 상황 항목 목록(id: 설명):
 {flags}"""
@@ -158,7 +167,18 @@ def intake_messages(text: str, flags: list[dict[str, str]]) -> list[dict[str, st
     ]
 
 
-def clean_intake(out: dict[str, Any], flag_ids: list[str]) -> dict[str, Any]:
+# 프롬프트 유출 검사용 지시문(따옴표 안 예시 질문은 빼고 비교한다: 예시를 그대로 묻는 것은 유출이 아니다).
+_INTAKE_SYS_RULES = re.sub(r'"[^"]*"', "", INTAKE_SYS)
+
+
+def prepare_intake(text: str) -> tuple[str, bool]:
+    """특수 토큰·역할 머리말 제거 + 도우미 지시문 문장 제거. (정리된 글, 지시문이 있었는지)."""
+    return sanitize_intake_text(text)
+
+
+def clean_intake(out: dict[str, Any], flag_ids: list[str], text: str | None = None) -> dict[str, Any]:
+    """모델 출력 정리. text(정리된 사용자 글)를 주면 근거 낱말 없는 flag·피해 유형을 버리고,
+    확인 질문에서 시스템 지시문 조각·위치/이름 질문·사용자 글 되풀이를 거른다."""
     vt = out.get("victim_type")
     if vt not in VICTIM_TYPES:
         vt = None
@@ -173,6 +193,11 @@ def clean_intake(out: dict[str, Any], flag_ids: list[str]) -> dict[str, Any]:
         conf = 0.0
     conf = max(0.0, min(1.0, conf))
     unclear = [q.strip() for q in (out.get("unclear") or []) if isinstance(q, str) and q.strip()][:3]
+    if text is not None:
+        vt = supported_victim_type(vt, text)
+        flags = supported_flags(flags, text)
+        unclear = [q for q in unclear if not leaks_prompt(q, _INTAKE_SYS_RULES)]
+        unclear = filter_clarify(unclear, user_text=text, flags=flags)
     return {"victim_type": vt, "flags": flags, "confidence": round(conf, 3), "unclear": unclear}
 
 
