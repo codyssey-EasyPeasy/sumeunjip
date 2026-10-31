@@ -1,0 +1,804 @@
+{
+ "name": "stepped_load_2026-11-01",
+ "measured_at_kst": "2026-10-31 23:37 ~ 23:52",
+ "deployed_commit": "642e5e1",
+ "path": "local -> ssh -L 18080:127.0.0.1:8080 hk-ops -> app :8080 -> GPU :8000 (token) -> vLLM :8001",
+ "inputs": "synthetic only: sim v3 uc/ben session requests (intake 71, answer 175 incl. history), answer_eval 45, retrieval_eval 60 queries, docs.json 30 (doccheck), 1,436-1,499 char concatenations of docs.json (rewrite, spans=[])",
+ "method": {
+  "model": "closed loop, no think time, each worker picks endpoint by weight",
+  "mix_weights": {
+   "answer": 0.45,
+   "intake": 0.25,
+   "search": 0.15,
+   "doccheck": 0.12,
+   "rewrite_1500chars": 0.03
+  },
+  "step_duration_s": 180,
+  "pause_between_steps_s": "~40 (20 s drain + metrics snapshots)",
+  "abort_rules": "GPU free < 500 MiB, error rate > 5% (errors = non-2xx except 429, plus timeouts/connection errors), answer p95 > 30 s",
+  "client_timeout_s": 180,
+  "gpu_monitor": "ssh hk-gpu loop: nvidia-smi memory.used/total/utilization.gpu + vLLM /metrics running/waiting/kv_cache_usage every ~1 s",
+  "vllm_metrics_delta": "full /metrics snapshot before/after each step via ssh curl 127.0.0.1:8001; histogram quantiles are bucket upper bounds (le), not exact",
+  "extractive_fallback_rate": "answer mode=extractive with latency >= 1 s (fixed notify/effect extractive answers return in < 0.1 s without GPU) / all 200 answers",
+  "rewrite_429_note": "all load comes through one tunnel = one client address; app allows 1 rewrite per address and 2 globally, so concurrent rewrites get 429 by design (reported, not counted as errors)"
+ },
+ "vllm_config_observed": {
+  "kv_cache_size_tokens": 48192,
+  "kv_cache_max_concurrency_at_8192": 5.88,
+  "gpu_memory_utilization": 0.6,
+  "prefix_caching": true,
+  "source": "vllm:cache_config_info in /metrics"
+ },
+ "steps": [
+  {
+   "concurrency": 1,
+   "wall_s": 181.3,
+   "aborted": null,
+   "requests": 55,
+   "throughput_req_per_min": 18.2,
+   "error_rate_excl_429": 0.0,
+   "errors_by_code": {},
+   "status_429": 0,
+   "all_latency_s_200": {
+    "n": 55,
+    "p50": 1.762,
+    "p95": 8.292,
+    "p99": 23.871,
+    "max": 36.0,
+    "mean": 3.297
+   },
+   "endpoints": {
+    "answer": {
+     "requests": 28,
+     "latency_s_200": {
+      "n": 28,
+      "p50": 3.553,
+      "p95": 8.408,
+      "p99": 12.184,
+      "max": 13.538,
+      "mean": 4.171
+     },
+     "status_counts": {
+      "200": 28
+     },
+     "modes": {
+      "not_found": 15,
+      "extractive": 2,
+      "generated": 11
+     },
+     "extractive_rate": 0.071,
+     "extractive_fallback_rate": 0.036,
+     "extractive_fixed_count": 1,
+     "llm_path_answers": 12,
+     "extractive_fallback_rate_of_llm_path": 0.083,
+     "latency_by_mode": {
+      "not_found": {
+       "n": 15,
+       "p50": 1.951,
+       "p95": 4.762,
+       "p99": 6.839,
+       "max": 7.358,
+       "mean": 2.582
+      },
+      "extractive": {
+       "n": 2,
+       "p50": 6.791,
+       "p95": 12.863,
+       "p99": 13.403,
+       "max": 13.538,
+       "mean": 6.79
+      },
+      "generated": {
+       "n": 11,
+       "p50": 6.026,
+       "p95": 8.358,
+       "p99": 8.491,
+       "max": 8.524,
+       "mean": 5.862
+      }
+     }
+    },
+    "doccheck": {
+     "requests": 4,
+     "latency_s_200": {
+      "n": 4,
+      "p50": 0.148,
+      "p95": 0.233,
+      "p99": 0.241,
+      "max": 0.243,
+      "mean": 0.164
+     },
+     "status_counts": {
+      "200": 4
+     }
+    },
+    "intake": {
+     "requests": 14,
+     "latency_s_200": {
+      "n": 14,
+      "p50": 1.498,
+      "p95": 2.007,
+      "p99": 2.116,
+      "max": 2.143,
+      "mean": 1.412
+     },
+     "status_counts": {
+      "200": 14
+     }
+    },
+    "rewrite": {
+     "requests": 1,
+     "latency_s_200": {
+      "n": 1,
+      "p50": 36.0,
+      "p95": 36.0,
+      "p99": 36.0,
+      "max": 36.0,
+      "mean": 36.0
+     },
+     "status_counts": {
+      "200": 1
+     },
+     "methods": {
+      "rule": 1
+     }
+    },
+    "search": {
+     "requests": 8,
+     "latency_s_200": {
+      "n": 8,
+      "p50": 1.014,
+      "p95": 1.083,
+      "p99": 1.097,
+      "max": 1.101,
+      "mean": 1.016
+     },
+     "status_counts": {
+      "200": 8
+     }
+    }
+   },
+   "gpu_vllm_monitor_1s": {
+    "samples": 173,
+    "gpu_mem_used_max_mib": 20070.0,
+    "gpu_mem_free_min_mib": 2964,
+    "gpu_util_mean_pct": 95.769,
+    "vllm_running_max": 1.0,
+    "vllm_running_mean": 0.844,
+    "vllm_waiting_max": 0.0,
+    "vllm_waiting_mean": 0.0,
+    "kv_cache_usage_max": 0.103
+   },
+   "vllm_metrics_delta": {
+    "window_s": 202.5,
+    "requests": 54,
+    "e2e_request_latency": {
+     "n": 54,
+     "mean_s": 2.802,
+     "p50_le_s": 2.0,
+     "p95_le_s": 5.0,
+     "p99_le_s": 40.0
+    },
+    "time_to_first_token": {
+     "n": 55,
+     "mean_s": 0.487,
+     "p50_le_s": 0.5,
+     "p95_le_s": 2.5,
+     "p99_le_s": 2.5
+    },
+    "request_queue_time": {
+     "n": 54,
+     "mean_s": 0.005,
+     "p50_le_s": 0.3,
+     "p95_le_s": 0.3,
+     "p99_le_s": 0.3
+    },
+    "prompt_tokens_per_s": 707.1,
+    "generation_tokens_per_s": 28.1,
+    "prefix_cache_hit_rate": 0.409,
+    "finished_reason_counts": {
+     "stop": 54,
+     "length": 0,
+     "abort": 0,
+     "error": 0
+    }
+   }
+  },
+  {
+   "concurrency": 2,
+   "wall_s": 184.9,
+   "aborted": null,
+   "requests": 83,
+   "throughput_req_per_min": 26.9,
+   "error_rate_excl_429": 0.0,
+   "errors_by_code": {},
+   "status_429": 0,
+   "all_latency_s_200": {
+    "n": 83,
+    "p50": 2.013,
+    "p95": 11.213,
+    "p99": 39.654,
+    "max": 51.209,
+    "mean": 4.412
+   },
+   "endpoints": {
+    "answer": {
+     "requests": 41,
+     "latency_s_200": {
+      "n": 41,
+      "p50": 3.881,
+      "p95": 11.251,
+      "p99": 12.449,
+      "max": 12.895,
+      "mean": 5.122
+     },
+     "status_counts": {
+      "200": 41
+     },
+     "modes": {
+      "not_found": 21,
+      "extractive": 4,
+      "generated": 15,
+      "regenerated": 1
+     },
+     "extractive_rate": 0.098,
+     "extractive_fallback_rate": 0.049,
+     "extractive_fixed_count": 2,
+     "llm_path_answers": 18,
+     "extractive_fallback_rate_of_llm_path": 0.111,
+     "latency_by_mode": {
+      "not_found": {
+       "n": 21,
+       "p50": 2.013,
+       "p95": 4.673,
+       "p99": 9.935,
+       "max": 11.251,
+       "mean": 2.742
+      },
+      "extractive": {
+       "n": 4,
+       "p50": 4.264,
+       "p95": 11.276,
+       "p99": 11.68,
+       "max": 11.781,
+       "mean": 5.102
+      },
+      "generated": {
+       "n": 15,
+       "p50": 8.069,
+       "p95": 11.478,
+       "p99": 12.611,
+       "max": 12.895,
+       "mean": 8.082
+      },
+      "regenerated": {
+       "n": 1,
+       "p50": 10.803,
+       "p95": 10.803,
+       "p99": 10.803,
+       "max": 10.803,
+       "mean": 10.803
+      }
+     }
+    },
+    "doccheck": {
+     "requests": 7,
+     "latency_s_200": {
+      "n": 7,
+      "p50": 0.15,
+      "p95": 0.172,
+      "p99": 0.174,
+      "max": 0.174,
+      "mean": 0.153
+     },
+     "status_counts": {
+      "200": 7
+     }
+    },
+    "intake": {
+     "requests": 22,
+     "latency_s_200": {
+      "n": 22,
+      "p50": 2.0,
+      "p95": 2.956,
+      "p99": 4.191,
+      "max": 4.518,
+      "mean": 2.088
+     },
+     "status_counts": {
+      "200": 22
+     }
+    },
+    "rewrite": {
+     "requests": 2,
+     "latency_s_200": {
+      "n": 2,
+      "p50": 44.163,
+      "p95": 50.504,
+      "p99": 51.068,
+      "max": 51.209,
+      "mean": 44.163
+     },
+     "status_counts": {
+      "200": 2
+     },
+     "methods": {
+      "rule": 2
+     }
+    },
+    "search": {
+     "requests": 11,
+     "latency_s_200": {
+      "n": 11,
+      "p50": 1.891,
+      "p95": 1.978,
+      "p99": 2.0,
+      "max": 2.006,
+      "mean": 1.895
+     },
+     "status_counts": {
+      "200": 11
+     }
+    }
+   },
+   "gpu_vllm_monitor_1s": {
+    "samples": 176,
+    "gpu_mem_used_max_mib": 20324.0,
+    "gpu_mem_free_min_mib": 2710,
+    "gpu_util_mean_pct": 99.92,
+    "vllm_running_max": 2.0,
+    "vllm_running_mean": 1.545,
+    "vllm_waiting_max": 0.0,
+    "vllm_waiting_mean": 0.0,
+    "kv_cache_usage_max": 0.193
+   },
+   "vllm_metrics_delta": {
+    "window_s": 206.3,
+    "requests": 81,
+    "e2e_request_latency": {
+     "n": 81,
+     "mean_s": 3.665,
+     "p50_le_s": 5.0,
+     "p95_le_s": 10.0,
+     "p99_le_s": 60.0
+    },
+    "time_to_first_token": {
+     "n": 81,
+     "mean_s": 0.476,
+     "p50_le_s": 0.5,
+     "p95_le_s": 2.5,
+     "p99_le_s": 2.5
+    },
+    "request_queue_time": {
+     "n": 81,
+     "mean_s": 0.001,
+     "p50_le_s": 0.3,
+     "p95_le_s": 0.3,
+     "p99_le_s": 0.3
+    },
+    "prompt_tokens_per_s": 984.0,
+    "generation_tokens_per_s": 43.3,
+    "prefix_cache_hit_rate": 0.504,
+    "finished_reason_counts": {
+     "stop": 81,
+     "length": 0,
+     "abort": 0,
+     "error": 0
+    }
+   }
+  },
+  {
+   "concurrency": 4,
+   "wall_s": 184.1,
+   "aborted": null,
+   "requests": 122,
+   "throughput_req_per_min": 39.8,
+   "error_rate_excl_429": 0.0164,
+   "errors_by_code": {
+    "504": 2
+   },
+   "status_429": 3,
+   "all_latency_s_200": {
+    "n": 117,
+    "p50": 3.672,
+    "p95": 15.227,
+    "p99": 17.64,
+    "max": 17.92,
+    "mean": 5.203
+   },
+   "endpoints": {
+    "answer": {
+     "requests": 57,
+     "latency_s_200": {
+      "n": 57,
+      "p50": 5.974,
+      "p95": 16.547,
+      "p99": 17.767,
+      "max": 17.92,
+      "mean": 7.819
+     },
+     "status_counts": {
+      "200": 57
+     },
+     "modes": {
+      "extractive": 11,
+      "not_found": 25,
+      "generated": 20,
+      "refused": 1
+     },
+     "extractive_rate": 0.193,
+     "extractive_fallback_rate": 0.14,
+     "extractive_fixed_count": 3,
+     "llm_path_answers": 28,
+     "extractive_fallback_rate_of_llm_path": 0.286,
+     "latency_by_mode": {
+      "extractive": {
+       "n": 11,
+       "p50": 13.965,
+       "p95": 16.602,
+       "p99": 17.404,
+       "max": 17.604,
+       "mean": 10.633
+      },
+      "not_found": {
+       "n": 25,
+       "p50": 3.64,
+       "p95": 5.962,
+       "p99": 6.901,
+       "max": 7.194,
+       "mean": 3.444
+      },
+      "generated": {
+       "n": 20,
+       "p50": 12.042,
+       "p95": 17.661,
+       "p99": 17.868,
+       "max": 17.92,
+       "mean": 12.124
+      },
+      "refused": {
+       "n": 1,
+       "p50": 0.107,
+       "p95": 0.107,
+       "p99": 0.107,
+       "max": 0.107,
+       "mean": 0.107
+      }
+     }
+    },
+    "doccheck": {
+     "requests": 13,
+     "latency_s_200": {
+      "n": 13,
+      "p50": 0.156,
+      "p95": 0.654,
+      "p99": 1.119,
+      "max": 1.235,
+      "mean": 0.252
+     },
+     "status_counts": {
+      "200": 13
+     }
+    },
+    "intake": {
+     "requests": 33,
+     "latency_s_200": {
+      "n": 33,
+      "p50": 3.672,
+      "p95": 6.499,
+      "p99": 7.751,
+      "max": 8.178,
+      "mean": 3.796
+     },
+     "status_counts": {
+      "200": 33
+     }
+    },
+    "rewrite": {
+     "requests": 5,
+     "latency_s_200": {
+      "n": 0
+     },
+     "status_counts": {
+      "429": 3,
+      "504": 2
+     },
+     "methods": {}
+    },
+    "search": {
+     "requests": 14,
+     "latency_s_200": {
+      "n": 14,
+      "p50": 1.979,
+      "p95": 4.525,
+      "p99": 4.594,
+      "max": 4.611,
+      "mean": 2.467
+     },
+     "status_counts": {
+      "200": 14
+     }
+    }
+   },
+   "gpu_vllm_monitor_1s": {
+    "samples": 175,
+    "gpu_mem_used_max_mib": 20262.0,
+    "gpu_mem_free_min_mib": 2772,
+    "gpu_util_mean_pct": 99.726,
+    "vllm_running_max": 4.0,
+    "vllm_running_mean": 2.966,
+    "vllm_waiting_max": 1.0,
+    "vllm_waiting_mean": 0.046,
+    "kv_cache_usage_max": 0.319
+   },
+   "vllm_metrics_delta": {
+    "window_s": 205.5,
+    "requests": 104,
+    "e2e_request_latency": {
+     "n": 104,
+     "mean_s": 4.069,
+     "p50_le_s": 5.0,
+     "p95_le_s": 10.0,
+     "p99_le_s": 10.0
+    },
+    "time_to_first_token": {
+     "n": 111,
+     "mean_s": 0.723,
+     "p50_le_s": 0.5,
+     "p95_le_s": 5.0,
+     "p99_le_s": 5.0
+    },
+    "request_queue_time": {
+     "n": 104,
+     "mean_s": 0.026,
+     "p50_le_s": 0.3,
+     "p95_le_s": 0.3,
+     "p99_le_s": 0.8
+    },
+    "prompt_tokens_per_s": 1344.6,
+    "generation_tokens_per_s": 54.0,
+    "prefix_cache_hit_rate": 0.489,
+    "finished_reason_counts": {
+     "stop": 104,
+     "length": 0,
+     "abort": 0,
+     "error": 0
+    }
+   }
+  },
+  {
+   "concurrency": 8,
+   "wall_s": 220.3,
+   "aborted": null,
+   "requests": 191,
+   "throughput_req_per_min": 52.0,
+   "error_rate_excl_429": 0.0105,
+   "errors_by_code": {
+    "504": 2
+   },
+   "status_429": 4,
+   "all_latency_s_200": {
+    "n": 185,
+    "p50": 6.771,
+    "p95": 16.379,
+    "p99": 20.766,
+    "max": 53.621,
+    "mean": 7.553
+   },
+   "endpoints": {
+    "answer": {
+     "requests": 93,
+     "latency_s_200": {
+      "n": 93,
+      "p50": 12.409,
+      "p95": 17.771,
+      "p99": 20.719,
+      "max": 21.254,
+      "mean": 10.377
+     },
+     "status_counts": {
+      "200": 93
+     },
+     "modes": {
+      "extractive": 52,
+      "not_found": 33,
+      "generated": 7,
+      "refused": 1
+     },
+     "extractive_rate": 0.559,
+     "extractive_fallback_rate": 0.505,
+     "extractive_fixed_count": 5,
+     "llm_path_answers": 54,
+     "extractive_fallback_rate_of_llm_path": 0.87,
+     "latency_by_mode": {
+      "extractive": {
+       "n": 52,
+       "p50": 13.791,
+       "p95": 19.309,
+       "p99": 20.958,
+       "max": 21.254,
+       "mean": 13.242
+      },
+      "not_found": {
+       "n": 33,
+       "p50": 6.591,
+       "p95": 11.269,
+       "p99": 12.249,
+       "max": 12.29,
+       "mean": 5.642
+      },
+      "generated": {
+       "n": 7,
+       "p50": 12.881,
+       "p95": 14.913,
+       "p99": 15.007,
+       "max": 15.03,
+       "mean": 12.892
+      },
+      "refused": {
+       "n": 1,
+       "p50": 0.069,
+       "p95": 0.069,
+       "p99": 0.069,
+       "max": 0.069,
+       "mean": 0.069
+      }
+     }
+    },
+    "doccheck": {
+     "requests": 22,
+     "latency_s_200": {
+      "n": 22,
+      "p50": 0.212,
+      "p95": 0.95,
+      "p99": 2.17,
+      "max": 2.494,
+      "mean": 0.39
+     },
+     "status_counts": {
+      "200": 22
+     }
+    },
+    "intake": {
+     "requests": 47,
+     "latency_s_200": {
+      "n": 47,
+      "p50": 6.672,
+      "p95": 10.816,
+      "p99": 11.049,
+      "max": 11.072,
+      "mean": 6.284
+     },
+     "status_counts": {
+      "200": 47
+     }
+    },
+    "rewrite": {
+     "requests": 7,
+     "latency_s_200": {
+      "n": 1,
+      "p50": 53.621,
+      "p95": 53.621,
+      "p99": 53.621,
+      "max": 53.621,
+      "mean": 53.621
+     },
+     "status_counts": {
+      "429": 4,
+      "504": 2,
+      "200": 1
+     },
+     "methods": {
+      "llm": 1
+     }
+    },
+    "search": {
+     "requests": 22,
+     "latency_s_200": {
+      "n": 22,
+      "p50": 2.464,
+      "p95": 7.956,
+      "p99": 8.032,
+      "max": 8.032,
+      "mean": 3.393
+     },
+     "status_counts": {
+      "200": 22
+     }
+    }
+   },
+   "gpu_vllm_monitor_1s": {
+    "samples": 210,
+    "gpu_mem_used_max_mib": 20476.0,
+    "gpu_mem_free_min_mib": 2558,
+    "gpu_util_mean_pct": 99.048,
+    "vllm_running_max": 8.0,
+    "vllm_running_mean": 5.186,
+    "vllm_waiting_max": 2.0,
+    "vllm_waiting_mean": 0.048,
+    "kv_cache_usage_max": 0.602
+   },
+   "vllm_metrics_delta": {
+    "window_s": 241.4,
+    "requests": 106,
+    "e2e_request_latency": {
+     "n": 106,
+     "mean_s": 6.871,
+     "p50_le_s": 10.0,
+     "p95_le_s": 15.0,
+     "p99_le_s": 15.0
+    },
+    "time_to_first_token": {
+     "n": 147,
+     "mean_s": 1.32,
+     "p50_le_s": 2.5,
+     "p95_le_s": 5.0,
+     "p99_le_s": 5.0
+    },
+    "request_queue_time": {
+     "n": 106,
+     "mean_s": 0.05,
+     "p50_le_s": 0.3,
+     "p95_le_s": 0.8,
+     "p99_le_s": 1.5
+    },
+    "prompt_tokens_per_s": 1691.2,
+    "generation_tokens_per_s": 54.6,
+    "prefix_cache_hit_rate": 0.474,
+    "finished_reason_counts": {
+     "stop": 106,
+     "length": 0,
+     "abort": 0,
+     "error": 0
+    }
+   }
+  }
+ ],
+ "summary": {
+  "aborted_any_step": false,
+  "answer_p95_s_by_c": {
+   "1": 8.408,
+   "2": 11.251,
+   "4": 16.547,
+   "8": 17.771
+  },
+  "extractive_fallback_rate_by_c": {
+   "1": 0.036,
+   "2": 0.049,
+   "4": 0.14,
+   "8": 0.505
+  },
+  "intake_p95_s_by_c": {
+   "1": 2.007,
+   "2": 2.956,
+   "4": 6.499,
+   "8": 10.816
+  },
+  "gpu_free_min_mib_by_c": {
+   "1": 2964,
+   "2": 2710,
+   "4": 2772,
+   "8": 2558
+  },
+  "generation_tokens_per_s_by_c": {
+   "1": 28.1,
+   "2": 43.3,
+   "4": 54.0,
+   "8": 54.6
+  },
+  "throughput_req_per_min_by_c": {
+   "1": 18.2,
+   "2": 26.9,
+   "4": 39.8,
+   "8": 52.0
+  },
+  "observations": [
+   "No step hit an abort rule. Errors were only 504 on rewrite (1,500 chars) at c=4 and c=8 (2 each); all other endpoints 100% 200.",
+   "Load shows up as quality loss before errors: answer extractive fallback 3.6% (c=1) -> 4.9% (c=2) -> 14.0% (c=4) -> 50.5% (c=8) because the 12 s answer budget runs out.",
+   "vLLM generation throughput saturates at about 54 tok/s from c=4; vLLM waiting queue max 1-2, so the bottleneck is decode throughput, not queueing.",
+   "GPU memory stayed at <= 20,476 / 23,034 MiB (free >= 2,558 MiB); kv_cache_usage max 0.60 at c=8.",
+   "vLLM TTFT count exceeds completed-request count per step (c=4: 111 vs 104, c=8: 147 vs 106): requests the GPU server gave up on (budget/timeout) keep generating in vLLM, abort counter stays 0 [inferred from counters].",
+   "1,500-char rewrite at c=1 returned method=rule (36 s) and the only 200 at c=8 took 53.6 s."
+  ]
+ }
+}
