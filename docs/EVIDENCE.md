@@ -69,7 +69,7 @@ ssh -F <해커톤 ssh 설정> -N -L 18080:127.0.0.1:8080 hk-ops &
 
 | 주장 | 지표 | 출처 | 명령 | 날짜 |
 |---|---|---|---|---|
-| 배포본 = 저장소 코드 | `app/guard.py`·`app/llm.py`·`app/main.py`(hk-ops), `gpu/guard.py`·`verify.py`·`llm.py`·`server.py`(hk-gpu) `sha256sum` 앞 16자리가 HEAD 와 같음(예: guard `68055350fc10e99a`) | 이 문서, `docs/evidence/infra.md` §5 | `sha256sum app/guard.py` (로컬·서버 각각) | 2026-10-31 18:1x |
+| 배포본 = 저장소 코드 | `app/guard.py`·`app/llm.py`·`app/main.py`(hk-ops), `gpu/guard.py`·`verify.py`·`llm.py`·`server.py`(hk-gpu) `sha256sum` 앞 16자리가 `2418ad9` 와 같음(예: guard `68055350fc10e99a`). 18:4x 재확인에서도 hk-ops `app/guard.py` 는 `68055350…` 로, 그 뒤 커밋 `cf8d149`(보호 안내 축소, 판정 등급·사유 로그 한 줄 추가)는 **배포 전**이다 | 이 문서, `docs/evidence/infra.md` §5 | `sha256sum app/guard.py` (로컬·서버 각각) | 2026-10-31 18:1x, 18:4x |
 | 가드 수정 뒤 다시 떴다 | 파일 시각 17:56:52, 앱 시작 17:57:38, GPU API 시작 17:57:35 | 이 문서 | `stat -c %y ~/sumeunjip/app/guard.py; ps -o lstart= -p <pid>` | 같음 |
 | 앱·vLLM 은 로컬에만 바인드 | `127.0.0.1:8080`, `127.0.0.1:8001`; GPU API 는 `0.0.0.0:8000`(접근 제어 미확인) | `docs/evidence/infra.md` §3 | `ss -ltnp` | 같음 |
 | L4 한 장에 모든 모델 | 20,560~20,912 / 23,034 MiB (vLLM 13,948, 추론 API 6,598~6,950 — 시점 차) | 이 문서, `infra.md` §2 | `nvidia-smi --query-compute-apps=pid,used_memory --format=csv` | 같음 |
@@ -77,7 +77,7 @@ ssh -F <해커톤 ssh 설정> -N -L 18080:127.0.0.1:8080 hk-ops &
 | 로그에 본문이 없다 | 앱 로그 3,362줄 → 숫자 치환 뒤 18모양(메서드·경로·상태), 표지 문자열 60회 송신 뒤 3개 로그 0건 | `docs/evidence/infra.md` §6 | 그 절의 `sed`·`grep -c` | 같음 |
 | 런타임은 외부 LLM 을 부르지 않는다 | `app/`·`gpu/` 에 GLM·중계 주소 0건, LLM_URL 미설정(기본 127.0.0.1:8001) | `docs/evidence/infra.md` §4·§5, `SPEC.md` §11.7 | `grep -rn "18090\|GLM" app gpu` | 같음 |
 | 엔드포인트 지연(서버 안) | 진단 0.005초, intake 1.83초, answer 5.75초(중앙값) 등 | `docs/evidence/infra.md` §7 | 측정 스크립트 비공개(같은 절 설명) | 같음 |
-| 단위 시험 | 앱 230 passed, GPU 120 passed (모델 없이) | 이 문서 | `uv run --frozen pytest -q tests`; `cd gpu && uv run --with pytest python -m pytest -q tests` | 2026-10-31 18:1x |
+| 단위 시험 | 앱 230 passed(`2418ad9`) → 407 passed(`cf8d149`, 보호 안내 보정 시험 추가), GPU 120 passed (모델 없이) | 이 문서 | `uv run --frozen pytest -q tests`; `cd gpu && uv run --with pytest python -m pytest -q tests` | 2026-10-31 18:1x |
 
 ## 7. 화면·차트·대화 발췌
 - 화면 14장: `docs/screens/v3-*.png` — 설명은 `docs/evidence/README.md`.

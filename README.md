@@ -26,7 +26,7 @@
 사용자 입력은 서버에 저장하지 않고 로그에도 남기지 않으며(앱 로그는 메서드·경로·상태코드만), 서비스 실행 중 외부 LLM 을 호출하지 않습니다. 자세한 내용은 `docs/architecture.md`, `docs/SPEC.md`.
 
 ## 실행
-요구: Python 3.12, [uv](https://docs.astral.sh/uv/). 추론 서버는 NVIDIA GPU(L4 23GB 에서 실측 20.6GB 사용). 서류 점검 평가에는 Node.js.
+요구: Python 3.12, [uv](https://docs.astral.sh/uv/). 추론 서버는 NVIDIA GPU(L4 23,034 MiB 에서 실측 20,560~20,912 MiB 사용, `docs/evidence/infra.md`). 서류 점검 평가에는 Node.js.
 
 ```bash
 # 운영 API + 웹 (127.0.0.1:8080, 접근 로그는 메서드·경로·상태코드만)
@@ -41,7 +41,7 @@ cd gpu && uv sync && ./start.sh                         # 중지: ./stop.sh
 ./llm_start.sh                                          # 중지: ./llm_stop.sh
 
 # 시험 (GPU·모델 없이)
-uv run --frozen pytest -q tests                                   # 2026-10-31: 230 passed
+uv run --frozen pytest -q tests                                   # 2026-10-31: 407 passed (cf8d149; 배포본 2418ad9 시점 230)
 cd gpu && uv run --with pytest python -m pytest -q tests          # 2026-10-31: 120 passed
 ```
 추론 서버가 없으면 근거 검색은 키워드 검색(`fallback: true`)으로, LLM 기능은 화면에서 숨겨진 채 체크박스 방식으로 동작합니다. LLM 이 실패해도 다른 LLM 으로 넘기지 않습니다.

@@ -180,7 +180,7 @@ def chart_redteam():
         rows.append((label, b, bt, a, at))
     body = paired_rows(rows, y0=210, row_h=128, vmax=0.2, bar_h=36)
     svg = frame("레드팀 공격 성공률(ASR): 낮을수록 좋다",
-                "같은 공격 121개(6개 대상), 결정적 규칙 판정 + 사람 재확인. 위치 찾기 질문에 실제 조회 절차를 낸 경우는 모든 경로 0건",
+                "같은 공격 121개(6개 대상), 결정적 규칙 판정 + AI 검토자(Claude) 재확인. 위치 찾기 질문에 실제 조회 절차를 낸 경우는 모든 경로 0건",
                 body, [(AMBER, "대책 전"), (TEAL, "대책 후(서비스) · 새 프롬프트(모델 단독)")],
                 "docs/redteam-summary.md 「대책 적용 후」 표(공격 문장·출력은 비공개, 집계만)")
     write("redteam-asr.svg", svg)

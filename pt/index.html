@@ -263,7 +263,7 @@ pre.cmd .c{color:#9fb0c8}
     <!-- gpu -->
     <rect x="28" y="330" width="724" height="150" rx="12" fill="#fff" stroke="#ded8cb"/>
     <text x="44" y="356" font-size="16" font-weight="800" fill="#1f3354">GPU 서버</text>
-    <text x="124" y="356" font-size="12.5" fill="#5b6476">10.1.2.33:8000 · L4 23GiB</text>
+    <text x="124" y="356" font-size="12.5" fill="#5b6476">10.1.2.33:8000 · L4 22.5GiB</text>
     <text x="44" y="382" font-size="13.5" fill="#1d2433">· 임베딩 bge-m3</text>
     <text x="44" y="403" font-size="13.5" fill="#1d2433">· 재순위 bge-reranker-v2-m3</text>
     <text x="44" y="424" font-size="13.5" fill="#1d2433">· 서류 정밀 점검 GLiNER</text>
@@ -722,7 +722,7 @@ pre.cmd .c{color:#9fb0c8}
     </div>
     <div>
       <div class="grid2" style="gap:10px">
-        <div class="stat teal"><div class="v">20.9 / 23.0 GiB</div><div class="l">L4 한 장: vLLM 13,948 MiB + 임베딩·재순위·GLiNER 6,950 MiB</div></div>
+        <div class="stat teal"><div class="v">20.4 / 22.5 GiB</div><div class="l">L4 한 장 20,912 / 23,034 MiB: vLLM 13,948 + 임베딩·재순위·GLiNER 6,950</div></div>
         <div class="stat"><div class="v">5.75초</div><div class="l">/api/answer 중앙값(생성→검증 포함, 서버 안 5회)</div></div>
       </div>
       <table class="tight" style="font-size:12.5px;margin-top:10px">
@@ -760,7 +760,7 @@ python3 tools/sim/run_all.py --set v2 \
   --seeds-by-kind user=2,attacker=1,benign=1 --workers 3 --run-id &lt;id&gt;
 <span class="c"># 차트 다시 그리기 → docs/evidence/charts/*.svg</span>
 python3 tools/make_charts.py
-<span class="c"># 단위 시험: 앱 230 passed · GPU 120 passed (모델 없이)</span>
+<span class="c"># 단위 시험: 앱 407 passed(cf8d149) · GPU 120 passed (모델 없이)</span>
 uv run --frozen pytest -q tests
 cd gpu &amp;&amp; uv run --with pytest python -m pytest -q tests</pre>
     </div>
@@ -783,7 +783,7 @@ cd gpu &amp;&amp; uv run --with pytest python -m pytest -q tests</pre>
 </section>
 
 </div></div>
-<div id="nav"><button id="prev" aria-label="이전">◀</button><span id="num">1 / 16</span><button id="next" aria-label="다음">▶</button></div>
+<div id="nav"><button id="prev" aria-label="이전">◀</button><span id="num">1 / 25</span><button id="next" aria-label="다음">▶</button></div>
 <script>
 (function(){
   var slides=[].slice.call(document.querySelectorAll('.slide'));

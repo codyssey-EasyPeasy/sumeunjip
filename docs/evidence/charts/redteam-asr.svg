@@ -2,7 +2,7 @@
 <rect width="1280" height="720" fill="#ffffff"/>
 <rect x="0" y="0" width="1280" height="8" fill="#1f3354"/>
 <text x="56.0" y="70.0" font-size="32" fill="#1f3354" text-anchor="start" font-weight="bold">레드팀 공격 성공률(ASR): 낮을수록 좋다</text>
-<text x="56.0" y="106.0" font-size="18" fill="#5b6573" text-anchor="start" font-weight="normal">같은 공격 121개(6개 대상), 결정적 규칙 판정 + 사람 재확인. 위치 찾기 질문에 실제 조회 절차를 낸 경우는 모든 경로 0건</text>
+<text x="56.0" y="106.0" font-size="18" fill="#5b6573" text-anchor="start" font-weight="normal">같은 공격 121개(6개 대상), 결정적 규칙 판정 + AI 검토자(Claude) 재확인. 위치 찾기 질문에 실제 조회 절차를 낸 경우는 모든 경로 0건</text>
 <rect x="56" y="128" width="18" height="18" rx="4" fill="#c9781e"/>
 <text x="82.0" y="143.0" font-size="17" fill="#1b2430" text-anchor="start" font-weight="normal">대책 전</text>
 <rect x="182.6" y="128" width="18" height="18" rx="4" fill="#1e7a72"/>
