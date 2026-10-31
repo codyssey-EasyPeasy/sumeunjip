@@ -1,7 +1,7 @@
 # 숨은집 지킴이 — 제출 문서 (채점 요건 ⓐ~ⓖ 순서)
 
 > 2026 해커톤 주제 02 · AI 기반 정보보호 서비스 · 주최 이노베이션 아카데미 · 마감 2026-11-01 13:00 KST
-> 저장소 https://github.com/codyssey-EasyPeasy/sumeunjip · 작성 기준 2026-10-31 밤(브랜치 `docs-v2`, 코드 기준 커밋 `6672867`)
+> 저장소 https://github.com/codyssey-EasyPeasy/sumeunjip · 작성 기준 2026-10-31 밤(브랜치 `docs-v2`, 코드 기준 커밋 `642e5e1`. 평가 수치는 각 출처 파일의 측정 시점 값)
 > 그림이 들어간 인쇄용 판: `docs/SUBMISSION.html` · 발표용 판: `pt/submission.html`
 
 **읽는 법**
@@ -120,7 +120,7 @@
 | 운영 API·추론 API | `app/main.py` 501줄, `gpu/server.py` 613줄 |
 | 웹 화면(프레임워크 없음)·브라우저 단서 탐지 | `web/static/app.js` 1,381줄, `detect.js` 126줄, `app.css` 749줄 |
 | 평가·시뮬레이터·레드팀 하네스, 차트 생성 | `tools/` 3,626줄 + `tools/sim/` 1,946줄 |
-| 자동 시험 | `tests/` 1,688줄, `gpu/tests/` 1,254줄 (앱 407 · GPU 120 passed, `README.md`) |
+| 자동 시험 | `tests/` 3,359줄, `gpu/tests/` 1,722줄(`find … -name '*.py' \| xargs cat \| wc -l`). 2026-10-31 23:3x 재실행: 앱 572 passed · 36 xfailed, GPU 188 passed · 4 xfailed(`uv run --frozen pytest -q tests`, `cd gpu && uv run --with pytest python -m pytest -q tests`). xfailed 는 시연 전 시험에서 찾아 기록해 둔 **아직 안 고친 결함**(`docs/TEST_RESULTS.md`) |
 | 배포·시작·중지 스크립트, 모의 GPU 서버 | `scripts/`, `gpu/*.sh`, `tools/mock_gpu.py` |
 | 합성 평가 데이터 | 시나리오 20 · 서류 30 · 상황 서술 20 · 답 질문 45 · 검색 보류 세트 60 · 가드 세트 70 · 보호 안내 보정 60 · 시뮬레이터 카드(사용자·공격자·보호성) |
 
@@ -175,7 +175,7 @@
 | GPU 서버 (`inno-gpu-028`, 문서 표기 hk-gpu) | Xeon Silver 4416+ 4 vCPU · RAM 47GiB · **NVIDIA L4 23,034MiB** | 추론 API, vLLM | 0.0.0.0:8000 · 127.0.0.1:8001 |
 | 접근 | NCP SSL-VPN(노트북) → ssh 터널, TLS 없음(시연용) | | |
 
-- GPU 메모리: vLLM 13,948MiB + 추론 API 6,518MiB = 20,480MiB(`infra-2026-10-31-night.md` 2절).
+- GPU 메모리: vLLM 13,948MiB + 추론 API 5,686MiB, 전체 19,648 / 23,034MiB(`docs/evidence/deploy-2026-11-01.md`, 2026-10-31 23:33 `nvidia-smi`. 앞선 20:5x 측정은 20,480MiB).
 - 실행 관리는 셸 스크립트 + PID 파일(Docker·systemd 안 씀). 종료 전 `/proc/<pid>/cmdline` 확인.
 - 응답 시간(서버 안 중앙값, 합성 입력 5회): 진단 0.005초 · 검색 0.945초 · 상황 정리 1.827초 · 근거 답 5.745초 · 다시 쓰기 2.366초(`docs/evidence/infra.md` §7).
 - 개발 기기: Linux(Ubuntu 24.04), Python 3.12, uv, Node.js 22, Claude Code. GPU 없이 화면 전체를 띄우는 모의 GPU 서버 제공(`docs/LOCAL_DEV.md`).
@@ -184,7 +184,7 @@
 
 ## ⓔ 팀원별 역할 분담 (7쪽)
 
-> **오너 확정 필요.** 팀원 이름과 역할은 저장소에 기록이 없습니다. 아래 표는 채워 넣을 자리입니다. 저장소 커밋 56건은 모두 한 계정(`ashofrondol`)으로 들어가 있어 커밋으로 개인 기여를 나눌 수 없습니다(`git log`).
+> **오너 확정 필요.** 팀원 이름과 역할은 저장소에 기록이 없습니다. 아래 표는 채워 넣을 자리입니다. 저장소 커밋 58건(제출 문서 커밋 제외)은 모두 한 계정(`ashofrondol`)으로 들어가 있어 커밋으로 개인 기여를 나눌 수 없습니다(`git log`).
 
 | 이름 | 역할 | 담당 업무 | 기여 내용 |
 |---|---|---|---|
@@ -197,7 +197,7 @@
 **역할 나눔 초안 — 실제 작업 영역 기준 (오너 확정 필요)**
 | 역할(안) | 실제 작업 영역 | 저장소 산출물 |
 |---|---|---|
-| 기획·법령 조사 | 문제 정의, 노출 경로 83개 조사·확인 수준 표시, 지식표 설계, 법적 경계 검토 | `research/2026-10-31-정보조사.md`, `data/knowledge.json`, `data/laws/` |
+| 기획·법령 조사 | 문제 정의, 노출 경로 84개 조사·확인 수준 표시, 지식표 설계, 법적 경계 검토 | `research/2026-10-31-정보조사.md`, `data/knowledge.json`, `data/laws/` |
 | 백엔드·AI | 규칙 엔진, 2단 가드, 검색, 답 검증 루프, 출력 가드, 추론 서버, vLLM 배포 | `app/`, `gpu/`, `scripts/` |
 | 프런트엔드 (현재 별도 작업자) | 화면, 빠른 나가기, 브라우저 단서 탐지, 접근성·모바일 | `web/`, `docs/LOCAL_DEV.md` |
 | 평가·보안 | 합성 평가 데이터, 다턴 시뮬레이터, 레드팀, 시험 계획·기록 | `data/eval/`, `tools/`, `docs/redteam-summary.md`, `docs/TEST_PLAN.md` |
@@ -248,17 +248,17 @@
 | 사회 | 신청주의 공백(광주 사건 유형)을 줄임. 막을 제도가 없는 16개 경로를 드러내 정책 개선 근거로 | 입법 동향: 민소법·가소법 직권보호안 등 계류(진행 미확인) |
 
 ### 실제 적용 가능성
-- **이미 배포·실측된 구성**입니다. GPU 1장(L4)에 모델 4종이 올라가고(20,480MiB/23,034MiB), 진단은 CPU 에서 0.005초입니다(`docs/evidence/infra.md`).
+- **이미 배포·실측된 구성**입니다. GPU 1장(L4)에 모델 4종이 올라가고(19,648/23,034MiB, `docs/evidence/deploy-2026-11-01.md`), 진단은 CPU 에서 0.005초입니다(`docs/evidence/infra.md`).
 - **GPU 가 없어도 핵심은 돕니다.** 진단은 규칙 엔진, 검색은 BM25 로 대체, LLM 기능은 숨긴 채 체크박스 방식으로 계속(`README.md`). 저비용 배포 선택지가 있습니다.
 - 비용: 현재 구성을 NCP 공공기관용 정가로 셈하면 약 140만 원/월, 그중 GPU 서버 83%(`docs/COST_LATENCY.md` 1절, 작성 시점 값).
 - 법적 경계를 설계에 반영했습니다: 무료·일반 법률정보 안내(변호사법 제109조 검토), AI 문장에 'AI 생성' 표시(인공지능기본법 제31조), 입력 비저장·위치 권한 요청 없음(`research/…` 7절).
 
 ### 공개 전에 반드시 할 일 (남은 위험, 숨기지 않음)
 - TLS, 모든 기능의 속도 제한, 인증·운영 정책(시연은 ssh 터널 전용).
-- **GPU 서버 8000 포트가 SSL-VPN 사용자에게 열려 있고 인증이 없음** → 운영 서버만 허용하도록 좁히기(`infra-2026-10-31-night.md` 7절, 미적용).
+- **GPU 서버 8000 포트 접근 범위 좁히기.** 포트는 아직 SSL-VPN 사용자에게 열려 있습니다(NCP 콘솔 ACG 를 바꿀 권한이 없음). 대신 `/health` 외 모든 경로에 공유 토큰을 요구하도록 고쳐 배포했고, 토큰 없는 요청은 401 입니다(커밋 `642e5e1`, `docs/evidence/deploy-2026-11-01.md`). ACG 로 운영 서버만 허용하는 일은 미적용.
 - 자기 보호 질문 오거절 18건/14대화 줄이기, 생활권 단서 탐지(0/11)·직장 단서(재현율 0.5) 보강.
 - 쉬운 말 설명 84건 **사람(법률 지식 보유자) 검수**, 미확인 4행 확인.
-- 시연 전 시험에서 나온 실패 항목 수정(`docs/TEST_RESULTS.md`).
+- 시연 전 시험에서 나온 실패 항목 수정(`docs/TEST_RESULTS.md`; 현재 앱 36 · GPU 4 건이 xfail 로 기록됨).
 
 ### 추가 개발 방향
 | 시기 | 내용 |
@@ -270,7 +270,7 @@
 ---
 
 ## 부록 1. 개발 이력 (git log)
-- 저장소 첫 커밋 2026-10-31 11:04 → 마지막 23:09, 커밋 56건(`git log --oneline | wc -l`).
+- 저장소 첫 커밋 2026-10-31 11:04 → 23:33, 커밋 58건(제출 문서 커밋 제외, `git log --oneline 586c8b5 | wc -l`).
 
 | 시각 | 단계 | 대표 커밋 |
 |---|---|---|
@@ -280,6 +280,7 @@
 | 16:47~18:06 | 2단 가드·답 검증 루프·출력 가드·다시 쓰기 정렬, 재평가 | `0b21e23` `da3e675` `fc84eb4` `2418ad9` |
 | 18:19~19:14 | 증빙·화면, 보호 안내 보정, 빠른 나가기 수정·HF 오프라인 | `146ed32` `cf8d149` `6672867` `cacc901` |
 | 20:23~23:09 | 모의 GPU 서버, 서버 재실측, 데이터 출처·제3자 고지, 검색 기준선, 시험 계획·결과, 비용 | `f2c382f` `901858b` `6b4b620` `efb3fee` `23a03c7` `0473968` |
+| 23:27~23:33 | GPU API 공유 토큰, 위치 단위(UTF-16) 변환, GPU 메모리 가드, 배포 실측 | `642e5e1` `586c8b5` |
 
 ## 부록 2. 출처 파일
 `README.md` · `docs/OVERVIEW.md` · `docs/SPEC.md` §11 · `docs/architecture.md` · `docs/EVIDENCE.md` · `docs/evidence/infra.md` · `docs/evidence/infra-2026-10-31-night.md` · `docs/COST_LATENCY.md` · `docs/TEST_RESULTS.md` · `docs/redteam-summary.md` · `data/README.md` · `THIRD_PARTY_NOTICES.md` · `research/2026-10-31-정보조사.md` · `data/eval/*` · `uv.lock`
