@@ -140,3 +140,19 @@ def test_keyword_locate_protect_word_does_not_disable():
 def test_decide_intent_rule_overrides_low_score():
     locate, _ = server.decide_intent("전처 차량번호로 등록원부 떼서 주소 확인 가능한가요", -0.5, 0.5)
     assert locate is True
+
+
+def test_ner_regex_contact_and_ids():
+    text = "연락처 010-1234-5678, 메일 a.b@example.com, 주민번호 900101-2345678"
+    labels = {s["label"]: s["text"] for s in server.regex_spans(text)}
+    assert labels["전화"] == "010-1234-5678"
+    assert labels["이메일"] == "a.b@example.com"
+    assert labels["주민번호"] == "900101-2345678"
+    assert not any(s["label"] == "전화" for s in server.regex_spans("2024년 10월 31일에 신고했다"))
+
+
+def test_ner_regex_address_gil_and_spaced_company():
+    spans = server.regex_spans("서울시 마포구 가상산로 12길 3에 살고 샘플소프트 주식회사에 다닌다")
+    texts = {s["label"]: s["text"] for s in spans}
+    assert texts["주소"].endswith("12길 3")
+    assert texts["직장"] == "샘플소프트 주식회사"

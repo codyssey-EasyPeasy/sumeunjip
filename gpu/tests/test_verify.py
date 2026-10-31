@@ -67,7 +67,10 @@ def test_guard_excluded_article_ngram():
 
 def test_guard_real_excluded_file_catches_nonexposable_article():
     root = Path(__file__).resolve().parents[2]
-    arts = [json.loads(line) for line in (root / "data/laws/articles.jsonl").open(encoding="utf-8")]
+    src = root / "data/laws/articles.jsonl"
+    if not src.exists():  # GPU 서버에는 gpu/ 만 배포되고 data/laws 는 없다
+        pytest.skip("data/laws/articles.jsonl 없음(gpu 단독 배포)")
+    arts = [json.loads(line) for line in src.open(encoding="utf-8")]
     hidden = next(a for a in arts if not a.get("exposable"))
     assert verify.guard().excluded, "gpu/excluded_ngrams.json 이 없다(tools/build_guard_ngrams.py)"
     assert "excluded_article" in verify.guard().issues(hidden["text"][:80])

@@ -403,3 +403,18 @@ def test_answer_extractive_mode_for_notify_and_effect(client, monkeypatch):
     assert b["mode"] == "extractive" and b["citations"] == ["A1"]
     b = client.post("/llm/answer", json={"question": "언제부터 효과가 있나요?", "items": ITEMS}).json()
     assert b["mode"] == "extractive"
+
+
+def test_rewrite_truncated_json_falls_back_to_rule(client, monkeypatch):
+    # 모델이 clues 를 되풀이하다 max_tokens 에서 잘리면(bad json) 503 대신 규칙 치환.
+    monkeypatch.setattr(llm, "chat", lambda *a, **k: '{"clues": [{"label": "이메일", "text": "x"}, {"label')
+    r = client.post("/llm/rewrite", json={"text": TEXT, "spans": _spans()})
+    assert r.status_code == 200
+    b = r.json()
+    assert b["method"] == "rule"
+    assert "가상로" not in b["suggested"] and "가상물산" not in b["suggested"]
+
+
+def test_rewrite_schema_forbids_empty_clue_text():
+    item = llm.rewrite_schema()["properties"]["clues"]["items"]["properties"]["text"]
+    assert item["minLength"] == 1

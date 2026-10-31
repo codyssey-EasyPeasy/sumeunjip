@@ -121,12 +121,16 @@ class IntentIn(BaseModel):
 
 # --- 순수 함수 (모델 없이 테스트 가능) ---
 _ADDR_ROAD = re.compile(
-    r"[가-힣]+(?:시|도)\s*[가-힣]+(?:구|군|시)\s*[가-힣0-9]+(?:로|길|동|읍|면)\s*\d+(?:-\d+)?(?:번길)?\s*\d*"
+    r"[가-힣]+(?:시|도)\s*[가-힣]+(?:구|군|시)\s*[가-힣0-9]+(?:로|길|동|읍|면)\s*\d+(?:-\d+)?(?:번?길)?\s*\d*"
 )
 _ADDR_DONGHO = re.compile(r"\d+동\s*\d+호")
 _PLATE = re.compile(r"\d{2,3}[가-힣]\s?\d{4}")
+# 전화·이메일·주민번호: 브라우저(detect.js)가 span 을 못 넘긴 경우에도 규칙 치환이 가리도록(2026-10-31 통합 e2e).
+_PHONE = re.compile(r"(?<!\d)(?:01[016789]|0\d{1,2})[-.\s]?\d{3,4}[-.\s]?\d{4}(?!\d)")
+_EMAIL = re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}")
+_RRN = re.compile(r"(?<!\d)\d{6}-?[1-4]\d{6}(?!\d)")
 _COMPANY = re.compile(
-    r"(?:(?:주식회사|\(주\)|㈜)\s*[가-힣A-Za-z0-9]+)|(?:[가-힣A-Za-z0-9]+(?:주식회사|\(주\)|㈜))|(?:[가-힣]+(?:회사|병원|공장|마트)에서\s*(?:근무|일))"
+    r"(?:[가-힣A-Za-z0-9]+\s?(?:주식회사|\(주\)|㈜))|(?:(?:주식회사|\(주\)|㈜)\s*[가-힣A-Za-z0-9]+)|(?:[가-힣]+(?:회사|병원|공장|마트)에서\s*(?:근무|일))"
 )
 _SCHOOL = re.compile(r"[가-힣]+(?:초등학교|중학교|고등학교|대학교|어린이집|유치원)")
 
@@ -156,6 +160,12 @@ def regex_spans(text: str) -> list[dict]:
         add(m, "직장")
     for m in _SCHOOL.finditer(text):
         add(m, "학교")
+    for m in _RRN.finditer(text):
+        add(m, "주민번호")
+    for m in _PHONE.finditer(text):
+        add(m, "전화")
+    for m in _EMAIL.finditer(text):
+        add(m, "이메일")
     return spans
 
 
@@ -489,9 +499,15 @@ def llm_rewrite(req: RewriteIn):
                         + llm.routine_spans(req.text))
     try:
         out = llm.chat_json(llm.rewrite_messages(req.text, spans), llm.rewrite_schema(),
-                            max_tokens=min(4096, 2 * n + 256), temperature=0.0)
-    except llm.LlmDown as exc:
+                            max_tokens=min(4096, 2 * n + 512), temperature=0.0)
+    except llm.LlmTimeout as exc:
         return _llm_down(exc)
+    except llm.LlmDown as exc:
+        # 모델이 clues 를 끝없이 되풀이해 JSON 이 잘리는 경우가 있다(2026-10-31 실측: 빈 '이메일' 단서 반복).
+        # 그때는 503 대신 규칙 치환만 돌려준다(모델 출력은 쓰지 않음).
+        if str(exc) != "bad json":
+            return _llm_down(exc)
+        out = {"clues": [], "text": ""}
     spans = merge_spans(spans + [{**c, "score": 0.5} for c in llm.clue_spans(req.text, out.get("clues"))])
     res = llm.finalize_rewrite(req.text, spans, str(out.get("text") or ""))
     # 공통 출력 가드: 원문에 없던 프롬프트·노출 금지 조문 조각, 단정 어휘, 반복이 생기면 규칙 치환.

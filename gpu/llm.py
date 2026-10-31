@@ -475,11 +475,11 @@ def rewrite_schema() -> dict[str, Any]:
         "type": "object",
         "properties": {
             "clues": {
-                "type": "array", "maxItems": 40,
+                "type": "array", "maxItems": 20,
                 "items": {
                     "type": "object",
                     "properties": {"label": {"enum": list(PLACEHOLDER)},
-                                   "text": {"type": "string", "maxLength": 200}},
+                                   "text": {"type": "string", "minLength": 1, "maxLength": 200}},
                     "required": ["label", "text"], "additionalProperties": False,
                 },
             },
