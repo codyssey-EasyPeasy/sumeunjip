@@ -60,10 +60,10 @@
   },
 
   "steps": [
-    { "id": "intro",    "maxSec": 12, "dwellMs": 4000, "caption": "보안 예보 — 첫 화면: 안전 안내와 긴급 연락처, 오른쪽 위 ‘빠른 나가기’" },
+    { "id": "intro",    "maxSec": 12, "dwellMs": 4000, "caption": "보안 예보 — 들어올 때마다 뜨는 안전 안내, 위쪽 긴급 연락처(112·1366·132), 오른쪽 위 ‘빠른 나가기’" },
     { "id": "intake",   "maxSec": 22, "dwellMs": 2000,  "caption": "말로 설명하기 — 상황을 적으면 AI가 해당 항목을 미리 골라 줍니다 (합성 문장)" },
-    { "id": "confirm",  "maxSec": 12, "dwellMs": 2500, "caption": "자동 선택은 제출되지 않습니다 — 직접 고치고 ‘확인했습니다’를 체크해야 진행" },
-    { "id": "diagnose", "maxSec": 16, "dwellMs": 4000, "caption": "진단 결과 — 급한 것부터 ‘지금 먼저 할 일’, 상대에게 알려질 수 있는 제도는 경고 확인 뒤 펼침" },
+    { "id": "confirm",  "maxSec": 12, "dwellMs": 2500, "caption": "자동 선택은 제출되지 않습니다 — 묶음을 펼쳐 직접 고치고 ‘확인했습니다’를 체크해야 진행" },
+    { "id": "diagnose", "maxSec": 16, "dwellMs": 4000, "caption": "진단 결과 — 급한 것부터, 카드는 위험 → 도움 순. 상대에게 알려질 수 있는 제도는 경고 확인 뒤 펼침" },
     { "id": "ask",      "maxSec": 28, "dwellMs": 6000, "caption": "‘이게 무슨 뜻인가요?’ — 안내문·조문만 근거로 답하고 배지로 답의 종류를 표시" },
     { "id": "doccheck", "maxSec": 18, "dwellMs": 4500, "caption": "서류 점검 — 기본 점검은 브라우저 안에서만, 정밀 점검은 누를 때만 서버로" },
     { "id": "rewrite",  "maxSec": 22, "dwellMs": 5000, "caption": "안전한 문장으로 바꾸기 — 주소 단서를 가린 제안 (본인이 확인 후 사용)" },

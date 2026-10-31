@@ -2,7 +2,8 @@
 
 제출용 시연 영상을 **실제로 동작하는 서비스 화면**에서 자동으로 녹화합니다. 앱 코드가 아니며 `web/` 는 건드리지 않습니다.
 
-> **녹화 시점: 프런트엔드 작업(`frontend` 브랜치)이 main 에 병합되고 운영 서버에 배포된 뒤에 합니다.** 그 전에는 리허설(`--check`, `--stub-exit`)만 합니다.
+> **녹화 조건 충족(2026-11-01 04:14 KST):** 프런트엔드 개편(PR #2)이 main 에 병합됐고, 운영 서버에 앱·웹 `993db4f` 가 배포됐습니다(GPU 서버는 `642e5e1` 그대로). 아래 (1)로 녹화합니다.
+> **대회 서버는 2026-11-01 13:00 에 삭제됩니다.** 그 뒤에는 실제 AI 화면을 녹화할 수 없고, 로컬 모의 서버(아래)로 흐름만 볼 수 있습니다.
 
 ## 공식 가이드 요약 (지켜야 할 것)
 | 항목 | 규칙 | 이 도구에서 |
@@ -22,14 +23,14 @@
 | `package.json` | `playwright-core` 1.63.0 고정(브라우저는 chromium-1243) |
 
 녹화 단계(약 100~115초 목표)
-1. 첫 화면 — 안전 안내, 긴급 연락처(112·1366·132), 오른쪽 위 ‘빠른 나가기’ 강조
+1. 첫 화면 — 들어올 때마다 뜨는 안전 안내 팝업, 위쪽 긴급 연락처 띠(112·1366·132), 오른쪽 위 ‘빠른 나가기’ 강조 → 팝업 ‘닫기’
 2. 말로 설명하기 — 합성 자유서술 입력 → 항목 골라 보기 (`/api/intake`)
-3. 자동 체크 확인 — 빠진 항목(옛 주소로 우편물) 직접 체크 → ‘고른 항목을 확인했습니다’
-4. 진단 결과 — ‘지금 먼저 할 일’, 통지 경고 확인 체크 → 신청 방법 펼침 (`/api/diagnose`)
+3. 자동 체크 확인 — 상황 묶음(‘우편·통신’)을 펼쳐 빠진 항목(옛 주소로 우편물)을 직접 체크 → ‘고른 항목을 확인했습니다’. AI 가 고른 항목이 있는 묶음은 자동으로 열립니다
+4. 진단 결과 — ‘지금 먼저 할 일’, 카드는 ‘생길 수 있는 위험’ → ‘받을 수 있는 도움’ 순, 통지 경고 확인 체크 → 신청 방법 펼침 (`/api/diagnose`)
 5. ‘이게 무슨 뜻인가요?’ — 우편물 카드에 질문, 답과 배지 (`/api/answer`)
 6. 서류 점검 — 합성 진술서 붙여 넣기 → 기본 점검 → 정밀 점검 (`/api/doccheck`)
 7. 안전한 문장으로 바꾸기 (`/api/rewrite`)
-8. 위치 탐색 질문 거절 + 보호 대안 — 근거 조문 탭 (`/api/search`). **질문 입력칸은 흐리게 가림**(`docs/PT_HANDOFF.md` 10장 원칙: 다른 사람을 찾는 질문은 화면에 그대로 보이지 않게). 끄려면 `inputs.maskLocateInput=false`
+8. 위치 탐색 질문 거절 + 보호 대안 — 근거 조문 탭 (`/api/search`). **질문 입력칸은 흐리게 가림**(`docs/PT_HANDOFF.md` 시연 원칙: 다른 사람을 찾는 질문은 화면에 그대로 보이지 않게). 끄려면 `inputs.maskLocateInput=false`
 9. 빠른 나가기 — Esc 두 번 → 구글 ‘날씨’ 검색 화면
 
 입력은 모두 `scenario.json` 의 **합성 문장**입니다(실존 인물·주소 없음, 이름·지명은 ○○). 답을 기다릴 때는 고정 sleep 이 아니라 해당 API 응답과 화면 변화를 기다리고, 단계마다 `maxSec` 을 넘기면 실패합니다.
@@ -40,9 +41,8 @@ cd tools/demo
 PATH=$HOME/.local/bin:$PATH npm ci          # playwright-core 만 설치(node_modules 는 커밋하지 않음)
 PATH=$HOME/.local/bin:$PATH npx playwright-core install chromium   # ~/.cache/ms-playwright/chromium-1243 이 이미 있으면 생략
 ```
-- 한글 글꼴: 리눅스에 한글 글꼴이 없으면 캡션·화면이 네모로 나옵니다. devjsy 에서는
-  `export FONTCONFIG_FILE=/tmp/claude-1000/-home-ashofrondol/7682b48e-686a-4a42-9902-a98bf6b1332d/scratchpad/fonts.conf`
-  (NanumGothic 을 넣어 둔 임시 fontconfig). 다른 기기는 `fonts-nanum` 등 한글 글꼴을 설치합니다.
+- 한글 글꼴: 리눅스에 한글 글꼴이 없으면 캡션·화면이 네모로 나옵니다. `fonts-nanum` 등 한글 글꼴을 설치하거나,
+  설치 권한이 없으면 NanumGothic 을 넣은 fontconfig 파일을 만들어 `export FONTCONFIG_FILE=<fonts.conf 경로>` 로 지정합니다.
 - ffmpeg: 따로 설치하지 않아도 됩니다. 녹화기가 `uv run --no-project --with imageio-ffmpeg` 로 pip 판 ffmpeg 를 찾습니다.
   직접 지정하려면 `--ffmpeg <경로>` 또는 `FFMPEG=<경로>`.
   경로 확인: `uv run --no-project --with imageio-ffmpeg python -c 'import imageio_ffmpeg; print(imageio_ffmpeg.get_ffmpeg_exe())'`
@@ -57,7 +57,7 @@ ssh -N -L 18080:127.0.0.1:8080 hk-ops
 curl -s http://127.0.0.1:18080/api/features          # {"llm":true}
 
 cd tools/demo
-export FONTCONFIG_FILE=/tmp/claude-1000/-home-ashofrondol/7682b48e-686a-4a42-9902-a98bf6b1332d/scratchpad/fonts.conf
+export FONTCONFIG_FILE=<fonts.conf 경로>     # 한글 글꼴이 설치돼 있으면 생략
 
 # 2) 선택자 확인(녹화 없음, 빠른 나가기 이동은 스텁). "missing": [] 와 "ok": true 여야 한다
 node record_demo.mjs --check --base http://127.0.0.1:18080
@@ -68,7 +68,7 @@ node record_demo.mjs --base http://127.0.0.1:18080 --stub-exit
 # 4) 실제 녹화(빠른 나가기가 진짜 구글 날씨 검색으로 이동)
 node record_demo.mjs --base http://127.0.0.1:18080
 ```
-- 출력: `/tmp/claude-1000/-home-ashofrondol/7682b48e-686a-4a42-9902-a98bf6b1332d/scratchpad/demo/sumeunjip-demo-<시각>.mp4` (+ 원본 `.webm`, `report-record-<시각>.json`). 다른 곳에 두려면 `--out <폴더>` 또는 `DEMO_OUT`. **영상은 저장소에 커밋하지 않습니다.**
+- 출력: 녹화기 기본 출력 폴더(`record_demo.mjs` 의 `DEFAULT_OUT`)에 `sumeunjip-demo-<시각>.mp4` (+ 원본 `.webm`, `report-record-<시각>.json`). 원하는 곳에 두려면 `--out <폴더>` 를 붙입니다. **영상은 저장소에 커밋하지 않습니다.**
 - 끝나면 표준 출력 JSON 의 `probe` 를 봅니다. 녹화기가 이미 검사하고, 어긋나면 종료 코드 2 입니다.
   기대값: `codec h264 · pixFmt yuv420p · 1920x1080 · fps 30 · faststart true · durationSec ≤ 120`.
 - ffprobe 대신 같은 ffmpeg 로 직접 확인:
@@ -87,9 +87,18 @@ node record_demo.mjs --base http://127.0.0.1:18080
 - `scenario.json` 의 `selectors` 는 키마다 후보 목록입니다. 앞에서부터 시도해서 처음 보이는 요소를 씁니다.
   - 문자열: Playwright 선택자(`#id`, `.class`, `text=...`)
   - 객체: `{"role":"button","name":"/빠른 나가기/"}`, `{"label":"..."}`, `{"placeholder":"..."}`, `{"text":"..."}` — `/.../` 는 정규식
-- 지금 후보는 main(`6b4b620`)과 `origin/feature/frontend`(`34edc21`, 안전 안내가 팝업으로 바뀐 판) 두 화면에서 모두 `--check` 통과를 확인했습니다(2026-10-31, 로컬 모의 서버).
+- `--check` 기록(선택자 키 전부 찾음, 9단계 모두 통과, `"missing": []`):
+
+  | 대상 | 화면 | 결과 | 걸린 시간(`totalSec`) | 시각(KST) |
+  |---|---|---|---|---|
+  | 운영 서버 배포본(앱·웹 `993db4f`, GPU `642e5e1`), ssh 터널 | PR #2 화면(안전 안내 팝업) | 9/9 통과 | 70.3초 | 2026-11-01 04:15 |
+  | 로컬 모의 서버(`993db4f`) | 같음 | 9/9 통과 | 50.1초 | 2026-11-01 03:59 |
+  | 로컬 모의 서버(main `6b4b620`, `feature/frontend` `34edc21`) | 개편 전·후 | 통과 | — | 2026-10-31 |
+
+  `--check` 시간은 선택자 확인용 실행 시간이라 녹화 길이와 다릅니다.
 - 개편 뒤 `--check` 결과의 `"selectors"` 에서 `MISSING` 인 키(괄호 안이 단계)만 고칩니다. `not reached` 는 앞 단계가 실패해 확인하지 못한 키입니다. 키 이름은 바꾸지 말고 후보만 앞에 추가합니다.
-- 안전 안내가 팝업이면 1단계에서 ‘닫기’를 누르고, 펼쳐진 상자면 ‘안내 접기’를 누릅니다(`safetyClose` 후보 둘 다 있음). 둘 다 없으면 건너뜁니다.
+- 1단계는 안전 안내 팝업의 ‘닫기’(`#safety-toggle`)를 누릅니다. 팝업 바깥 어두운 배경을 눌러도 닫히고, 다시 보려면 위쪽 띠의 ‘안전 안내 다시 보기’를 누릅니다. 옛 화면(펼쳐진 상자의 ‘안내 접기’)도 `safetyClose` 후보에 남겨 두었습니다. 둘 다 없으면 건너뜁니다.
+- **리허설 영상으로 눈으로 확인할 것(미실측):** ① 팝업이 열린 동안 어두운 배경이 위쪽 긴급 연락처 띠까지 덮는지(1단계 캡션이 띠를 가리키므로, 덮이면 ‘닫기’ 뒤에 띠를 다시 강조), ② 화면 아래 고정 도움 줄(1366·132·112)이 캡션 띠와 겹치는지.
 
 ## 서버 없이 리허설 (로컬 모의 서버)
 `docs/LOCAL_DEV.md` 와 같은 구성입니다. 2·5·6·7단계는 `(모의 응답)` 이라 품질은 무관하고 흐름·선택자·길이만 봅니다.
@@ -104,6 +113,7 @@ node record_demo.mjs --base http://127.0.0.1:18791 --stub-exit
 공통 준비
 - 화면 해상도 1920x1080, 브라우저 **시크릿 창**을 최대화, 확대 125%. 알림은 끕니다(Windows ‘방해 금지’).
 - 입력은 위 ‘녹화 단계’ 순서대로, `scenario.json` 의 `inputs` 문장을 메모장에서 복사해 붙여 넣습니다. 실제 이름·주소·연락처를 쓰지 않습니다.
+- 1단계에서 안전 안내 팝업을 2~3초 보여 준 뒤 ‘닫기’를 누릅니다.
 - 8단계 위치 탐색 질문은 입력칸이 보이지 않게(창 일부만 찍거나 편집에서 가림) 합니다.
 - 2분 안에 끝나도록 한 번 연습한 뒤 녹화합니다.
 

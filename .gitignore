@@ -5,7 +5,6 @@ __pycache__/
 node_modules/
 *.log
 *.pid
-*.pid
 models/
 # 시뮬레이션 대화 원문은 공개하지 않는다(집계만 공개)
 data/eval/sim_results/**/*
@@ -14,3 +13,9 @@ data/eval/sim_results/**/*
 !data/eval/sim_results/**/summary.json
 !data/eval/sim_results/**/card_consistency.json
 .coverage
+# 로컬 환경 변수 파일(README 가 cp .env.example .env 를 안내한다). 템플릿만 올린다
+.env
+.env.*
+!.env.example
+# 개발 도구(Claude Code) 작업 폴더·워크트리
+.claude/
