@@ -135,12 +135,15 @@ def test_a6_inherits_a1_notify_warning():
     assert by["A6"]["notify_inherited_from"] == "A1"
 
 
-def test_j15_inherits_j13_notify_warning():
+def test_j15_has_own_notify_warning():
     # 전자장치 부착도 스토킹 잠정조치라 결정 내용이 행위자에게 고지된다(스토킹처벌법 제10조 제2항).
+    # J13 을 물려받으면 "'긴급응급조치' 신청과 함께" 문장이 붙는데, 전자장치는 긴급응급조치로 할 수 없다.
     e = Engine(load_knowledge())
     by = {it["id"]: it for it in e.items}
-    assert "고지" in by["J15"]["notify_warning"]
-    assert by["J15"]["notify_inherited_from"] == "J13"
+    w = by["J15"]["notify_warning"]
+    assert "고지" in w and "제10조 제2항" in w
+    assert "긴급응급조치" not in w
+    assert "notify_inherited_from" not in by["J15"]
 
 
 def test_j11_has_own_notify_warning_and_basis():
