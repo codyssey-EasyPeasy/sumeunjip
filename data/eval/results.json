@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-31T14:38:56+09:00",
+  "generated_at": "2026-10-31T17:11:35+09:00",
   "knowledge_version": "2026-10-31",
   "gpu_url": "http://127.0.0.1:18000",
   "diagnose": {
@@ -86,26 +86,26 @@
   },
   "doccheck_tier2": {
     "strict_label_overlap": {
-      "pred": 47,
+      "pred": 41,
       "gold": 43,
       "tp_pred": 36,
-      "fp": 11,
+      "fp": 5,
       "tp_gold": 28,
       "fn": 15,
-      "precision": 0.766,
+      "precision": 0.878,
       "recall": 0.6512,
-      "f1": 0.704
+      "f1": 0.7478
     },
     "any_label_overlap": {
-      "pred": 47,
+      "pred": 41,
       "gold": 43,
       "tp_pred": 38,
-      "fp": 9,
+      "fp": 3,
       "tp_gold": 30,
       "fn": 13,
-      "precision": 0.8085,
+      "precision": 0.9268,
       "recall": 0.6977,
-      "f1": 0.749
+      "f1": 0.7961
     },
     "per_label": {
       "생활권": {
@@ -134,31 +134,31 @@
         "recall": 1.0
       }
     },
-    "docs_without_gold_false_positive_docs": 5,
+    "docs_without_gold_false_positive_docs": 3,
     "docs": 30
   },
   "doccheck_combined": {
     "strict_label_overlap": {
-      "pred": 80,
+      "pred": 88,
       "gold": 57,
-      "tp_pred": 68,
-      "fp": 12,
+      "tp_pred": 82,
+      "fp": 6,
       "tp_gold": 42,
       "fn": 15,
-      "precision": 0.85,
+      "precision": 0.9318,
       "recall": 0.7368,
-      "f1": 0.7894
+      "f1": 0.8229
     },
     "any_label_overlap": {
-      "pred": 80,
+      "pred": 88,
       "gold": 57,
-      "tp_pred": 76,
+      "tp_pred": 84,
       "fp": 4,
       "tp_gold": 44,
       "fn": 13,
-      "precision": 0.95,
+      "precision": 0.9545,
       "recall": 0.7719,
-      "f1": 0.8517
+      "f1": 0.8535
     },
     "per_label": {
       "생활권": {

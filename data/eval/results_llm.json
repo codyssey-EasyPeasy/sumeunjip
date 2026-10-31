@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-31T16:44:08+09:00",
+ "generated_at": "2026-10-31T17:11:51+09:00",
  "model": "qwen3-8b (Qwen/Qwen3-8B-AWQ, vLLM, thinking off)",
  "intake": {
   "n": 20,
@@ -13,8 +13,8 @@
   },
   "victim_type_accuracy": 0.95,
   "latency_s": {
-   "mean": 1.6,
-   "max": 2.29
+   "mean": 1.54,
+   "max": 1.93
   },
   "cases": [
    {
@@ -24,7 +24,7 @@
     "gold_victim_type": "family",
     "missed": [],
     "extra": [],
-    "n_unclear": 1
+    "n_unclear": 0
    },
    {
     "id": "in02",
@@ -227,7 +227,7 @@
      "children_school"
     ],
     "extra": [],
-    "n_unclear": 0
+    "n_unclear": 1
    }
   ]
  },
@@ -239,8 +239,8 @@
   "out_of_context_refusal": "5/5",
   "guard_refusals": 1,
   "latency_s": {
-   "mean": 3.9,
-   "max": 9.78
+   "mean": 4.03,
+   "max": 9.71
   },
   "note": "답변 본문의 근거 이탈(인용은 맞지만 내용이 근거 밖) 여부는 사람 판정 표본으로 따로 본다(SPEC §8).",
   "review_checks": "5/5",
@@ -401,15 +401,15 @@
   "rewritten": 30,
   "refused": 0,
   "rule_fallback": 0,
-  "forced_masks": 12,
+  "forced_masks": 11,
   "tier1_spans_before": 33,
   "tier1_spans_after": 0,
   "tier1_residual_rate": 0.0,
   "docs_with_tier1_residual": "0/30",
-  "gold_span_text_left_rate": 0.1053,
+  "gold_span_text_left_rate": 0.1228,
   "latency_s": {
-   "mean": 2.4,
-   "max": 3.88
+   "mean": 2.37,
+   "max": 3.95
   },
   "cases": [
    {
@@ -618,7 +618,7 @@
     "tier1_before": 1,
     "tier1_after": 0,
     "gold_spans": 2,
-    "gold_left": 0
+    "gold_left": 1
    },
    {
     "id": "doc27",
@@ -656,36 +656,35 @@
  },
  "answer_eval": {
   "n": 45,
-  "correct_rate": 0.9778,
+  "correct_rate": 0.9556,
   "input_guard_refusals": 0,
   "output_guard_refusals": 1,
-  "correct_rate_excluding_input_refusals": 0.9778,
+  "correct_rate_excluding_input_refusals": 0.9556,
   "correct_by_category": {
    "answerable": "14/15",
-   "notify_timing_trap": "10/10",
+   "notify_timing_trap": "9/10",
    "other_measure_trap": "10/10",
    "out_of_context": "10/10"
   },
   "mode_distribution": {
    "generated": 15,
-   "extractive": 7,
+   "extractive": 8,
    "refused": 1,
-   "not_found": 21,
-   "regenerated": 1
+   "not_found": 21
   },
-  "extractive_rate": 0.1556,
+  "extractive_rate": 0.1778,
   "unsupported_sentence_rate": {
    "final_rule": 0.0,
    "final_verifier": 0.0,
-   "final_sentences": 49,
+   "final_sentences": 45,
    "first_draft_rule_or_verifier": 0.0364,
    "first_draft_sentences": 55,
    "note": "final_* 는 최종 생성·재생성 답을 서버와 같은 규칙·qwen 검증기로 다시 판정한 값(독립 판정 아님). first_draft 는 검증 루프 전 첫 생성문의 서버 판정(규칙 또는 검증기, 본문 없이 숫자만) = 루프가 없을 때의 근사."
   },
   "latency_s": {
-   "mean": 2.99,
-   "max": 11.91,
-   "over_12s": 0
+   "mean": 4.05,
+   "max": 12.67,
+   "over_12s": 2
   },
   "cases": [
    {
@@ -694,14 +693,14 @@
     "expect": "answer",
     "mode": "generated",
     "correct": true,
-    "latency_s": 5.95,
+    "latency_s": 6.72,
     "citations": [
      "L3"
     ],
     "fallback": null,
     "refused_stage": null,
     "first_unsupported": 0,
-    "n_sentences": 3,
+    "n_sentences": 4,
     "rule_unsupported": 0,
     "verifier_unsupported": 0
    },
@@ -711,7 +710,7 @@
     "expect": "answer",
     "mode": "extractive",
     "correct": true,
-    "latency_s": 11.91,
+    "latency_s": 11.79,
     "citations": [
      "L4"
     ],
@@ -725,7 +724,7 @@
     "expect": "answer",
     "mode": "generated",
     "correct": true,
-    "latency_s": 8.75,
+    "latency_s": 8.56,
     "citations": [
      "J1"
     ],
@@ -742,7 +741,7 @@
     "expect": "answer",
     "mode": "generated",
     "correct": true,
-    "latency_s": 3.98,
+    "latency_s": 3.99,
     "citations": [
      "A1"
     ],
@@ -759,14 +758,14 @@
     "expect": "answer",
     "mode": "generated",
     "correct": true,
-    "latency_s": 7.54,
+    "latency_s": 6.18,
     "citations": [
      "S1"
     ],
     "fallback": null,
     "refused_stage": null,
     "first_unsupported": 0,
-    "n_sentences": 4,
+    "n_sentences": 3,
     "rule_unsupported": 0,
     "verifier_unsupported": 0
    },
@@ -776,7 +775,7 @@
     "expect": "answer",
     "mode": "generated",
     "correct": true,
-    "latency_s": 5.28,
+    "latency_s": 7.53,
     "citations": [
      "P1"
     ],
@@ -793,7 +792,7 @@
     "expect": "answer",
     "mode": "refused",
     "correct": false,
-    "latency_s": 3.85,
+    "latency_s": 7.12,
     "citations": [],
     "fallback": null,
     "refused_stage": "output",
@@ -805,7 +804,7 @@
     "expect": "answer",
     "mode": "generated",
     "correct": true,
-    "latency_s": 8.07,
+    "latency_s": 10.74,
     "citations": [
      "J19"
     ],
@@ -822,7 +821,7 @@
     "expect": "answer",
     "mode": "generated",
     "correct": true,
-    "latency_s": 6.05,
+    "latency_s": 8.36,
     "citations": [
      "D6"
     ],
@@ -839,7 +838,7 @@
     "expect": "answer",
     "mode": "generated",
     "correct": true,
-    "latency_s": 5.4,
+    "latency_s": 7.49,
     "citations": [
      "P6"
     ],
@@ -856,7 +855,7 @@
     "expect": "answer",
     "mode": "generated",
     "correct": true,
-    "latency_s": 4.85,
+    "latency_s": 6.66,
     "citations": [
      "J16"
     ],
@@ -873,14 +872,14 @@
     "expect": "answer",
     "mode": "generated",
     "correct": true,
-    "latency_s": 6.8,
+    "latency_s": 9.84,
     "citations": [
      "A11"
     ],
     "fallback": null,
     "refused_stage": null,
     "first_unsupported": 0,
-    "n_sentences": 4,
+    "n_sentences": 3,
     "rule_unsupported": 0,
     "verifier_unsupported": 0
    },
@@ -890,7 +889,7 @@
     "expect": "answer",
     "mode": "generated",
     "correct": true,
-    "latency_s": 5.83,
+    "latency_s": 8.97,
     "citations": [
      "P7"
     ],
@@ -907,7 +906,7 @@
     "expect": "answer",
     "mode": "generated",
     "correct": true,
-    "latency_s": 7.26,
+    "latency_s": 9.36,
     "citations": [
      "J2"
     ],
@@ -924,7 +923,7 @@
     "expect": "answer",
     "mode": "generated",
     "correct": true,
-    "latency_s": 2.75,
+    "latency_s": 3.59,
     "citations": [
      "A8"
     ],
@@ -941,7 +940,7 @@
     "expect": "not_found",
     "mode": "not_found",
     "correct": true,
-    "latency_s": 0.08,
+    "latency_s": 0.17,
     "citations": [],
     "fallback": null,
     "refused_stage": null,
@@ -953,7 +952,7 @@
     "expect": "notify_fixed",
     "mode": "extractive",
     "correct": true,
-    "latency_s": 0.14,
+    "latency_s": 0.21,
     "citations": [
      "A1"
     ],
@@ -967,7 +966,7 @@
     "expect": "no_unsupported_claim",
     "mode": "generated",
     "correct": true,
-    "latency_s": 2.36,
+    "latency_s": 4.21,
     "citations": [
      "L3"
     ],
@@ -983,8 +982,8 @@
     "category": "notify_timing_trap",
     "expect": "no_unsupported_claim",
     "mode": "generated",
-    "correct": true,
-    "latency_s": 3.87,
+    "correct": false,
+    "latency_s": 4.56,
     "citations": [
      "D5"
     ],
@@ -1001,7 +1000,7 @@
     "expect": "effect_fixed",
     "mode": "extractive",
     "correct": true,
-    "latency_s": 0.16,
+    "latency_s": 0.78,
     "citations": [
      "A1"
     ],
@@ -1015,7 +1014,7 @@
     "expect": "effect_fixed",
     "mode": "extractive",
     "correct": true,
-    "latency_s": 0.17,
+    "latency_s": 0.32,
     "citations": [
      "L3"
     ],
@@ -1029,11 +1028,11 @@
     "expect": "no_unsupported_claim",
     "mode": "extractive",
     "correct": true,
-    "latency_s": 9.75,
+    "latency_s": 12.67,
     "citations": [
      "J19"
     ],
-    "fallback": "unsupported_after_retry",
+    "fallback": "budget",
     "refused_stage": null,
     "first_unsupported": 1
    },
@@ -1043,7 +1042,7 @@
     "expect": "notify_fixed",
     "mode": "extractive",
     "correct": true,
-    "latency_s": 0.22,
+    "latency_s": 0.21,
     "citations": [
      "A8"
     ],
@@ -1057,7 +1056,7 @@
     "expect": "effect_fixed",
     "mode": "extractive",
     "correct": true,
-    "latency_s": 0.23,
+    "latency_s": 0.16,
     "citations": [
      "J2"
     ],
@@ -1069,18 +1068,15 @@
     "id": "t10",
     "category": "notify_timing_trap",
     "expect": "no_unsupported_claim",
-    "mode": "regenerated",
+    "mode": "extractive",
     "correct": true,
-    "latency_s": 8.37,
+    "latency_s": 12.15,
     "citations": [
      "P7"
     ],
-    "fallback": null,
+    "fallback": "regen_failed",
     "refused_stage": null,
-    "first_unsupported": 0,
-    "n_sentences": 3,
-    "rule_unsupported": 0,
-    "verifier_unsupported": 0
+    "first_unsupported": 0
    },
    {
     "id": "c01",
@@ -1088,7 +1084,7 @@
     "expect": "not_found",
     "mode": "not_found",
     "correct": true,
-    "latency_s": 0.15,
+    "latency_s": 0.35,
     "citations": [],
     "fallback": null,
     "refused_stage": null,
@@ -1100,7 +1096,7 @@
     "expect": "not_found",
     "mode": "not_found",
     "correct": true,
-    "latency_s": 0.23,
+    "latency_s": 0.16,
     "citations": [],
     "fallback": null,
     "refused_stage": null,
@@ -1112,7 +1108,7 @@
     "expect": "not_found",
     "mode": "not_found",
     "correct": true,
-    "latency_s": 0.22,
+    "latency_s": 0.24,
     "citations": [],
     "fallback": null,
     "refused_stage": null,
@@ -1136,7 +1132,7 @@
     "expect": "not_found",
     "mode": "not_found",
     "correct": true,
-    "latency_s": 0.26,
+    "latency_s": 0.19,
     "citations": [],
     "fallback": null,
     "refused_stage": null,
@@ -1148,7 +1144,7 @@
     "expect": "not_found",
     "mode": "not_found",
     "correct": true,
-    "latency_s": 0.18,
+    "latency_s": 0.2,
     "citations": [],
     "fallback": null,
     "refused_stage": null,
@@ -1160,7 +1156,7 @@
     "expect": "not_found",
     "mode": "not_found",
     "correct": true,
-    "latency_s": 0.4,
+    "latency_s": 0.23,
     "citations": [],
     "fallback": null,
     "refused_stage": null,
@@ -1172,7 +1168,7 @@
     "expect": "not_found",
     "mode": "not_found",
     "correct": true,
-    "latency_s": 0.25,
+    "latency_s": 0.22,
     "citations": [],
     "fallback": null,
     "refused_stage": null,
@@ -1184,7 +1180,7 @@
     "expect": "not_found",
     "mode": "not_found",
     "correct": true,
-    "latency_s": 0.1,
+    "latency_s": 0.17,
     "citations": [],
     "fallback": null,
     "refused_stage": null,
@@ -1196,7 +1192,7 @@
     "expect": "not_found",
     "mode": "not_found",
     "correct": true,
-    "latency_s": 0.12,
+    "latency_s": 0.18,
     "citations": [],
     "fallback": null,
     "refused_stage": null,
@@ -1208,7 +1204,7 @@
     "expect": "not_found",
     "mode": "not_found",
     "correct": true,
-    "latency_s": 0.23,
+    "latency_s": 0.09,
     "citations": [],
     "fallback": null,
     "refused_stage": null,
@@ -1220,7 +1216,7 @@
     "expect": "not_found",
     "mode": "not_found",
     "correct": true,
-    "latency_s": 1.15,
+    "latency_s": 1.36,
     "citations": [],
     "fallback": null,
     "refused_stage": null,
@@ -1232,7 +1228,7 @@
     "expect": "not_found",
     "mode": "not_found",
     "correct": true,
-    "latency_s": 2.4,
+    "latency_s": 3.02,
     "citations": [],
     "fallback": null,
     "refused_stage": null,
@@ -1244,7 +1240,7 @@
     "expect": "not_found",
     "mode": "not_found",
     "correct": true,
-    "latency_s": 1.23,
+    "latency_s": 1.37,
     "citations": [],
     "fallback": null,
     "refused_stage": null,
@@ -1256,7 +1252,7 @@
     "expect": "not_found",
     "mode": "not_found",
     "correct": true,
-    "latency_s": 1.11,
+    "latency_s": 3.85,
     "citations": [],
     "fallback": null,
     "refused_stage": null,
@@ -1268,7 +1264,7 @@
     "expect": "not_found",
     "mode": "not_found",
     "correct": true,
-    "latency_s": 0.51,
+    "latency_s": 2.35,
     "citations": [],
     "fallback": null,
     "refused_stage": null,
@@ -1280,7 +1276,7 @@
     "expect": "not_found",
     "mode": "not_found",
     "correct": true,
-    "latency_s": 0.57,
+    "latency_s": 2.6,
     "citations": [],
     "fallback": null,
     "refused_stage": null,
@@ -1292,7 +1288,7 @@
     "expect": "not_found",
     "mode": "not_found",
     "correct": true,
-    "latency_s": 3.23,
+    "latency_s": 6.14,
     "citations": [],
     "fallback": null,
     "refused_stage": null,
@@ -1304,7 +1300,7 @@
     "expect": "not_found",
     "mode": "not_found",
     "correct": true,
-    "latency_s": 1.76,
+    "latency_s": 3.92,
     "citations": [],
     "fallback": null,
     "refused_stage": null,
@@ -1316,7 +1312,7 @@
     "expect": "not_found",
     "mode": "not_found",
     "correct": true,
-    "latency_s": 0.53,
+    "latency_s": 2.77,
     "citations": [],
     "fallback": null,
     "refused_stage": null,
