@@ -36,9 +36,9 @@ ssh -F <해커톤 ssh 설정> -N -L 18080:127.0.0.1:8080 hk-ops &
 | 배포 앱이 정상 질문을 거절하지 않는다 (`2418ad9`, 재측정 같음) | 0/15, 0/10 (가드 세트 기준. 근거 질문 a4 는 아래 4절처럼 3회 모두 거절) | 같은 곳 | 같음 | 같음 |
 | 규칙 가드만으로도 거절된다 | rule_guard 25/25·10/10·4/4, 오거절 0 | `results.json` `intent`·`intent_holdout`·`intent_review` | `python3 tools/eval.py` | 2026-10-31 17:11 |
 | 임베딩 점수만으로는 부족하다(그래서 신호로만 씀) | 리뷰 세트에서 GPU 단독 오거절 4/4 | `results.json` `intent_review.gpu` | 같음 | 같음 |
-| 2단 가드 거절 임계값 0.16 의 근거 | 피해자 발화 6개 점수 0.024~0.155 | `app/guard.py` `EMB_REFUSE` 주석, `data/eval/guard_holdout2.json` | 코드 주석(측정 스크립트 결과 파일 없음, 미확인) | 2026-10-31 |
+| 2단 가드 거절 임계값 0.16 의 근거 | 피해자 발화 중 해당 6개 점수 최고 0.155(최저 -0.108; 코드 주석은 0.024~0.155) → 0.16 이면 피해자 30개 거절 0, 타인 탐색 20개는 규칙만으로 19 거절·1 다시 쓰기 | `data/eval/guard_threshold_remeasure.json`(idx·점수·판정), `app/guard.py` `EMB_REFUSE` 주석, `data/eval/guard_holdout2.json` | holdout2 문장을 GPU `/intent` 에 보내고 `app.guard.assess` 로 판정(`docs/evidence/infra-2026-10-31-night.md` 9절) | 2026-10-31 21:0x 재측정 |
 | 다턴에서 자기 보호 질문 오거절이 줄었다 | 103건/38카드(v21) → 23건/17카드(v3) | `data/eval/sim_results/v21-20261031/summary.md`, `v3-20261031/summary.md` | `python3 tools/sim/run_all.py --set v2 --seeds-by-kind user=2,attacker=1,benign=1 --workers 3 --run-id <id>` (GLM 중계 필요) | 2026-10-31 (v3: `fc84eb4`) |
-| 그 뒤 `2418ad9` 로 더 줄었다 | v3 오거절 23문장 재전송 시 7건 해소, **16건 남음** | 커밋 `2418ad9` 메시지 | 재전송 스크립트·결과 파일 없음(미확인 — 숫자는 커밋 메시지뿐) | 2026-10-31 17:5x |
+| 현재 배포본의 자기 보호 질문 오거절 | **18건/14대화**(v3 사용자 대화를 `cf8d149`+`6672867` 배포본에 재전송). 중간 값 '`2418ad9` 로 7건 해소·16건 남음'은 같은 23문장 단발 재전송이고 근거가 커밋 메시지뿐(결과 파일 없음)이라 현행 값으로 쓰지 않는다 | `data/eval/notice_calibration_summary.md` | v3 대화 요청을 배포본에 재전송(원문 비공개) | 2026-10-31 |
 | 위치를 되묻지 않는다 | 서비스가 위치를 되물은 카드 2(v21) → 0(v3), 같은 확인 질문 반복 2 → 0 | `v3-20261031/summary.md` | 위 run_all | 2026-10-31 |
 | 보호 안내를 근거 있는 질문에만 붙인다 | 사용자 카드 38/40장·응답 96건(v3) → 1/40장·1/225건(배포본, 2026-10-31) | `data/eval/notice_calibration_summary.md` | v3 대화 요청을 배포본에 재전송(원문 비공개) | 2026-10-31 |
 | 탐색처럼 보이는 피해자 질문도 도움을 받는다 | 보호성 카드 6/6 통과, 첫 턴 거절 2장(대안 동반) | 같음 | 같음 | 같음 |
@@ -69,15 +69,15 @@ ssh -F <해커톤 ssh 설정> -N -L 18080:127.0.0.1:8080 hk-ops &
 
 | 주장 | 지표 | 출처 | 명령 | 날짜 |
 |---|---|---|---|---|
-| 배포본 = 저장소 코드 | `app/guard.py`·`app/llm.py`·`app/main.py`(hk-ops), `gpu/guard.py`·`verify.py`·`llm.py`·`server.py`(hk-gpu) `sha256sum` 앞 16자리가 `2418ad9` 와 같음(예: guard `68055350fc10e99a`). 18:4x 재확인에서도 hk-ops `app/guard.py` 는 `68055350…` 로, 그 뒤 커밋 `cf8d149`(보호 안내 축소, 판정 등급·사유 로그 한 줄 추가)는 **배포 전**이다 | 이 문서, `docs/evidence/infra.md` §5 | `sha256sum app/guard.py` (로컬·서버 각각) | 2026-10-31 18:1x, 18:4x |
+| 배포본 = 저장소 코드 | `app/guard.py`·`app/llm.py`·`app/main.py`(hk-ops), `gpu/guard.py`·`verify.py`·`llm.py`·`server.py`(hk-gpu) `sha256sum` 이 **`6672867`**(= `cf8d149` 보호 안내 보정 + Esc·HF 오프라인 수정)과 같음: hk-ops 12개(`app/*.py`·`web/index.html`·`web/static/*`·`data/knowledge.json`), hk-gpu 11개(`gpu/*.py·*.sh·*.json`) 모두 일치. 18:1x 측정 때는 `2418ad9` 와 같았다(예: guard `68055350fc10e99a`) | `docs/evidence/infra-2026-10-31-night.md` 6절, `docs/evidence/infra.md` §5 | 서버 `sha256sum` ↔ `git show <커밋>:<경로> \| sha256sum` | 2026-10-31 21:0x (이전 18:1x, 18:4x) |
 | 가드 수정 뒤 다시 떴다 | 파일 시각 17:56:52, 앱 시작 17:57:38, GPU API 시작 17:57:35 | 이 문서 | `stat -c %y ~/sumeunjip/app/guard.py; ps -o lstart= -p <pid>` | 같음 |
-| 앱·vLLM 은 로컬에만 바인드 | `127.0.0.1:8080`, `127.0.0.1:8001`; GPU API 는 `0.0.0.0:8000`(접근 제어 미확인) | `docs/evidence/infra.md` §3 | `ss -ltnp` | 같음 |
-| L4 한 장에 모든 모델 | 20,560~20,912 / 23,034 MiB (vLLM 13,948, 추론 API 6,598~6,950 — 시점 차) | 이 문서, `infra.md` §2 | `nvidia-smi --query-compute-apps=pid,used_memory --format=csv` | 같음 |
+| 앱·vLLM 은 로컬에만 바인드 | `127.0.0.1:8080`, `127.0.0.1:8001`; GPU API 는 `0.0.0.0:8000` 이고 **SSL-VPN 클라이언트에서 TCP 연결·`/health` 200**(인증 없음, ACG 가 운영 서버로 좁히지 않음. 규칙 원문은 미확인) | `docs/evidence/infra.md` §3, `docs/evidence/infra-2026-10-31-night.md` 7절 | `ss -ltnp`; VPN 노트북 `Test-NetConnection 10.1.2.33 -Port 8000` | 같음 |
+| L4 한 장에 모든 모델 | 20,480 / 23,034 MiB (vLLM 13,948 + 추론 API 6,518, 20:5x 재기동 뒤). 추론 API 는 기동마다 6,518~6,950 이라 합계 20,480~20,912 | `docs/evidence/infra-2026-10-31-night.md` 2절, `infra.md` §2 | `nvidia-smi --query-compute-apps=pid,used_memory --format=csv` | 같음 |
 | 기능 상태 | 앱 `/api/health` items 84, `/api/features` llm true, GPU `/health` 모델 3개 true·`excluded_ngrams` 24,995·예산 12초 | 이 문서 | `curl -s 127.0.0.1:8080/api/health` 등 (hk-ops 안에서) | 같음 |
 | 로그에 본문이 없다 | 앱 로그 3,362줄 → 숫자 치환 뒤 18모양(메서드·경로·상태), 표지 문자열 60회 송신 뒤 3개 로그 0건 | `docs/evidence/infra.md` §6 | 그 절의 `sed`·`grep -c` | 같음 |
 | 런타임은 외부 LLM 을 부르지 않는다 | `app/`·`gpu/` 에 GLM·중계 주소 0건, LLM_URL 미설정(기본 127.0.0.1:8001) | `docs/evidence/infra.md` §4·§5, `SPEC.md` §11.7 | `grep -rn "18090\|GLM" app gpu` | 같음 |
 | 엔드포인트 지연(서버 안) | 진단 0.005초, intake 1.83초, answer 5.75초(중앙값) 등 | `docs/evidence/infra.md` §7 | 측정 스크립트 비공개(같은 절 설명) | 같음 |
-| 단위 시험 | 앱 230 passed(`2418ad9`) → 407 passed(`cf8d149`, 보호 안내 보정 시험 추가), GPU 120 passed (모델 없이) | 이 문서 | `uv run --frozen pytest -q tests`; `cd gpu && uv run --with pytest python -m pytest -q tests` | 2026-10-31 18:1x |
+| 단위 시험 | 앱 230 passed(`2418ad9`) → 407 passed(`cf8d149`, 보호 안내 보정 시험 추가), GPU 120 passed (모델 없이). 21시 재실행(코드는 `6672867` 이후 동일)에서도 407·120, rc 0 | `docs/evidence/infra-2026-10-31-night.md` 11절 | `uv run --frozen pytest -q tests`; `cd gpu && uv run --with pytest python -m pytest -q tests` | 2026-10-31 18:1x, 21:1x |
 
 ## 7. 화면·차트·대화 발췌
 - 화면 14장: `docs/screens/v3-*.png` — 설명은 `docs/evidence/README.md`.

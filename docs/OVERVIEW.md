@@ -1,7 +1,7 @@
 # 숨은집 지킴이 — 서비스 전체 정리 (PT 작업자 전달용)
 
 > 2026 해커톤 주제 02 · AI 기반 정보보호 서비스 · 주최 이노베이션 아카데미 · 마감 2026-11-01 13:00 KST
-> 저장소: https://github.com/codyssey-EasyPeasy/sumeunjip (branch `main`) · 이 문서 기준 커밋 `cacc901` (2026-10-31)
+> 저장소: https://github.com/codyssey-EasyPeasy/sumeunjip (branch `main`) · 이 문서 기준: 2026-10-31 21시 갱신(최신은 `git log -1 -- docs/OVERVIEW.md`), 배포 코드는 커밋 `6672867` 과 해시가 같음(`docs/evidence/infra-2026-10-31-night.md` 6절)
 > 같은 내용의 그림 포함 판: `docs/OVERVIEW.html` (브라우저로 열기, 인쇄 가능)
 
 **읽는 법**
@@ -57,15 +57,15 @@
 | 언어 | Python | 3.12 이상 | 운영 API·추론 서버 | `pyproject.toml`, `docs/SPEC.md` §0 |
 | 패키지 관리 | uv (`uv.lock`) | — | 의존성 고정 설치(`uv sync --frozen`) | `README.md` 실행 절 |
 | 운영 API | FastAPI / Starlette / Uvicorn / Pydantic / httpx | 0.162.0 / 1.10.0 / 0.54.0 / 2.14.2 / 0.28.1 | 진단·검색·가드·LLM 중계 | 직접 의존성 4개뿐(런타임 최소화, `SPEC.md` §0). 버전은 `uv.lock` |
-| 추론 서버 | FastAPI + sentence-transformers, FlagEmbedding, GLiNER, PyTorch | 설치 버전 **미확인** (`gpu/` 에 lock 파일 없음) | 임베딩·재순위·개체명 인식·의도 점수·LLM 중계·검증 | `gpu/pyproject.toml` |
+| 추론 서버 | FastAPI + sentence-transformers, FlagEmbedding, GLiNER, PyTorch | fastapi 0.162.0 · uvicorn 0.54.0 · sentence-transformers 6.2.0 · FlagEmbedding 1.4.2 · gliner 0.2.29 · torch 2.15.0 · transformers 5.16.1 (배포 서버 `gpu/.venv` 실측 2026-10-31 20:5x; 서버의 `gpu/uv.lock` 은 저장소에 없음) | 임베딩·재순위·개체명 인식·의도 점수·LLM 중계·검증 | `gpu/pyproject.toml` |
 | 임베딩 모델 | BAAI/bge-m3 | — | 조문 검색, 질문 의도 점수 | `gpu/server.py` |
 | 재순위 모델 | BAAI/bge-reranker-v2-m3 | — | 검색 결과 재정렬, 답 문장 근거 확인 | `gpu/server.py`, `gpu/verify.py` |
 | 개체명 인식 | urchade/gliner_multi-v2.1 (+정규식) | — | 서류 속 주소·직장·학교·차량·생활권 단서 찾기 | `gpu/server.py` |
 | 내부 LLM | Qwen/Qwen3-8B-AWQ (Apache-2.0) | — | 상황 정리, 근거 답, 문장 다시 쓰기, 답 검증 | 직접 띄운 모델 하나로 외부 전송 0 (`docs/architecture.md` 원칙 5, `SPEC.md` §8) |
-| LLM 서빙 | vLLM (OpenAI 호환 서버) | 0.32 (저장소 기록. 패치 번호 0.32.0 은 저장소 근거 없음) | Qwen 실행, JSON 형식 강제 출력 | `gpu/llm_start.sh`, `docs/architecture.md` |
-| GPU | NVIDIA L4 1장 | 23,034 MiB, 드라이버 580.159.04 | 모든 모델 실행 | `docs/evidence/infra.md` §2 |
+| LLM 서빙 | vLLM (OpenAI 호환 서버) | 0.32.0 (배포 서버 `vllm-venv` 실측, `docs/evidence/infra-2026-10-31-night.md` 5절) | Qwen 실행, JSON 형식 강제 출력 | `gpu/llm_start.sh`, `docs/architecture.md` |
+| GPU | NVIDIA L4 1장 | 23,034 MiB, 드라이버 580.159.04, CUDA 13.0 | 모든 모델 실행 | `docs/evidence/infra.md` §2 |
 | 실행 관리 | 셸 스크립트 + PID 파일 (Docker·systemd 안 씀) | — | 시작·중지 | `scripts/start_app.sh`, `gpu/start.sh`, `gpu/llm_start.sh` |
-| 시험 | pytest | — | 앱 407 passed, GPU 120 passed (2026-10-31) | `README.md` 실행 절 |
+| 시험 | pytest | — | 앱 407 passed, GPU 120 passed (2026-10-31 21시 재실행, 코드 `6672867` 이후 동일 — `docs/evidence/infra-2026-10-31-night.md` 11절) | `README.md` 실행 절 |
 | (개발용만) | GLM-5.3-Flash | — | 합성 사용자 시뮬레이터·레드팀 도구. **운영 코드에는 없음** | `docs/SPEC.md` §11.7 |
 
 ---
@@ -93,7 +93,7 @@
 ```
 출처: `docs/architecture.md` 배치도, `docs/evidence/infra.md` §1·§3
 
-- 저장소 문서의 서버 이름은 `hk-ops`·`hk-gpu` 이고, 대회 서버 이름은 각각 `inno-server-028`(운영)·`inno-gpu-028`(GPU)입니다(`docs/evidence/infra.md` §1 표). CPU 모델명(Xeon Gold 5220 / Xeon Silver 4416+)·OS(Ubuntu 24.04.1)는 **저장소에 기록이 없습니다**(운영 측 제공 정보, 저장소 기준 미확인).
+- 저장소 문서의 서버 이름은 `hk-ops`·`hk-gpu` 이고, 대회 서버 이름은 각각 `inno-server-028`(운영)·`inno-gpu-028`(GPU)입니다(`docs/evidence/infra.md` §1 표). CPU 는 운영 서버 Intel Xeon Gold 5220 2 vCPU·RAM 7.8GiB, GPU 서버 Intel Xeon Silver 4416+ 4 vCPU·RAM 47GiB 이고 둘 다 Ubuntu 24.04.1 LTS(커널 6.8.0-136)입니다(2026-10-31 20:54 `lscpu`·`nproc`·`free -h`·`/etc/os-release` 실측, `docs/evidence/infra-2026-10-31-night.md` 1절).
 - 서버 접근은 노트북 VPN(NCP SSL-VPN) 경유, 시연은 ssh 터널로만 합니다. (`docs/evidence/infra.md` 머리말)
 
 ### 3.2 포트
@@ -101,7 +101,7 @@
 | 서버 | 주소:포트 | 프로그램 | 누가 접근 |
 |---|---|---|---|
 | hk-ops | 127.0.0.1:8080 | 운영 API + 웹 화면 | 서버 자신(시연은 ssh 터널) |
-| hk-gpu | 0.0.0.0:8000 | 추론 API | 운영 서버(내부망). 클라우드 접근 제어 여부 **미확인** |
+| hk-gpu | 0.0.0.0:8000 | 추론 API | 운영 서버(내부망) **와 SSL-VPN 사용자**에게 열려 있음(2026-10-31 20:55 VPN 노트북에서 TCP·`/health` 200, `docs/evidence/infra-2026-10-31-night.md` 7절). 인증 없음 → ACG 를 운영 서버로 좁히는 조치 필요(미적용) |
 | hk-gpu | 127.0.0.1:8001 | vLLM (Qwen3-8B) | 서버 자신만 |
 
 출처: `docs/evidence/infra.md` §3 (`ss -ltnp` 실측)
@@ -123,16 +123,16 @@
 | 프로그램 | 모델 | GPU 메모리 |
 |---|---|---|
 | vLLM | Qwen3-8B-AWQ | 13,948 MiB |
-| 추론 API | bge-m3 + bge-reranker-v2-m3 + GLiNER | 6,950 MiB (다른 시점 6,598 MiB) |
-| 합계 | | 20,912 MiB (다른 시점 20,560 MiB) |
+| 추론 API | bge-m3 + bge-reranker-v2-m3 + GLiNER | 6,518 MiB (재기동 뒤 20:5x 실측. 재기동 전 18:1x 6,950) |
+| 합계 | | 20,480 MiB (재기동 전 18:1x 20,912) |
 
-출처: `docs/evidence/infra.md` §2 (nvidia-smi 2026-10-31 18:1x), `docs/architecture.md` 표. 두 문서의 측정 시점이 달라 값이 조금 다릅니다(`README.md`: 20,560~20,912 MiB). 서버 RAM 사용량 실측은 **미확인**.
+출처: `docs/evidence/infra-2026-10-31-night.md` 2·3절(nvidia-smi·`free -h`·`ps -o rss`, 2026-10-31 20:5x). 추론 API 메모리는 기동할 때마다 조금 달라 20,480~20,912 MiB 범위로 적어도 됩니다. 서버 RAM 사용: 운영 서버 547MiB/7.8GiB(앱 프로세스 RSS 약 66MiB), GPU 서버 6.9GiB/47GiB(추론 API RSS 약 2.4GiB, vLLM 약 1.3+2.9GiB).
 
 ### 3.5 외부로 나가지 않는 것
 
 - 사용자 입력을 **외부 LLM·외부 API 로 보내는 경로가 없습니다**. 쓰는 LLM 은 GPU 서버에서 직접 띄운 Qwen 하나뿐이고, 실패해도 다른 LLM 으로 넘기지 않습니다. (`docs/SPEC.md` §11.7, `docs/evidence/infra.md` §5)
 - 런타임 코드에 있는 외부 주소는 '빠른 나가기'의 이동 대상(구글 '날씨' 검색) 하나뿐입니다.
-- GPU 서버가 기동할 때 모델 허브(HF Hub)에 파일 확인 요청을 보내던 것(경고 22회, 사용자 데이터 없음)은 커밋 `6672867` 에서 `HF_HUB_OFFLINE=1` 로 끊었습니다(`gpu/start.sh`). 다시 띄운 뒤 0회인지 실측 기록은 **미확인**.
+- GPU 서버가 기동할 때 모델 허브(HF Hub)에 파일 확인 요청을 보내던 것(경고 22회, 사용자 데이터 없음)은 커밋 `6672867` 에서 `HF_HUB_OFFLINE=1` 로 끊었습니다(`gpu/start.sh`). 다시 띄운 뒤(18:56:50) 새 경고는 0회입니다(20:5x 실측: 경고 수 22 그대로, 마지막 경고는 직전 프로세스, 현재 프로세스 환경에 `HF_HUB_OFFLINE=1`, `docs/evidence/infra-2026-10-31-night.md` 4절).
 
 ---
 
@@ -372,7 +372,7 @@
 | 다턴 시뮬레이션 | 정상 질문 거절 v21 → v3 | 103건/38대화 → 23건/17대화 | `data/eval/sim_results/*/summary.md`, `charts/guard-before-after.svg` |
 | 다턴 시뮬레이션 | 공격자 12명 강한 누출 | 0 | `data/eval/sim_results/v3-20261031/summary.md` |
 | 속도 | 서버 안 중앙값: 진단 / 검색 / 상황 정리 / 근거 답 / 다시 쓰기 | 0.005초 / 0.945초 / 1.827초 / 5.745초 / 2.366초 | `docs/evidence/infra.md` §7 |
-| 시험 | 자동 시험 | 앱 407 passed, GPU 120 passed | `README.md` |
+| 시험 | 자동 시험 | 앱 407 passed, GPU 120 passed (2026-10-31 21시 재실행) | `README.md` |
 
 ---
 
@@ -387,7 +387,7 @@
 - 소형 LLM 은 틀릴 수 있습니다(첫 생성 근거 없는 문장 3.6%). 그래서 통지·시점 질문은 생성하지 않습니다.
 - 쉬운 설명 84행 모두 사람 검수 전, 확인 수준 미확인 4행. 법령은 2026-10-31 기준 스냅샷입니다.
 - 레드팀 '대책 후' 값은 `fc84eb4` 기준입니다. 현재 배포본(`cf8d149`+`6672867`)으로 서비스 경로 121개를 다시 돌려 같은 3/112 = 2.7% 를 얻었습니다(2026-10-31 20:5x). 모델 단독·PAIR-lite·GLM 은 다시 돌리지 않았습니다.
-- 시연은 TLS 없이 ssh 터널로만 합니다. 추론 서버 8000 포트의 클라우드 접근 제어 여부는 미확인입니다.
+- 시연은 TLS 없이 ssh 터널로만 합니다. 추론 서버 8000 포트는 SSL-VPN 사용자에게도 열려 있고 인증이 없습니다(2026-10-31 20:55 실측). 공개 전 ACG 를 운영 서버로 좁혀야 합니다.
 
 **다음 단계** (문서에 적힌 것만)
 - 공개 배포 전: TLS, 모든 기능의 속도 제한, 인증·운영 정책 결정 (`docs/architecture.md` 미확인·전제)
@@ -429,7 +429,7 @@
 
 ## 부록 A. PT 작업자 참고 — 고쳐야 할 낡은 문구·캡처 주의
 
-1. **`pt/index.html` 324행·720행**: "GPU 서버 기동 때 HF Hub 확인 요청, `HF_HUB_OFFLINE` 미설정" 문구는 낡았습니다. 커밋 `6672867` 에서 `gpu/start.sh` 에 `HF_HUB_OFFLINE=1` 을 넣었습니다. 권장 문구: "GPU 서버 기동 때 HF Hub 확인 요청(사용자 데이터 없음)은 `HF_HUB_OFFLINE=1` 로 끔(6672867). 재기동 후 0회 실측은 미확인". `docs/architecture.md` '남기지 않는 것' 절도 같은 이유로 낡았습니다.
+1. **(반영 완료)** `pt/index.html` 303·324·720행의 HF Hub 문구는 이미 'HF_HUB_OFFLINE=1 로 끔' 으로 고쳐져 있습니다(`grep -n HF pt/index.html`). 재기동 뒤 새 경고 0회도 실측했습니다(2026-10-31 20:5x, `docs/evidence/infra-2026-10-31-night.md` 4절). `docs/architecture.md` 도 반영했습니다.
 2. **캡처 v3-07·v3-08**: 일반 질문에도 파란 보호 안내 상자가 보이는데, 이는 보호 안내 보정(`cf8d149`) **전** 화면입니다. 현재 배포본으로 다시 찍은 `v4-07`·`v4-08` 에는 상자가 없습니다(같은 질문 API 재전송 12회 모두 안내 없음). 발표 부록은 `v4` 로 바꿨습니다.
 3. **캡처 v3-11·v3-11m**: 입력칸에 다른 사람의 주소를 찾으려는 질문 문장이 그대로 보입니다. PT 에 쓸 경우 입력칸을 가리거나 흐리게 처리하는 것을 권합니다(이 문서 HTML 판에는 넣지 않았습니다).
 4. **가드 등급**: `docs/SPEC.md` §11.1 은 4등급이지만 지금 코드는 5등급(일반 neutral 추가, `cf8d149`)입니다.

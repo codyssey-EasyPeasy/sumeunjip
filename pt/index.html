@@ -196,7 +196,7 @@ pre.cmd .c{color:#9fb0c8}
 <!-- 5. 사용 흐름 -->
 <section class="slide">
   <div class="kicker">사용 흐름</div>
-  <h2>혼자서도 10분 안에 끝나는 4단계</h2>
+  <h2>혼자서도 할 수 있는 4단계</h2>
   <div class="flow" style="margin-bottom:20px">
     <div class="step"><div class="n">1</div><h3>안전 확인</h3><p>상대가 볼 수 있는 기기·계정이면 다른 기기 권장. 방문 기록이 남을 수 있음을 먼저 알림. <b>빠른 나가기</b> 위치 안내.</p></div>
     <div class="arrow">→</div>
@@ -287,7 +287,7 @@ pre.cmd .c{color:#9fb0c8}
     <text x="836" y="82" font-size="16" font-weight="800" fill="#1f3354">빌드 때만 · 공개 정보</text>
     <text x="836" y="106" font-size="13.5" fill="#1d2433">국가법령정보센터 현행 조문 수집</text>
     <text x="836" y="128" font-size="13.5" fill="#1d2433">→ 조문 분할 → 노출 통제(비노출 43)</text>
-    <text x="836" y="150" font-size="13.5" fill="#1d2433">→ 쉬운 말 초안(외부 LLM, 공개 조문만)</text>
+    <text x="836" y="150" font-size="13.5" fill="#1d2433">→ 쉬운 말 초안(DeepSeek·Claude, 공개 조문만)</text>
     <text x="836" y="172" font-size="13.5" fill="#1d2433">→ 읽기 전용 배포</text>
     <rect x="820" y="210" width="288" height="196" rx="12" fill="#fff" stroke="#ded8cb"/>
     <text x="836" y="236" font-size="16" font-weight="800" fill="#1f3354">GLM-5.3-Flash (제3자 서버)</text>
@@ -415,7 +415,7 @@ pre.cmd .c{color:#9fb0c8}
     <div class="card teal"><span class="tag t">GPU · 내부</span><h3 style="margin-top:10px">내부 LLM</h3><p>vLLM Qwen3-8B-AWQ. 상황 정리 · 근거 답(<b>문장별 검증</b>, 실패하면 재생성 1회 → 원문 발췌) · 안전 문구 제안.</p></div>
   </div>
   <div class="grid2" style="margin-top:18px">
-    <div class="card amber"><span class="tag a">외부 · 서비스 경로 밖</span><h3 style="margin-top:10px">외부 LLM은 합성 데이터에만</h3><p>빌드 때 공개 조문 → 쉬운 말 <b>초안</b>. GLM-5.3-Flash는 <b>합성 사용자·공격자 시뮬레이터와 시연 데이터 전용</b>(중계 역터널). 앱·GPU 코드에는 그 주소가 없고, 사용자 입력은 보내지 않습니다.</p></div>
+    <div class="card amber"><span class="tag a">외부 · 서비스 경로 밖</span><h3 style="margin-top:10px">외부 LLM은 합성 데이터에만</h3><p>빌드 때 공개 조문 → 쉬운 말 <b>초안</b>(DeepSeek-V4.1-Flash 42건 · Claude 41건+J28, 사람 검수 전). GLM-5.3-Flash는 <b>합성 사용자·공격자 시뮬레이터와 시연 데이터 전용</b>(중계 역터널). 앱·GPU 코드에는 그 주소가 없고, 사용자 입력은 보내지 않습니다.</p></div>
     <div class="card"><span class="tag">규칙</span><h3 style="margin-top:10px">진단 엔진 — 결정은 여기서</h3><p>지식표 84행 × 피해 유형 × 상황 조건을 결정적으로 평가. 내부 LLM이 제안한 체크 항목도 <b>본인이 확인한 뒤에만</b> 들어갑니다.</p></div>
   </div>
   <p class="note">내부 LLM: JSON 스키마 강제 · 입력 가드 2번(앱·GPU) + 공통 출력 가드(프롬프트 20-gram·비노출 조문 12-gram·과잉 약속·목록 밖 인용·반복 붕괴) · intake는 지시문 문장을 지우고 근거 낱말 없는 항목을 버림 · 멈추면 체크박스로 계속(다른 LLM 대체 금지). 출처: docs/SPEC.md §11.1–11.7, <code>grep -rn "18090\|GLM" app gpu</code> 0건(docs/EVIDENCE.md §6).</p>
@@ -694,7 +694,7 @@ pre.cmd .c{color:#9fb0c8}
         <tr style="background:#fbeedb"><td>보호 안내가 붙은 응답 (건 / 카드)</td><td>—</td><td>96 / 38</td></tr>
       </table>
       <div class="card amber" style="padding:10px 14px;margin-top:10px"><ul class="clean">
-        <li style="font-size:13px;margin:2px 0"><code>2418ad9</code> 뒤 v3 오거절 23문장 재전송: 7건 해소, <b>16건 남음</b> — 근거는 커밋 메시지뿐(결과 파일 없음)</li>
+        <li style="font-size:13px;margin:2px 0">현재 배포본(<code>cf8d149</code>+<code>6672867</code>)에 v3 사용자 대화 재전송: 자기 보호 질문 거절 <b>18건/14대화</b> 남음(notice_calibration_summary.md)</li>
         <li style="font-size:13px;margin:2px 0">남은 예: 아이 학교 옮기기, 추적 의심 물건, '같이 산 적 없다'는 부정 답</li>
         <li style="font-size:13px;margin:2px 0">시드 1~2개·온도 0.7 — 표본이 작고 대화가 매번 달라짐</li></ul></div>
       <p class="src" style="margin-top:6px">data/eval/sim_results/{v21,v3}-20261031/summary.md · docs/evidence/sample-conversation.md. v3 상대는 <code>fc84eb4</code>. 발췌의 다른 턴에서 원문 발췌 중복·근거 어긋남 가능성 1건도 그 문서에 적음.</p>
@@ -711,7 +711,7 @@ pre.cmd .c{color:#9fb0c8}
     <div>
       <table class="tight" style="font-size:12.5px">
         <tr><th style="width:27%">확인 항목</th><th>결과</th><th style="width:24%">명령</th></tr>
-        <tr><td>포트 바인드</td><td>앱 <b>127.0.0.1:8080</b> · vLLM <b>127.0.0.1:8001</b> · GPU API 0.0.0.0:8000(사설망 접근 제어 <b>미확인</b>)</td><td><code>ss -ltnp</code></td></tr>
+        <tr><td>포트 바인드</td><td>앱 <b>127.0.0.1:8080</b> · vLLM <b>127.0.0.1:8001</b> · GPU API 0.0.0.0:8000 — <b>VPN 사용자에게도 열림·인증 없음</b>(VPN 노트북 실측)</td><td><code>ss -ltnp</code></td></tr>
         <tr><td>vLLM 로그</td><td><code>--no-enable-log-requests --no-enable-log-outputs --disable-uvicorn-access-log</code></td><td><code>/proc/&lt;pid&gt;/cmdline</code></td></tr>
         <tr><td>앱 로그 모양</td><td>3,362줄 → 숫자 치환 뒤 <b>18가지</b>(메서드·경로·상태). GPU 로그 8,752줄 → 69가지, 사용자 문장 없음</td><td><code>sed 's/[0-9]+/N/g' | sort -u</code></td></tr>
         <tr><td>표지 문자열 시험</td><td>합성 표지 60회 송신 뒤 app.log·gpu.log·llm.log 검색 <b>0건</b></td><td><code>grep -c</code></td></tr>
@@ -722,7 +722,7 @@ pre.cmd .c{color:#9fb0c8}
     </div>
     <div>
       <div class="grid2" style="gap:10px">
-        <div class="stat teal"><div class="v">20.4 / 22.5 GiB</div><div class="l">L4 한 장 20,912 / 23,034 MiB: vLLM 13,948 + 임베딩·재순위·GLiNER 6,950</div></div>
+        <div class="stat teal"><div class="v">20.0 / 22.5 GiB</div><div class="l">L4 한 장 20,480 / 23,034 MiB(재기동 뒤): vLLM 13,948 + 임베딩·재순위·GLiNER 6,518</div></div>
         <div class="stat"><div class="v">5.75초</div><div class="l">/api/answer 중앙값(생성→검증 포함, 서버 안 5회)</div></div>
       </div>
       <table class="tight" style="font-size:12.5px;margin-top:10px">
@@ -737,7 +737,7 @@ pre.cmd .c{color:#9fb0c8}
       <p class="src" style="margin-top:6px">같은 요청 반복이라 vLLM 접두사 캐시 영향 가능. 측정 스크립트는 비공개(단순 반복문, infra.md §7 설명). 평가셋 근거 답 평균 4.05초·최대 12.67초(results_llm.json).</p>
     </div>
   </div>
-  <p class="note">출처: docs/evidence/infra.md §2–7 (2026-10-31 18:1x KST, 두 서버에서 읽기 명령만 실행, 출력 그대로 수록) · docs/EVIDENCE.md §6</p>
+  <p class="note">출처: docs/evidence/infra.md §2–7 (2026-10-31 18:1x KST) · infra-2026-10-31-night.md (20:5x 재측정: GPU 메모리·HF 오프라인·VPN 도달) — 두 서버에서 읽기 명령만 실행, 출력 그대로 수록 · docs/EVIDENCE.md §6</p>
   <div class="foot"><span>숨은집 지킴이 · 부록</span><span>A6</span></div>
 </section>
 
@@ -760,7 +760,7 @@ python3 tools/sim/run_all.py --set v2 \
   --seeds-by-kind user=2,attacker=1,benign=1 --workers 3 --run-id &lt;id&gt;
 <span class="c"># 차트 다시 그리기 → docs/evidence/charts/*.svg</span>
 python3 tools/make_charts.py
-<span class="c"># 단위 시험: 앱 407 passed(cf8d149) · GPU 120 passed (모델 없이)</span>
+<span class="c"># 단위 시험: 앱 407 passed · GPU 120 passed (모델 없이, 2026-10-31 21시 재실행)</span>
 uv run --frozen pytest -q tests
 cd gpu &amp;&amp; uv run --with pytest python -m pytest -q tests</pre>
     </div>
@@ -776,7 +776,7 @@ cd gpu &amp;&amp; uv run --with pytest python -m pytest -q tests</pre>
         <tr><td><code>docs/SPEC.md</code> §11</td><td>실제 동작(가드·검증·상한) 정본</td></tr>
         <tr><td><code>data/knowledge.json</code> · <code>data/laws/articles.jsonl</code></td><td>지식표 84행 · 조문 174</td></tr>
       </table>
-      <div class="card amber" style="padding:10px 14px;margin-top:10px"><p style="font-size:13px">공개 저장소로 재현할 수 없는 것: 레드팀 공격 세트·판정기(비공개), 지연 측정 스크립트, <code>2418ad9</code> 재전송 16건 결과(파일 없음). 모든 평가 데이터는 <b>합성</b>이며 실제 피해자 사례로 검증하지 않았습니다.</p></div>
+      <div class="card amber" style="padding:10px 14px;margin-top:10px"><p style="font-size:13px">공개 저장소로 재현할 수 없는 것: 레드팀 공격 세트·판정기(비공개), 지연 측정·보호 안내 재전송 스크립트(대화 원문 비공개). 모든 평가 데이터는 <b>합성</b>이며 실제 피해자 사례로 검증하지 않았습니다.</p></div>
     </div>
   </div>
   <div class="foot"><span>github.com/codyssey-EasyPeasy/sumeunjip</span><span>A7</span></div>
