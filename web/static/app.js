@@ -1,5 +1,5 @@
 /*
- * 숨은집 지킴이 프런트엔드.
+ * "보안 예보" 프런트엔드.
  * 원칙:
  *  - 모든 동적 텍스트는 textContent/createElement 로만 삽입한다(innerHTML 사용 금지).
  *  - localStorage/sessionStorage/cookie 사용 금지.
@@ -234,9 +234,9 @@
 
     for (var oi = 0; oi < order.length; oi++) {
       var gname = order[oi];
-      var fieldset = document.createElement('fieldset');
+      var fieldset = document.createElement('details');
       fieldset.className = 'flag-group';
-      var legend = document.createElement('legend');
+      var legend = document.createElement('summary');
       legend.textContent = gname;
       fieldset.appendChild(legend);
 
@@ -1192,6 +1192,8 @@
         box.checked = true;
         box.parentNode.classList.add('auto-picked');
       }
+      var group = box.parentNode.parentNode;
+      if (group && group.tagName === 'DETAILS') group.open = true;
       picked++;
       (function (b) {
         var li = el('li', 'auto-picked-item');
