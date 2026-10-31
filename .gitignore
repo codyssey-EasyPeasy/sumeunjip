@@ -13,3 +13,4 @@ data/eval/sim_results/**/*
 !data/eval/sim_results/**/summary.md
 !data/eval/sim_results/**/summary.json
 !data/eval/sim_results/**/card_consistency.json
+.coverage
