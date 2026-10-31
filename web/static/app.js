@@ -1245,17 +1245,30 @@
   /* ---------- safety notice ---------- */
   function initSafety() {
     var btn = $('safety-toggle');
-    var body = $('safety-body');
-    btn.addEventListener('click', function () {
-      var open = body.hidden;
-      body.hidden = !open;
-      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-      btn.textContent = open ? '안내 접기' : '안전 안내 다시 보기';
-      if (!open) {
-        var t = $('tab-diagnose');
-        if (t) t.focus();
+    var reopen = $('safety-reopen');
+    var panel = $('safety');
+    var backdrop = $('safety-backdrop');
+    function openSafety() {
+      panel.hidden = false;
+      backdrop.hidden = false;
+      document.body.classList.add('safety-open');
+      btn.focus();
+    }
+    function closeSafety() {
+      panel.hidden = true;
+      backdrop.hidden = true;
+      document.body.classList.remove('safety-open');
+      reopen.focus();
+    }
+    btn.addEventListener('click', closeSafety);
+    backdrop.addEventListener('click', closeSafety);
+    reopen.addEventListener('click', openSafety);
+    try {
+      if (!window.localStorage.getItem('sumeunjip-safety-seen')) {
+        openSafety();
+        window.localStorage.setItem('sumeunjip-safety-seen', '1');
       }
-    });
+    } catch (e) { openSafety(); }
   }
 
   /* ---------- tabs ---------- */

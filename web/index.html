@@ -15,19 +15,21 @@
   <p class="tagline">새 주소가 상대에게 알려지지 않도록, 지금 쓸 수 있는 보호 제도를 순서대로 정리해 드립니다.</p>
 </header>
 
+<div class="emergency-bar" aria-label="긴급 연락처">
+  <ul class="emergency-list">
+    <li><a href="tel:112" class="emergency-call"><strong>112</strong><span>경찰 긴급신고</span></a></li>
+    <li><a href="tel:1366" class="emergency-call"><strong>1366</strong><span>여성긴급전화 · 24시간</span></a></li>
+    <li><a href="tel:132" class="emergency-call"><strong>132</strong><span>대한법률구조공단</span></a></li>
+  </ul>
+  <button type="button" id="safety-reopen" class="safety-reopen">안전 안내 다시 보기</button>
+</div>
+
 <button type="button" id="quick-exit" class="quick-exit" aria-label="빠른 나가기: 입력한 내용을 지우고 날씨 검색 화면으로 바로 이동합니다">빠른 나가기</button>
 
-<section id="safety" class="safety" aria-labelledby="safety-title">
-  <h2 id="safety-title" tabindex="-1">시작하기 전에 확인해 주세요</h2>
+<button type="button" id="safety-backdrop" class="safety-backdrop" aria-label="팝업 닫기" hidden></button>
 
-  <div class="emergency" role="note" aria-label="긴급 연락처">
-    <p class="emergency-lead">지금 위험하면 바로 연락하세요.</p>
-    <ul class="emergency-list">
-      <li><a href="tel:112" class="emergency-call"><strong>112</strong><span>경찰 긴급신고</span></a></li>
-      <li><a href="tel:1366" class="emergency-call"><strong>1366</strong><span>여성긴급전화 · 24시간</span></a></li>
-      <li><a href="tel:132" class="emergency-call"><strong>132</strong><span>대한법률구조공단</span></a></li>
-    </ul>
-  </div>
+<section id="safety" class="safety safety-dialog" aria-labelledby="safety-title" role="dialog" aria-modal="true" aria-describedby="safety-body" hidden>
+  <h2 id="safety-title" tabindex="-1">시작하기 전에 확인해 주세요</h2>
 
   <div id="safety-body">
     <h3 class="safety-sub">안전한 기기에서 보고 계신가요?</h3>
@@ -42,7 +44,7 @@
       1366(24시간)이나 대한법률구조공단 132에서 받을 수 있습니다.
     </p>
   </div>
-  <button type="button" id="safety-toggle" class="safety-toggle" aria-expanded="true" aria-controls="safety-body">안내 접기</button>
+  <button type="button" id="safety-toggle" class="safety-toggle">닫기</button>
 </section>
 
 <nav class="tabs" role="tablist" aria-label="기능 선택">
