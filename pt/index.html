@@ -263,7 +263,7 @@ pre.cmd .c{color:#9fb0c8}
     <!-- gpu -->
     <rect x="28" y="330" width="724" height="150" rx="12" fill="#fff" stroke="#ded8cb"/>
     <text x="44" y="356" font-size="16" font-weight="800" fill="#1f3354">GPU 서버</text>
-    <text x="124" y="356" font-size="12.5" fill="#5b6476">10.1.2.33:8000 · L4 22.5GiB</text>
+    <text x="124" y="356" font-size="12.5" fill="#5b6476">:8000 토큰 인증 · L4 22.5GiB</text>
     <text x="44" y="382" font-size="13.5" fill="#1d2433">· 임베딩 bge-m3</text>
     <text x="44" y="403" font-size="13.5" fill="#1d2433">· 재순위 bge-reranker-v2-m3</text>
     <text x="44" y="424" font-size="13.5" fill="#1d2433">· 서류 정밀 점검 GLiNER</text>
@@ -711,12 +711,12 @@ pre.cmd .c{color:#9fb0c8}
     <div>
       <table class="tight" style="font-size:12.5px">
         <tr><th style="width:27%">확인 항목</th><th>결과</th><th style="width:24%">명령</th></tr>
-        <tr><td>포트 바인드</td><td>앱 <b>127.0.0.1:8080</b> · vLLM <b>127.0.0.1:8001</b> · GPU API 0.0.0.0:8000 — <b>VPN 사용자에게도 열림·인증 없음</b>(VPN 노트북 실측)</td><td><code>ss -ltnp</code></td></tr>
+        <tr><td>포트 바인드</td><td>앱 <b>127.0.0.1:8080</b> · vLLM <b>127.0.0.1:8001</b> · GPU API 0.0.0.0:8000 — VPN 에서 닿음 → <b>11-01 부터 공유 토큰</b>: 토큰 없이 401(VPN 노트북 실측), 로그 토큰 0건</td><td><code>ss -ltnp</code> · <code>curl</code></td></tr>
         <tr><td>vLLM 로그</td><td><code>--no-enable-log-requests --no-enable-log-outputs --disable-uvicorn-access-log</code></td><td><code>/proc/&lt;pid&gt;/cmdline</code></td></tr>
         <tr><td>앱 로그 모양</td><td>3,362줄 → 숫자 치환 뒤 <b>18가지</b>(메서드·경로·상태). GPU 로그 8,752줄 → 69가지, 사용자 문장 없음</td><td><code>sed 's/[0-9]+/N/g' | sort -u</code></td></tr>
         <tr><td>표지 문자열 시험</td><td>합성 표지 60회 송신 뒤 app.log·gpu.log·llm.log 검색 <b>0건</b></td><td><code>grep -c</code></td></tr>
         <tr><td>외부 주소</td><td>런타임 코드의 외부 URL = '빠른 나가기' 이동 대상 1개. GLM 중계 주소 0건</td><td><code>grep -rnoE 'https?://'</code></td></tr>
-        <tr><td>배포본 = 저장소</td><td>앱 13개 파일·<code>gpu/*.py</code> sha256 일치, 17:57 재기동(<code>2418ad9</code>)</td><td><code>sha256sum</code></td></tr>
+        <tr><td>배포본 = 저장소</td><td>배포 파일 sha256 일치(10-31 <code>2418ad9</code>, 11-01 <code>642e5e1</code> 토큰·위치 단위·메모리 가드)</td><td><code>sha256sum</code></td></tr>
         <tr style="background:#fbeedb"><td>기동 시 모델 허브 요청</td><td>이전에는 GPU 서버 기동 때 HF Hub 확인 요청(로그 경고 22회, 사용자 데이터 없음). <code>HF_HUB_OFFLINE=1</code> 적용 뒤 재기동에서 새 경고 0(누적 22 그대로)</td><td><code>grep gpu.log</code></td></tr>
       </table>
     </div>
@@ -733,11 +733,12 @@ pre.cmd .c{color:#9fb0c8}
         <tr><td>POST /api/intake</td><td>1.827초</td><td>1.829</td></tr>
         <tr><td>POST /api/rewrite</td><td>2.366초</td><td>2.398</td></tr>
         <tr><td>POST /api/answer</td><td>5.745초</td><td>6.676</td></tr>
+        <tr style="background:#e2f1ee"><td>동시 부하 1·2·4·8 (합성, 터널)</td><td colspan="2">답 p95 8.4·11.3·16.5·17.8초 · 발췌 대체 4·5·14·50% · 5xx 는 긴 다시 쓰기 504 뿐 → <b>품질 유지 시간당 약 200 세션</b></td></tr>
       </table>
       <p class="src" style="margin-top:6px">같은 요청 반복이라 vLLM 접두사 캐시 영향 가능. 측정 스크립트는 비공개(단순 반복문, infra.md §7 설명). 평가셋 근거 답 평균 4.05초·최대 12.67초(results_llm.json).</p>
     </div>
   </div>
-  <p class="note">출처: docs/evidence/infra.md §2–7 (2026-10-31 18:1x KST) · infra-2026-10-31-night.md (20:5x 재측정: GPU 메모리·HF 오프라인·VPN 도달) — 두 서버에서 읽기 명령만 실행, 출력 그대로 수록 · docs/EVIDENCE.md §6</p>
+  <p class="note">출처: docs/evidence/infra.md §2–7 (2026-10-31 18:1x KST) · infra-2026-10-31-night.md (20:5x 재측정: GPU 메모리·HF 오프라인·VPN 도달) · deploy-2026-11-01.md (토큰 401 실측) · results_load.json (동시 부하) · docs/EVIDENCE.md §6·§9</p>
   <div class="foot"><span>숨은집 지킴이 · 부록</span><span>A6</span></div>
 </section>
 
