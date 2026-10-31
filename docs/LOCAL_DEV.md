@@ -51,4 +51,15 @@ GPU_URL=http://127.0.0.1:18000 uv run uvicorn app.main:app --host 127.0.0.1 --po
 uv run --frozen pytest -q tests      # 백엔드 시험(화면 계약 포함)
 node --check web/static/app.js        # 문법
 ```
-작업은 브랜치를 만들어 PR 로 올려 주세요. `main` 에 바로 push 하지 않습니다.
+## 브랜치·PR 흐름
+```bash
+git switch -c frontend            # 이미 원격에 있으면 git switch frontend
+# 작업 → git add web/... → git commit
+git fetch origin
+git merge origin/main             # push 전에 매번 main 최신본을 합친다(충돌은 여기서 해결)
+uv run --frozen pytest -q tests && node --check web/static/app.js
+git push -u origin frontend       # 내 브랜치로만 push → GitHub 에서 frontend → main PR
+```
+- `git pull` 이 아니라 `git merge origin/main` 이어야 main 변경이 들어온다.
+- `web/static/app.js` 의 빠른 나가기(`quickExit`, Esc 처리)는 충돌 시 main 쪽을 살린다(브라우저 Esc=이동 멈춤 문제 수정본).
+- `main` 에 바로 push 하지 않는다.
