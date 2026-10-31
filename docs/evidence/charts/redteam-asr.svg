@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720" font-family="'Noto Sans KR','NanumGothic','Malgun Gothic','Apple SD Gothic Neo',sans-serif" role="img" aria-label="레드팀 공격 성공률(ASR): 낮을수록 좋다">
+<rect width="1280" height="720" fill="#ffffff"/>
+<rect x="0" y="0" width="1280" height="8" fill="#1f3354"/>
+<text x="56.0" y="70.0" font-size="32" fill="#1f3354" text-anchor="start" font-weight="bold">레드팀 공격 성공률(ASR): 낮을수록 좋다</text>
+<text x="56.0" y="106.0" font-size="18" fill="#5b6573" text-anchor="start" font-weight="normal">같은 공격 121개(6개 대상), 결정적 규칙 판정 + 사람 재확인. 위치 찾기 질문에 실제 조회 절차를 낸 경우는 모든 경로 0건</text>
+<rect x="56" y="128" width="18" height="18" rx="4" fill="#c9781e"/>
+<text x="82.0" y="143.0" font-size="17" fill="#1b2430" text-anchor="start" font-weight="normal">대책 전</text>
+<rect x="182.6" y="128" width="18" height="18" rx="4" fill="#1e7a72"/>
+<text x="208.6" y="143.0" font-size="17" fill="#1b2430" text-anchor="start" font-weight="normal">대책 후(서비스) · 새 프롬프트(모델 단독)</text>
+<line x1="420.0" y1="198" x2="420.0" y2="584.0" stroke="#e6e9ed" stroke-width="1"/>
+<text x="420.0" y="604.0" font-size="14" fill="#5b6573" text-anchor="middle" font-weight="normal">0%</text>
+<line x1="575.0" y1="198" x2="575.0" y2="584.0" stroke="#e6e9ed" stroke-width="1"/>
+<text x="575.0" y="604.0" font-size="14" fill="#5b6573" text-anchor="middle" font-weight="normal">5%</text>
+<line x1="730.0" y1="198" x2="730.0" y2="584.0" stroke="#e6e9ed" stroke-width="1"/>
+<text x="730.0" y="604.0" font-size="14" fill="#5b6573" text-anchor="middle" font-weight="normal">10%</text>
+<line x1="885.0" y1="198" x2="885.0" y2="584.0" stroke="#e6e9ed" stroke-width="1"/>
+<text x="885.0" y="604.0" font-size="14" fill="#5b6573" text-anchor="middle" font-weight="normal">15%</text>
+<line x1="1040.0" y1="198" x2="1040.0" y2="584.0" stroke="#e6e9ed" stroke-width="1"/>
+<text x="1040.0" y="604.0" font-size="14" fill="#5b6573" text-anchor="middle" font-weight="normal">20%</text>
+<text x="400.0" y="239.0" font-size="18" fill="#1b2430" text-anchor="end" font-weight="normal">서비스 전체 경로</text>
+<text x="400.0" y="261.0" font-size="18" fill="#1b2430" text-anchor="end" font-weight="normal">(가드·검증·후처리)</text>
+<rect x="420.0" y="210.0" width="167.4" height="36.0" rx="4.0" fill="#c9781e"><title>서비스 전체 경로 (가드·검증·후처리) · 대책 전: 6/111 = 5.4%</title></rect>
+<text x="597.4" y="238.0" font-size="17" fill="#1b2430" text-anchor="start" font-weight="normal">6/111 = 5.4%</text>
+<rect x="420.0" y="252.0" width="83.7" height="36.0" rx="4.0" fill="#1e7a72"><title>서비스 전체 경로 (가드·검증·후처리) · 대책 후: 3/112 = 2.7%</title></rect>
+<text x="513.7" y="280.0" font-size="17" fill="#1b2430" text-anchor="start" font-weight="bold">3/112 = 2.7%</text>
+<text x="400.0" y="367.0" font-size="18" fill="#1b2430" text-anchor="end" font-weight="normal">Qwen3-8B 단독</text>
+<text x="400.0" y="389.0" font-size="18" fill="#1b2430" text-anchor="end" font-weight="normal">(thinking 끔)</text>
+<rect x="420.0" y="338.0" width="440.2" height="36.0" rx="4.0" fill="#c9781e"><title>Qwen3-8B 단독 (thinking 끔) · 대책 전: 15/106 = 14.2%</title></rect>
+<text x="870.2" y="366.0" font-size="17" fill="#1b2430" text-anchor="start" font-weight="normal">15/106 = 14.2%</text>
+<rect x="420.0" y="380.0" width="328.6" height="36.0" rx="4.0" fill="#1e7a72"><title>Qwen3-8B 단독 (thinking 끔) · 대책 후: 11/104 = 10.6%</title></rect>
+<text x="758.6" y="408.0" font-size="17" fill="#1b2430" text-anchor="start" font-weight="bold">11/104 = 10.6%</text>
+<text x="400.0" y="495.0" font-size="18" fill="#1b2430" text-anchor="end" font-weight="normal">Qwen3-8B 단독</text>
+<text x="400.0" y="517.0" font-size="18" fill="#1b2430" text-anchor="end" font-weight="normal">(thinking 켬)</text>
+<rect x="420.0" y="466.0" width="409.2" height="36.0" rx="4.0" fill="#c9781e"><title>Qwen3-8B 단독 (thinking 켬) · 대책 전: 14/106 = 13.2%</title></rect>
+<text x="839.2" y="494.0" font-size="17" fill="#1b2430" text-anchor="start" font-weight="normal">14/106 = 13.2%</text>
+<rect x="420.0" y="508.0" width="350.3" height="36.0" rx="4.0" fill="#1e7a72"><title>Qwen3-8B 단독 (thinking 켬) · 대책 후: 12/106 = 11.3%</title></rect>
+<text x="780.3" y="536.0" font-size="17" fill="#1b2430" text-anchor="start" font-weight="bold">12/106 = 11.3%</text>
+<text x="56.0" y="696.0" font-size="14" fill="#5b6573" text-anchor="start" font-weight="normal">출처: docs/redteam-summary.md 「대책 적용 후」 표(공격 문장·출력은 비공개, 집계만)</text>
+</svg>
