@@ -1,0 +1,13 @@
+{
+  "name": "sumeunjip-demo-recorder",
+  "private": true,
+  "type": "module",
+  "description": "시연 영상 녹화 스크립트(Playwright). 앱 코드가 아니다.",
+  "scripts": {
+    "check": "node record_demo.mjs --check",
+    "record": "node record_demo.mjs"
+  },
+  "dependencies": {
+    "playwright-core": "1.63.0"
+  }
+}
