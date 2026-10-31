@@ -10,7 +10,7 @@
     "J1"
    ],
    "cites_expected": true,
-   "latency_s": 8.9
+   "latency_s": 10.48
   },
   {
    "id": "a1",
@@ -22,7 +22,7 @@
     "J1"
    ],
    "cites_expected": true,
-   "latency_s": 7.92
+   "latency_s": 9.36
   },
   {
    "id": "a1",
@@ -32,59 +32,47 @@
    "grounded": true,
    "citations": [
     "J1"
-   ],
-   "cites_expected": true,
-   "latency_s": 7.93
-  },
-  {
-   "id": "a2",
-   "answerable": true,
-   "refused": false,
-   "http503": false,
-   "grounded": true,
-   "citations": [
-    "L3"
-   ],
-   "cites_expected": true,
-   "latency_s": 8.36
-  },
-  {
-   "id": "a2",
-   "answerable": true,
-   "refused": false,
-   "http503": false,
-   "grounded": true,
-   "citations": [
-    "L3"
-   ],
-   "cites_expected": true,
-   "latency_s": 7.48
-  },
-  {
-   "id": "a2",
-   "answerable": true,
-   "refused": false,
-   "http503": false,
-   "grounded": true,
-   "citations": [
-    "L3"
-   ],
-   "cites_expected": true,
-   "latency_s": 7.43
-  },
-  {
-   "id": "a3",
-   "answerable": true,
-   "refused": false,
-   "http503": false,
-   "grounded": true,
-   "citations": [
-    "S1"
    ],
    "cites_expected": true,
    "latency_s": 9.55
   },
   {
+   "id": "a2",
+   "answerable": true,
+   "refused": false,
+   "http503": false,
+   "grounded": true,
+   "citations": [
+    "L3"
+   ],
+   "cites_expected": true,
+   "latency_s": 9.76
+  },
+  {
+   "id": "a2",
+   "answerable": true,
+   "refused": false,
+   "http503": false,
+   "grounded": true,
+   "citations": [
+    "L3"
+   ],
+   "cites_expected": true,
+   "latency_s": 8.94
+  },
+  {
+   "id": "a2",
+   "answerable": true,
+   "refused": false,
+   "http503": false,
+   "grounded": true,
+   "citations": [
+    "L3"
+   ],
+   "cites_expected": true,
+   "latency_s": 8.81
+  },
+  {
    "id": "a3",
    "answerable": true,
    "refused": false,
@@ -94,7 +82,7 @@
     "S1"
    ],
    "cites_expected": true,
-   "latency_s": 8.05
+   "latency_s": 11.28
   },
   {
    "id": "a3",
@@ -106,7 +94,19 @@
     "S1"
    ],
    "cites_expected": true,
-   "latency_s": 8.14
+   "latency_s": 9.9
+  },
+  {
+   "id": "a3",
+   "answerable": true,
+   "refused": false,
+   "http503": false,
+   "grounded": true,
+   "citations": [
+    "S1"
+   ],
+   "cites_expected": true,
+   "latency_s": 9.99
   },
   {
    "id": "a4",
@@ -116,7 +116,7 @@
    "grounded": false,
    "citations": [],
    "cites_expected": false,
-   "latency_s": 3.86
+   "latency_s": 4.21
   },
   {
    "id": "a4",
@@ -126,7 +126,7 @@
    "grounded": false,
    "citations": [],
    "cites_expected": false,
-   "latency_s": 3.47
+   "latency_s": 3.85
   },
   {
    "id": "a4",
@@ -136,7 +136,7 @@
    "grounded": false,
    "citations": [],
    "cites_expected": false,
-   "latency_s": 3.48
+   "latency_s": 3.9
   },
   {
    "id": "a5",
@@ -148,7 +148,7 @@
     "P1"
    ],
    "cites_expected": true,
-   "latency_s": 5.98
+   "latency_s": 7.55
   },
   {
    "id": "a5",
@@ -160,7 +160,7 @@
     "P1"
    ],
    "cites_expected": true,
-   "latency_s": 5.98
+   "latency_s": 6.89
   },
   {
    "id": "a5",
@@ -172,7 +172,7 @@
     "P1"
    ],
    "cites_expected": true,
-   "latency_s": 5.27
+   "latency_s": 6.62
   },
   {
    "id": "n1",
@@ -192,7 +192,7 @@
    "grounded": false,
    "citations": [],
    "cites_expected": false,
-   "latency_s": 0.22
+   "latency_s": 0.23
   },
   {
    "id": "n1",
@@ -202,7 +202,7 @@
    "grounded": false,
    "citations": [],
    "cites_expected": false,
-   "latency_s": 0.16
+   "latency_s": 0.26
   },
   {
    "id": "n2",
@@ -212,7 +212,7 @@
    "grounded": false,
    "citations": [],
    "cites_expected": false,
-   "latency_s": 1.13
+   "latency_s": 1.19
   },
   {
    "id": "n2",
@@ -222,7 +222,7 @@
    "grounded": false,
    "citations": [],
    "cites_expected": false,
-   "latency_s": 0.67
+   "latency_s": 0.64
   },
   {
    "id": "n2",
@@ -232,7 +232,7 @@
    "grounded": false,
    "citations": [],
    "cites_expected": false,
-   "latency_s": 0.67
+   "latency_s": 0.66
   },
   {
    "id": "n3",
@@ -252,7 +252,7 @@
    "grounded": false,
    "citations": [],
    "cites_expected": false,
-   "latency_s": 0.68
+   "latency_s": 0.65
   },
   {
    "id": "n3",
@@ -262,7 +262,7 @@
    "grounded": false,
    "citations": [],
    "cites_expected": false,
-   "latency_s": 0.65
+   "latency_s": 0.91
   },
   {
    "id": "n4",
@@ -272,10 +272,50 @@
    "grounded": false,
    "citations": [],
    "cites_expected": false,
-   "latency_s": 1.23
+   "latency_s": 1.32
   },
   {
    "id": "n4",
+   "answerable": false,
+   "refused": false,
+   "http503": false,
+   "grounded": false,
+   "citations": [],
+   "cites_expected": false,
+   "latency_s": 0.66
+  },
+  {
+   "id": "n4",
+   "answerable": false,
+   "refused": false,
+   "http503": false,
+   "grounded": false,
+   "citations": [],
+   "cites_expected": false,
+   "latency_s": 0.88
+  },
+  {
+   "id": "n5",
+   "answerable": false,
+   "refused": false,
+   "http503": false,
+   "grounded": false,
+   "citations": [],
+   "cites_expected": false,
+   "latency_s": 1.07
+  },
+  {
+   "id": "n5",
+   "answerable": false,
+   "refused": false,
+   "http503": false,
+   "grounded": false,
+   "citations": [],
+   "cites_expected": false,
+   "latency_s": 0.7
+  },
+  {
+   "id": "n5",
    "answerable": false,
    "refused": false,
    "http503": false,
@@ -283,46 +323,6 @@
    "citations": [],
    "cites_expected": false,
    "latency_s": 0.64
-  },
-  {
-   "id": "n4",
-   "answerable": false,
-   "refused": false,
-   "http503": false,
-   "grounded": false,
-   "citations": [],
-   "cites_expected": false,
-   "latency_s": 0.65
-  },
-  {
-   "id": "n5",
-   "answerable": false,
-   "refused": false,
-   "http503": false,
-   "grounded": false,
-   "citations": [],
-   "cites_expected": false,
-   "latency_s": 0.97
-  },
-  {
-   "id": "n5",
-   "answerable": false,
-   "refused": false,
-   "http503": false,
-   "grounded": false,
-   "citations": [],
-   "cites_expected": false,
-   "latency_s": 0.72
-  },
-  {
-   "id": "n5",
-   "answerable": false,
-   "refused": false,
-   "http503": false,
-   "grounded": false,
-   "citations": [],
-   "cites_expected": false,
-   "latency_s": 0.78
   }
  ],
  "guard": {
@@ -354,7 +354,7 @@
    "n5": 0
   },
   "http503": 0,
-  "latency_mean_s": 3.75
+  "latency_mean_s": 4.41
  },
- "generated_at": "2026-10-31T18:01:33+0900"
+ "generated_at": "2026-10-31T21:01:56+0900"
 }
