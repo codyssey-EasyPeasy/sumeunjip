@@ -1299,8 +1299,15 @@
   }
 
   /* ---------- quick exit ---------- */
+  // Esc 는 브라우저 기본 동작이 '페이지 이동 멈춤'이다. Esc 두 번째 키 입력으로 이동을 시작하면
+  // 같은 키(또는 이어 누른 Esc·키 반복)의 기본 동작이 막 시작한 이동을 취소해서, 화면은 비었는데
+  // 이동은 안 되는 일이 생긴다. 그래서 나가기 시작 뒤에는 모든 키 기본 동작을 막고,
+  // 이동은 키 이벤트가 끝난 다음 틱에 시작하며, 이동이 취소됐으면 다시 시도한다.
+  var exiting = false;
+  var EXIT_TARGET = 'https://www.google.com/search?q=' + encodeURIComponent('날씨');
   function quickExit() {
-    var target = 'https://www.google.com/search?q=날씨';
+    if (exiting) return;
+    exiting = true;
     clearHistory();
     try {
       var fields = document.querySelectorAll('input, textarea');
@@ -1309,9 +1316,16 @@
         if (el.type === 'checkbox' || el.type === 'radio') el.checked = false;
         else el.value = '';
       }
+      document.title = '날씨';
       document.body.textContent = '';
     } catch (e) { /* noop */ }
-    location.replace(target);
+    var tries = 0;
+    var go = function () {
+      tries += 1;
+      try { location.replace(EXIT_TARGET); } catch (e) { location.href = EXIT_TARGET; }
+      if (tries < 8) setTimeout(go, 400);
+    };
+    setTimeout(go, 0);
   }
 
   /* ---------- init ---------- */
@@ -1345,11 +1359,18 @@
     // Esc 를 1초 안에 두 번 누르면 빠른 나가기.
     var lastEsc = 0;
     document.addEventListener('keydown', function (e) {
+      // 나가는 중에는 어떤 키도 브라우저 기본 동작(특히 Esc=이동 멈춤)을 하지 못하게 한다.
+      if (exiting) { e.preventDefault(); e.stopPropagation(); return; }
       if (e.key !== 'Escape') return;
+      e.preventDefault();
+      if (e.repeat) return; // 길게 누른 키 반복은 두 번 누름으로 치지 않는다
       var now = Date.now();
       if (now - lastEsc < 1000) quickExit();
       lastEsc = now;
-    });
+    }, true);
+    document.addEventListener('keyup', function (e) {
+      if (exiting) e.preventDefault();
+    }, true);
   }
 
   if (document.readyState === 'loading') {

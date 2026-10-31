@@ -3,6 +3,8 @@ set -euo pipefail
 
 dir=$(dirname "$(readlink -f "$0")")
 export HF_HOME="${MODELS_DIR:-$HOME/models}"
+# 모델은 이미 받아 둠 — 기동 때 HF Hub 로 확인 요청을 보내지 않는다(실측 22회 → 0)
+export HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1
 
 pidfile="$dir/gpu.pid"
 log="$HOME/sumeunjip/gpu.log"
