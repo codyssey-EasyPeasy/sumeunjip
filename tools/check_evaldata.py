@@ -23,7 +23,7 @@ from pathlib import Path
 
 ROOT: Path = Path(__file__).resolve().parent.parent
 
-RESEARCH_PATH = "research/2026-10-31-정보조사.md"
+RESEARCH_PATH = "docs/research/2026-10-31-정보조사.md"
 SPEC_PATH = "docs/SPEC.md"
 SCENARIOS_PATH = "data/eval/scenarios.json"
 DOCS_PATH = "data/eval/docs.json"

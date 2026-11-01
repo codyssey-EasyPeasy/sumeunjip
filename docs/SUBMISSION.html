@@ -87,9 +87,9 @@ svg text{font-family:Pretendard,"Noto Sans KR","NanumGothic",sans-serif}
   <div class="cover">
     <div>
       <div class="req" style="color:var(--sub)">코디세이 AI 해커톤 2026 · 주제 02 AI 기반 정보보호 서비스 · 주최 이노베이션아카데미</div>
-      <h1>보안 예보</h1>
+      <h1>보안 예보</h1><p style="font-size:9pt;color:var(--sub)">피해자의 새로운 주소가 노출 되기 전에 · 2026 CODYSSEY HACKATHON · EasyPeasy</p>
       <p style="font-size:11pt;font-weight:800;color:var(--navy)">가장 위험한 개인정보, 피해자의 새 주소가 새는 84개 경로를 먼저 진단하는 정보보호 AI</p><p class="sub" style="font-size:8.6pt">해킹이 아니라 합법 절차로 새는 개인정보를 막습니다 · 입력 저장 0 · 실행 중 외부 AI 호출 0 · 타인 위치 찾기 거절</p>
-      <p style="margin-top:8px"><b>EasyPeasy 팀</b> · 정세영(백엔드 및 AI) · 김시현(기획 및 법령조사, 프런트엔드) · 김대웅(평가·보안 및 PT 자료 제작)</p>
+      <p style="margin-top:8px"><b>EasyPeasy 팀</b> · 정세영(Backend · AI 시스템) · 김대웅(Backend · 서비스 로직) · 김시현(Frontend · 기획 · 운영)</p>
     </div>
     <div class="meta">작성 2026-11-01 · 기준 <code>993db4f</code> + <code>b7c7e1f</code>(06:03 배포본)<br>github.com/codyssey-EasyPeasy/boan-yebo<br>모든 평가 수치는 <b>합성 데이터 기준</b></div>
   </div>
@@ -108,7 +108,7 @@ svg text{font-family:Pretendard,"Noto Sans KR","NanumGothic",sans-serif}
     <div class="card"><div class="num">4.5만<small>건</small></div><p class="sub" style="font-size:8pt">스토킹 신고 2025년 (+39.9%, 2024년 3.2만) · 교제폭력 10.5만</p></div>
     <div class="card"><div class="num">3천<small>여 건/년</small></div><p class="sub" style="font-size:8pt">주민등록 열람제한 신청 (가정폭력 상담 18~20만 건)</p></div>
   </div>
-  <p class="src">출처: 신고 통계는 성평등가족부·경찰청 공동 발표(2026-05-18, 1차, <code>research/2026-11-01-발전방향.md</code> 5절). 사례는 경인일보·경기신문(2026.9)·경북매일(2026.10.28)·YTN(2025.8.14) 보도, <code>research/2026-10-31-정보조사.md</code> 5절. 열람제한은 서울신문(2020·2018) 보도, 이후 공개 통계 미확인.</p>
+  <p class="src">출처: 신고 통계는 성평등가족부·경찰청 공동 발표(2026-05-18, 1차, <code>docs/research/2026-11-01-발전방향.md</code> 5절). 사례는 경인일보·경기신문(2026.9)·경북매일(2026.10.28)·YTN(2025.8.14) 보도, <code>docs/research/2026-10-31-정보조사.md</code> 5절. 열람제한은 서울신문(2020·2018) 보도, 이후 공개 통계 미확인.</p>
 
   <h3>왜 막지 못하는가 — 자체 법령 조사로 찾은 구조적 원인</h3>
   <svg viewBox="0 0 680 150" width="100%" role="img" aria-label="새 주소가 기록을 타고 새는 구조">
@@ -419,10 +419,10 @@ svg text{font-family:Pretendard,"Noto Sans KR","NanumGothic",sans-serif}
   <h2>조사한 사람이 경로를 정하고, 만든 사람이 엔진을, 검증한 사람이 안전을 책임졌습니다</h2>
   <div class="note teal" style="margin-top:0;font-size:7.8pt;padding:1.2mm 2.6mm"><b>협업 구조 → 산출물</b> 김시현 법령 조사(84경로·16 공백) → 지식표 84행(팀 공유 계약) → 정세영 규칙 엔진·2단 가드·검증 루프·L4 서빙 → 김대웅 합성 평가·레드팀 세트 112건(배포본 검색·답 경로 3/84) → 평가 결과로 가드·지식표 수정 후 재측정(예: <code>cf8d149</code> → <code>cacc901</code>). <b>산출물 일관성</b>: 조사 84경로 = 지식표 84행 = 엔진 시험 84/84행 도달 = 발표의 84. 숫자의 기준은 <code>docs/EVIDENCE.md</code> 하나.</div>
   <table>
-    <tr><th style="width:11%">이름</th><th style="width:14%">역할</th><th style="width:25%">담당 업무</th><th>기여 내용 (저장소 산출물)</th></tr>
-    <tr><td><b>정세영</b></td><td><b>백엔드 및 AI</b></td><td>운영 API·추론 API 설계와 구현, 내부 LLM 도입, 입력·출력 가드와 답 검증 루프, 서버 배포·운영</td><td>규칙 진단 엔진 <code>app/engine.py</code> · 2단 입력 가드 <code>app/guard.py</code> · 조문 검색과 BM25 대체 <code>app/retrieval.py</code> · 운영 API <code>app/main.py</code> · 추론 서버 <code>/embed</code>·<code>/rerank</code>·<code>/ner</code>·<code>/intent</code>·<code>/llm/*</code> <code>gpu/server.py</code> · 생성→검증→재생성→발췌 루프와 출력 가드 <code>gpu/verify.py</code>·<code>gpu/llm.py</code> · Qwen3-8B-AWQ·vLLM 서빙 · NCP 서버 2대 배포, L4 메모리 배치 19,648/23,034MiB · GPU API 공유 토큰, 실행 중 HF 오프라인 · 시작·중지 스크립트</td></tr>
-    <tr><td><b>김시현</b></td><td><b>기획 및 법령조사, 프런트엔드</b></td><td>문제 정의와 목표 사용자 설정, 주소 노출 경로 법령 조사, 지식표 기획, 웹 화면과 사용자 흐름, 화면 개선(PR #2)</td><td>정보조사 문서 <code>research/2026-10-31-정보조사.md</code> — 6개 영역 <b>84개 노출 경로</b>, 막는 제도 없는 16개, 신청 시 통지 12개 · 지식표 84행 기획(근거 조문·신청처·서류·한계·긴급도) <code>data/knowledge.json</code> · 근거 조문 174건 범위 선정 <code>data/laws/</code> · 사용자 흐름(안전 확인 → 상황 입력 → 진단 → 서류 점검)과 피해자 본인 직접 사용 전환 · 웹 화면 <code>web/</code> — 빠른 나가기, 통지 확인 잠금, 모바일 배치 · <b>PR #2</b>: 방문마다 안전 안내 팝업·'다시 보기', 위쪽 긴급 띠(112·1366·132), 하단 고정 도움 줄, 맨 위로 버튼, 상황 묶음 접기, 시스템 다크 모드, 카드 '위험 → 도움' 순서, 검색 결과 원문 먼저, 파비콘 자체 제작</td></tr>
-    <tr><td><b>김대웅</b></td><td><b>평가·보안 및 PT 자료 제작</b></td><td>합성 평가 데이터와 평가 하네스, 다턴 시뮬레이터, 레드팀·가드 평가, 시험 계획·결과, 발표 자료</td><td>합성 평가 세트 <code>data/eval/</code>(시나리오 20·서류 30·서술 20·답 질문 45·검색 보류 60·가드 70·보정 60) · 평가 하네스 <code>tools/eval*.py</code> · 다턴 시뮬레이터 <code>tools/sim/</code> · <b>레드팀 고정 공격 세트 112건</b>(배포본 검색·답 경로 3/84 통과, 조회 방법 출력 0건. 10-31 전체 5/112 는 이력), 가드 평가(조정 세트에서 찾기 거절 35/35 · 정상 오거절 0/25) · 시험 계획·결과 <code>docs/TEST_PLAN.md</code>·<code>TEST_RESULTS.md</code> · 차트·화면 캡처 · 발표 자료 <code>pt/</code></td></tr>
+    <tr><th style="width:11%">이름</th><th style="width:14%">역할(발표 8쪽)</th><th style="width:25%">담당 업무</th><th>저장소 산출물(artifacts, 커밋은 공용 환경·정세영 계정)</th></tr>
+    <tr><td><b>정세영</b></td><td><b>Backend · AI 시스템</b></td><td>전체 시스템 설계·아키텍처, GPU 추론 서버·모델 연동, RAG 파이프라인·출력 검증</td><td>규칙 진단 엔진 <code>app/engine.py</code> · 2단 입력 가드 <code>app/guard.py</code> · 조문 검색과 BM25 대체 <code>app/retrieval.py</code> · 운영 API <code>app/main.py</code> · 추론 서버 <code>/embed</code>·<code>/rerank</code>·<code>/ner</code>·<code>/intent</code>·<code>/llm/*</code> <code>gpu/server.py</code> · 생성→검증→재생성→발췌 루프와 출력 가드 <code>gpu/verify.py</code>·<code>gpu/llm.py</code> · Qwen3-8B-AWQ·vLLM 서빙 · NCP 서버 2대 배포, L4 메모리 배치 19,648/23,034MiB · GPU API 공유 토큰, 실행 중 HF 오프라인 · 시작·중지 스크립트</td></tr>
+    <tr><td><b>김시현</b></td><td><b>Frontend · 기획 · 운영</b></td><td>웹 프런트엔드·UI, 서비스 기획·요구사항·기능 설계, 문서화·발표 자료(PR #2 화면)</td><td>정보조사 문서 <code>docs/research/2026-10-31-정보조사.md</code> — 6개 영역 <b>84개 노출 경로</b>, 막는 제도 없는 16개, 신청 시 통지 12개 · 지식표 84행 기획(근거 조문·신청처·서류·한계·긴급도) <code>data/knowledge.json</code> · 근거 조문 174건 범위 선정 <code>data/laws/</code> · 사용자 흐름(안전 확인 → 상황 입력 → 진단 → 서류 점검)과 피해자 본인 직접 사용 전환 · 웹 화면 <code>web/</code> — 빠른 나가기, 통지 확인 잠금, 모바일 배치 · <b>PR #2</b>: 방문마다 안전 안내 팝업·'다시 보기', 위쪽 긴급 띠(112·1366·132), 하단 고정 도움 줄, 맨 위로 버튼, 상황 묶음 접기, 시스템 다크 모드, 카드 '위험 → 도움' 순서, 검색 결과 원문 먼저, 파비콘 자체 제작</td></tr>
+    <tr><td><b>김대웅</b></td><td><b>Backend · 서비스 로직</b></td><td>FastAPI 애플리케이션 서버, 규칙 기반 진단·보호 제도 매칭 로직, 지식 검색(RAG)·데이터 관리(PR #4 생활권 단서·입력 가드 오탐 감소·안전 UX)</td><td>합성 평가 세트 <code>data/eval/</code>(시나리오 20·서류 30·서술 20·답 질문 45·검색 보류 60·가드 70·보정 60) · 평가 하네스 <code>tools/eval*.py</code> · 다턴 시뮬레이터 <code>tools/sim/</code> · <b>레드팀 고정 공격 세트 112건</b>(배포본 검색·답 경로 3/84 통과, 조회 방법 출력 0건. 10-31 전체 5/112 는 이력), 가드 평가(조정 세트에서 찾기 거절 35/35 · 정상 오거절 0/25) · 시험 계획·결과 <code>docs/TEST_PLAN.md</code>·<code>TEST_RESULTS.md</code> · 차트·화면 캡처 · 발표 자료 <code>pt/</code></td></tr>
   </table>
 
   <h3>협업 방식</h3>
@@ -501,8 +501,8 @@ svg text{font-family:Pretendard,"Noto Sans KR","NanumGothic",sans-serif}
   <h3>기대 효과</h3>
   <div class="grid3">
     <div class="card teal"><h3>피해자</h3><p style="font-size:8.4pt">흩어진 제도를 한 화면에서 <b>급한 순서</b>로. 통지 경고로 역노출을 미리 앎. 제출 전 서류의 위치 단서를 스스로 지움.</p><p class="src">합성 시나리오 20개에서 꼭 나올 제도 56/56(<code>results.json</code>). 실제 이용자 효과는 <b>미검증</b></p></div>
-    <div class="card teal"><h3>상담 현장</h3><p style="font-size:8.4pt">인쇄한 결과를 1366·132 상담에 가져가 바로 이어감. 정부가 밝힌 '초기 상담부터 능동 안내'에 쓸 체크리스트.</p><p class="src">성평등가족부 대응(2026-09-05)·현장 매뉴얼 부재 지적, 보도 [2차] — <code>research/…</code> 5절</p></div>
-    <div class="card teal"><h3>정책</h3><p style="font-size:8.4pt">막을 제도가 없는 <b>16개 경로</b>를 근거와 함께 드러내 제도 개선 근거로. 법이 바뀌면 지식표만 고치면 됨.</p><p class="src">민소법·주민등록법 개정안 등 계류(진행 미확인)</p></div>
+    <div class="card teal"><h3>상담·지원기관</h3><p style="font-size:8.4pt">인쇄한 결과를 1366·132 상담에 가져가 바로 이어감. 정부가 밝힌 '초기 상담부터 능동 안내'에 쓸 체크리스트.</p><p class="src">성평등가족부 대응(2026-09-05)·현장 매뉴얼 부재 지적, 보도 [2차] — <code>research/…</code> 5절</p></div>
+    <div class="card teal"><h3>기관·정책</h3><p style="font-size:8.4pt">막을 제도가 없는 <b>16개 경로</b>를 근거와 함께 드러내 제도 개선 근거로. 법이 바뀌면 지식표만 고치면 됨.</p><p class="src">민소법·주민등록법 개정안 등 계류(진행 미확인)</p></div>
   </div>
 
   <h3>실제 적용 가능성</h3>
@@ -552,7 +552,7 @@ svg text{font-family:Pretendard,"Noto Sans KR","NanumGothic",sans-serif}
     <tr><td><b>③ 절차별 비공개</b></td><td>소송·선거·등기·법인 절차마다 주소 가림</td><td>일본 민사소송 비닉결정, 영국 선거인명부 익명등록, 일본 등기 공시용 주소</td><td>소송 주소 비공개는 <b>신청해야만</b>. 선거인명부·부동산 등기·법인 대표자 주소엔 피해자용 제도 없음</td></tr>
     <tr><td><b>④ 기술 안전 도구</b></td><td>기기·계정 점검, 지원기관 연결</td><td>미국 Cornell CETA 클리닉, 영국 Bright Sky</td><td>행정·사법 경로 진단 도구는 조사 범위에서 못 찾음(부재 증명 아님)</td></tr>
   </table>
-  <p style="font-size:8.2pt">어느 나라도 한 번에 다 막지 못합니다. 그래서 제도가 생겨도 <b>경로별 진단</b>이 필요합니다. <span class="src"><code>research/2026-11-01-해외레퍼런스.md</code>(각국 정부·법원 자료)</span></p>
+  <p style="font-size:8.2pt">어느 나라도 한 번에 다 막지 못합니다. 그래서 제도가 생겨도 <b>경로별 진단</b>이 필요합니다. <span class="src"><code>docs/research/2026-11-01-해외레퍼런스.md</code>(각국 정부·법원 자료)</span></p>
 
   <h3>발전 방향 4축</h3>
   <div class="grid4">
@@ -562,7 +562,7 @@ svg text{font-family:Pretendard,"Noto Sans KR","NanumGothic",sans-serif}
     <div class="card"><b>④ 운영·윤리</b><br><span style="font-size:7.8pt">사람 검수, AI 생성 고지, 법령 갱신 책임자, 지속 재원</span></div>
   </div>
 
-  <h3>단계별 계획 — 실측 지표에서 출발 <span class="src"><code>research/2026-11-01-발전방향.md</code></span></h3>
+  <h3>단계별 계획 — 실측 지표에서 출발 <span class="src"><code>docs/research/2026-11-01-발전방향.md</code></span></h3>
   <table class="xs">
     <tr><th style="width:11%">단계</th><th style="width:44%">할 일(산출물)</th><th style="width:11%">담당(안)</th><th>성공 지표 (기준선 실측 → 팀 제안 목표)</th></tr>
     <tr><td rowspan="3"><b>단기</b><br>~3개월</td><td>쉬운 말 설명 84행 전문가 검수</td><td>김시현</td><td>검수 <b>0/84 → 84/84</b></td></tr>

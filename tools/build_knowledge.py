@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """data/knowledge.json 빌더 (Lane K).
 
-조사 문서(research/2026-10-31-정보조사.md) 2.1~2.6 표에서 기계적 칸(경로·막는 제도·신청처·서류·한계·확인도)을
+조사 문서(docs/research/2026-10-31-정보조사.md) 2.1~2.6 표에서 기계적 칸(경로·막는 제도·신청처·서류·한계·확인도)을
 읽고, 상담 판단이 필요한 칸(피해 유형·상황 조건·긴급도·시점·통지 경고·상태·근거 조문)은 아래 OV 표로 덮는다.
 plain 은 build_plain.py 가 채운다(기존 knowledge.json 에 plain 이 있으면 보존).
 
@@ -15,7 +15,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-RESEARCH = ROOT / "research" / "2026-10-31-정보조사.md"
+RESEARCH = ROOT / "docs" / "research" / "2026-10-31-정보조사.md"
 OUT = ROOT / "data" / "knowledge.json"
 VERSION = "2026-10-31"
 
