@@ -1,6 +1,6 @@
 데이터·문서 라이선스 / Data and documentation license
 
-이 저장소의 data/, research/, docs/, pt/ 아래 자료(지식표, 법령 조사 문서, 평가 데이터, 설계 문서, 발표 자료)는
+이 저장소의 data/, docs/research/, docs/, pt/ 아래 자료(지식표, 법령 조사 문서, 평가 데이터, 설계 문서, 발표 자료)는
 Creative Commons Attribution 4.0 International (CC BY 4.0) 라이선스를 따릅니다.
 https://creativecommons.org/licenses/by/4.0/
 
@@ -9,6 +9,6 @@ Copyright (c) 2026 codyssey-EasyPeasy
 - 출처 표시: "보안 예보 (codyssey-EasyPeasy)".
 - data/laws/ 의 법령 본문은 저작권법 제7조에 따라 보호 대상이 아니며, 출처는 법제처 국가법령정보센터(law.go.kr)입니다.
 - web/favicon_easyPeasy.ico(서비스 파비콘)는 팀원 김시현의 자체 제작물이며 코드와 같이 MIT(LICENSE)를 따릅니다.
-- research/ 와 docs/ 에 인용한 언론 보도·해외 자료의 문장과 통계는 각 원 출처의 권리를 따르며, 출처를 문서 안에 표기했습니다.
+- docs/research/ 와 docs/ 에 인용한 언론 보도·해외 자료의 문장과 통계는 각 원 출처의 권리를 따르며, 출처를 문서 안에 표기했습니다.
 - 글꼴·모델·도구 등 제3자 구성 요소는 THIRD_PARTY_NOTICES.md 를 따릅니다.
 - 법률정보 안내 자료이며 법률상담이 아닙니다. 법령은 바뀔 수 있으므로 시행일을 확인하세요.
