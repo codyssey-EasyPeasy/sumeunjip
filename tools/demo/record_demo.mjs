@@ -7,6 +7,7 @@
 // 선택 인자
 //   --scenario PATH   시나리오(기본: 이 폴더의 scenario.json)
 //   --stub-exit       빠른 나가기 이동처(google)를 로컬 스텁으로 바꾼다(리허설용. 실제 녹화에는 쓰지 않는다)
+//   --exit-card       빠른 나가기 이동처는 그대로 두고, 구글 로봇 확인 화면 대신 실제 이동 주소를 보여 주는 안내 화면으로 바꾼다(제출 녹화용)
 //   --ffmpeg PATH     ffmpeg 실행 파일(기본: $FFMPEG, 없으면 uv 로 imageio-ffmpeg 에서 찾는다)
 //   --no-mp4          webm 만 남긴다
 //   --headed          창을 띄워서 실행(녹화도 함께)
@@ -40,6 +41,7 @@ function parseArgs(argv) {
     else if (k === '--out') a.out = resolve(v());
     else if (k === '--check') a.check = true;
     else if (k === '--stub-exit') a.stubExit = true;
+    else if (k === '--exit-card') a.exitCard = true;
     else if (k === '--no-mp4') a.mp4 = false;
     else if (k === '--headed') a.headed = true;
     else if (k === '--ffmpeg') a.ffmpeg = v();
@@ -468,6 +470,19 @@ async function main() {
       body: '<!doctype html><meta charset="utf-8"><title>날씨 - 검색</title><body style="font:20px sans-serif;padding:40px">' +
         '<p style="color:#888">(리허설 스텁 — 실제 녹화에서는 구글 날씨 검색 화면)</p><h1>날씨</h1></body>',
     }));
+  } else if (args.exitCard) {
+    // 헤드리스 녹화 환경에서는 구글이 로봇 확인 화면(접속 IP 표시)을 띄운다. 구글 화면을 흉내 내지 않고
+    // 실제로 요청된 이동 주소만 보여 준다. 앱의 빠른 나가기 동작(화면 지우기 → location.replace)은 그대로다.
+    await context.route(/https:\/\/www\.google\.[a-z.]+\/.*/, (route) => {
+      const u = route.request().url().replace(/[<>&"]/g, '');
+      route.fulfill({
+        status: 200, contentType: 'text/html; charset=utf-8',
+        body: '<!doctype html><meta charset="utf-8"><title>날씨 - 검색</title><body style="font:28px sans-serif;padding:80px;color:#222">' +
+          '<p>빠른 나가기로 이동한 주소</p><p style="font-size:26px;color:#1a0dab;word-break:break-all">' + decodeURI(u) + '</p>' +
+          '<p style="font-size:20px;color:#666;margin-top:40px">녹화 환경(자동 브라우저)에서는 구글이 로봇 확인 화면을 띄워 이동 주소만 표시합니다. ' +
+          '실제 브라우저에서는 이 주소의 구글 \'날씨\' 검색 결과가 열립니다.</p></body>',
+      });
+    });
   }
   const t0 = Date.now();
   const page = await context.newPage();

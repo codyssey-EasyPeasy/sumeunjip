@@ -158,3 +158,8 @@ OBS Studio
 "$FF" -y -ss <시작초> -i in.mp4 -t 118 -vf "fps=30,scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2,format=yuv420p" \
   -c:v libx264 -preset slow -crf 18 -movflags +faststart -an out.mp4
 ```
+
+## 제출 녹화 (2026-11-01 09:45, 배포본 `6d08c6a`)
+- 명령: `node record_demo.mjs --base http://127.0.0.1:18088 --pace 0.8 --exit-card`
+- 결과: 94.6초, 1920x1080 H.264 30fps, 9/9 단계 통과.
+- `--exit-card` 를 쓴 이유: 자동 브라우저로 구글에 가면 로봇 확인 화면이 뜨고 그 화면에 접속 IP 가 찍힌다(첫 녹화에서 확인, 폐기). 빠른 나가기 동작은 그대로이고, 도착 화면만 실제 이동 주소(`https://www.google.com/search?q=날씨`)와 그 이유를 적은 안내로 바꾼다.
