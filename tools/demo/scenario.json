@@ -4,7 +4,9 @@
     "selectors: 키마다 후보 목록. 앞에서부터 시도해 처음 찾은 것을 쓴다.",
     "  문자열 = Playwright 선택자(css 또는 'text=' 등), 객체 = {role,name} | {label} | {text} | {placeholder}.",
     "  name/label/text 가 '/.../' 이면 정규식이다. 화면을 다시 만든 뒤에는 --check 로 빠진 키부터 고친다.",
-    "steps: 순서대로 실행. maxSec 을 넘기면 실패(녹화 모드), dwellMs 는 동작이 끝난 뒤 화면을 보여 주는 시간."
+    "steps: 순서대로 실행. maxSec 을 넘기면 실패(녹화 모드), dwellMs 는 동작이 끝난 뒤 화면을 보여 주는 시간(--pace 배수 적용).",
+    "  popupMs: intro 에서 안전 안내 팝업을 닫기 전에 보여 주는 시간(--pace 미적용). waitCaption: 응답을 기다리는 동안 캡션 아래 줄에 띄우는 대기 표시.",
+    "maxSec(ask 35·rewrite 32·locate 18)은 2026-11-01 운영 서버 리허설 실측(ask 22.9초, rewrite 12.8초·한 번은 22초 초과, locate 11.2초)에 여유를 둔 값이다. 전체 118초 상한은 그대로라 실제 녹화는 --pace 0.8 을 권한다."
   ],
   "video": { "width": 1920, "height": 1080, "fps": 30, "totalCapSec": 118 },
   "browser": { "viewport": { "width": 1920, "height": 1080 }, "deviceScaleFactor": 1, "zoom": 1.25, "locale": "ko-KR",
@@ -60,14 +62,14 @@
   },
 
   "steps": [
-    { "id": "intro",    "maxSec": 12, "dwellMs": 4000, "caption": "피해자의 새 주소는 해킹이 아니라 서류로 샙니다 — 84개 유출 경로를 먼저 점검하는 피해자 본인용 정보보호 도구 (입력은 모두 합성)" },
+    { "id": "intro",    "maxSec": 14, "popupMs": 2500, "dwellMs": 3000, "caption": "피해자의 새 주소는 해킹이 아니라 서류로 샙니다 — 84개 유출 경로를 먼저 점검하는 피해자 본인용 정보보호 도구 (입력은 모두 합성)" },
     { "id": "intake",   "maxSec": 22, "dwellMs": 2000,  "caption": "말로 적으면 우리 GPU 위의 LLM(Qwen3-8B)이 해당 상황을 미리 고릅니다 — 외부 AI 로 보내지 않습니다" },
     { "id": "confirm",  "maxSec": 12, "dwellMs": 2500, "caption": "AI 가 고른 항목은 본인이 확인해야 제출됩니다 — 결정은 사람이 합니다" },
     { "id": "diagnose", "maxSec": 16, "dwellMs": 4000, "caption": "권할 제도는 규칙 엔진이 정합니다(84행, 같은 입력엔 같은 결과) — 상대에게 통지되는 제도는 그 위험을 확인해야 신청 방법이 열립니다" },
-    { "id": "ask",      "maxSec": 28, "dwellMs": 6000, "caption": "답은 문장마다 근거 조문을 확인합니다 — 실패하면 1회 다시 만들고, 그래도 안 되면 원문 발췌로 대신합니다" },
+    { "id": "ask",      "maxSec": 35, "dwellMs": 6000, "waitCaption": "답을 만들고 문장마다 근거 조문을 확인하는 중 — 실제 서버 대기 시간 그대로", "caption": "답은 문장마다 근거 조문을 확인합니다 — 실패하면 1회 다시 만들고, 그래도 안 되면 원문 발췌로 대신합니다" },
     { "id": "doccheck", "maxSec": 18, "dwellMs": 4500, "caption": "서류 점검 — 1단계는 이 브라우저 안에서만, 2단계 정밀 점검(GLiNER + 규칙)은 누를 때만 우리 서버로" },
-    { "id": "rewrite",  "maxSec": 22, "dwellMs": 5000, "caption": "위치 단서를 지운 문장 제안 — 원문에 없던 숫자·이름·장소가 나오면 모델 출력을 버리고 규칙으로 가립니다" },
-    { "id": "locate",   "maxSec": 12, "dwellMs": 5000, "caption": "다른 사람의 위치를 찾는 질문은 두 번 판정해 거절하고, 내 정보를 지키는 제도를 안내합니다 (질문 입력칸은 가림)" },
+    { "id": "rewrite",  "maxSec": 32, "dwellMs": 5000, "waitCaption": "문장을 만들고 원문에 없던 단서가 생기지 않았는지 검사하는 중 — 실제 서버 대기 시간 그대로", "caption": "위치 단서를 지운 문장 제안 — 원문에 없던 숫자·이름·장소가 나오면 모델 출력을 버리고 규칙으로 가립니다" },
+    { "id": "locate",   "maxSec": 18, "dwellMs": 5000, "caption": "상대가 지금 사는 곳을 알아내려는 질문(입력칸은 가림)은 두 번 판정해 거절하고, 내 정보를 지키는 제도를 안내합니다" },
     { "id": "exit",     "maxSec": 10, "dwellMs": 3500, "caption": "Esc 두 번이면 화면이 지워지고 날씨 검색으로 — 입력은 저장하지 않습니다 · github.com/codyssey-EasyPeasy/sumeunjip" }
   ]
 }

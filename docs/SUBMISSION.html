@@ -91,7 +91,7 @@ svg text{font-family:Pretendard,"Noto Sans KR","NanumGothic",sans-serif}
       <p style="font-size:11pt;font-weight:800;color:var(--navy)">가장 위험한 개인정보, 피해자의 새 주소가 새는 84개 경로를 먼저 진단하는 정보보호 AI</p><p class="sub" style="font-size:8.6pt">해킹이 아니라 합법 절차로 새는 개인정보를 막습니다 · 입력 저장 0 · 실행 중 외부 AI 호출 0 · 타인 위치 찾기 거절</p>
       <p style="margin-top:8px"><b>EasyPeasy 팀</b> · 정세영(백엔드 및 AI) · 김시현(기획 및 법령조사, 프런트엔드) · 김대웅(평가·보안 및 PT 자료 제작)</p>
     </div>
-    <div class="meta">작성 2026-11-01 · 기준 <code>main</code> <code>993db4f</code>(PR #2 포함, 배포본)<br>github.com/codyssey-EasyPeasy/sumeunjip<br>모든 평가 수치는 <b>합성 데이터 기준</b></div>
+    <div class="meta">작성 2026-11-01 · 기준 <code>993db4f</code> + <code>b7c7e1f</code>(06:03 배포본)<br>github.com/codyssey-EasyPeasy/sumeunjip<br>모든 평가 수치는 <b>합성 데이터 기준</b></div>
   </div>
 
   <div class="req"><b>ⓐ</b> 문제 정의 및 목표 사용자 <span class="tag n" style="margin-left:6px;letter-spacing:0">심사: 기획 구체성 · 기획 창의성</span></div>
@@ -295,7 +295,7 @@ svg text{font-family:Pretendard,"Noto Sans KR","NanumGothic",sans-serif}
 <section class="page" id="c2">
   <div class="req"><b>ⓒ</b> 활용 AI 기술 및 직접 개발 범위 (2/2) <span class="tag n" style="margin-left:6px;letter-spacing:0">심사: 기술 완성도 · 성과</span></div>
   <h2>우리가 만든 것은 검증 장치입니다 — 그 장치가 우리 기능 하나를 출시에서 막았습니다</h2>
-  <div class="note teal" style="margin-top:0;font-size:7.8pt;padding:1.2mm 2.6mm"><b>설계 결정 4개</b> ① 권고는 LLM 이 아니라 규칙이 정함(결정적, 0.005초) ② 품질 게이트 0.90 — '검색 답 종합'은 보류 세트 0.625로 미달해 <b>출시 안 함</b>, 추가 개선 시도도 기준 미달 ③ 가드를 앱·GPU 로 나눔(GPU 가 없어도 1단은 동작) ④ 작은 이득도 공개(재순위기 R@5 0.945 → 0.964, 1문항)</div>
+  <div class="note teal" style="margin-top:0;font-size:7.8pt;padding:1.2mm 2.6mm"><b>설계 결정 4개</b> ① 권고는 LLM 이 아니라 규칙이 정함(결정적, 0.005초) ② 품질 게이트 0.90 — '검색 답 종합'은 보류 세트 0.625로 미달해 <b>출시 안 함</b>, 1~3라운드 모두 기준 미달 ③ 가드를 앱·GPU 로 나눔(GPU 가 없어도 1단은 동작) ④ 작은 이득도 공개(재순위기 R@5 0.945 → 0.964, 1문항)</div>
   <div class="grid2" style="grid-template-columns:1.35fr 1fr">
     <div>
       <table class="xs">
@@ -308,7 +308,7 @@ svg text{font-family:Pretendard,"Noto Sans KR","NanumGothic",sans-serif}
         <tr><td>운영 API · 추론 API</td><td><code>app/main.py</code> 508 · <code>gpu/server.py</code> 613줄</td></tr>
         <tr><td>웹 화면(프레임워크 없음)·브라우저 단서 탐지</td><td><code>app.js</code> 1,428 · <code>detect.js</code> 126 · <code>app.css</code> 824줄</td></tr>
         <tr><td>평가·다턴 시뮬레이터·레드팀 하네스·차트</td><td><code>tools/</code> 3,626 + <code>tools/sim/</code> 1,946줄</td></tr>
-        <tr><td>자동 시험: 앱 572 passed · 36 xfailed / GPU 실제 torch 188 passed · 4 xfailed, 가짜 torch 187 passed · 1 skipped · 4 xfailed (xfail = 아직 안 고친 결함, <code>TEST_RESULTS.md</code>)</td><td><code>tests/</code> 3,359 · <code>gpu/tests/</code> 1,722줄</td></tr>
+        <tr><td>자동 시험: 앱 598 passed · 36 xfailed / GPU 188 passed · 4 xfailed (2026-11-01 06시, xfail = 아직 안 고친 결함, <code>TEST_RESULTS.md</code>)</td><td><code>tests/</code> 3,359 · <code>gpu/tests/</code> 1,722줄</td></tr>
         <tr><td>배포·시작·중지 스크립트, 모의 GPU 서버</td><td><code>scripts/</code>, <code>gpu/*.sh</code>, <code>tools/mock_gpu.py</code></td></tr>
         <tr><td>합성 평가 데이터</td><td>시나리오 20 · 서류 30 · 상황 20 · 답 질문 45 · 검색 보류 60 · 가드 70 · 보정 60 · 시뮬레이터 카드</td></tr>
       </table>
@@ -318,7 +318,7 @@ svg text{font-family:Pretendard,"Noto Sans KR","NanumGothic",sans-serif}
         <tr><th><span class="ext">그대로 가져다 쓴 것</span></th></tr>
         <tr><td>모델 4종 — 미세조정·재학습 <b>없음</b></td></tr>
         <tr><td>vLLM · PyTorch · sentence-transformers · FastAPI 등 (ⓓ·ⓕ)</td></tr>
-        <tr><td>법령 원문 — 국가법령정보센터 조문 174건</td></tr>
+        <tr><td>법령 원문 — 국가법령정보센터 조문 175건</td></tr>
         <tr><td>서버 2대 · NVIDIA L4 · SSL-VPN — 주최 측 제공(NCP)</td></tr>
       </table>
       <div class="card amber" style="margin-top:2mm">
@@ -343,10 +343,10 @@ svg text{font-family:Pretendard,"Noto Sans KR","NanumGothic",sans-serif}
       <tr><td>서류 단서 F1 (1단계→2단계→결합)</td><td>0.682 → 0.748 → <b>0.823</b></td><td><code>results.json</code></td></tr>
       <tr><td>근거 답 45문항 정답률</td><td><b>0.956</b></td><td><code>results_llm.json</code></td></tr>
       <tr><td>찾기 질문 거절 / 정상 질문 오거절 (운영 앱, 가드 조정에 쓴 세트)</td><td><b>35/35</b> / 0/25<br><span class="src">0/25 의 95% 상한 13.3%</span></td><td><code>results_app_llm.json</code></td></tr>
-      <tr><td>레드팀 고정 112건, 가드가 거절 못 한 것 · 실제 조회 방법 출력</td><td><b>5/112 = 4.5%</b> · <b>0건</b><br><span class="src">95% 1.9–10.0% · 검출 재현율 미측정</span></td><td><code>EVIDENCE.md</code> 0-12·0-14</td></tr>
+      <tr><td>레드팀 검색·답 경로 84건(현재 배포본), 가드가 거절 못 한 것 · 실제 조회 방법 출력</td><td><b>3/84 = 3.6%</b> · <b>0건</b><br><span class="src">95% 1.2–10.0% · 10-31 전체 112건 5/112(이력)</span></td><td><code>EVIDENCE.md</code> 0-12·0-14</td></tr>
       <tr><td>다턴 시뮬레이션 자기 보호 질문 오거절 (남은 문제)</td><td>18건/14대화</td><td><code>notice_calibration_summary.md</code></td></tr>
     </table>
-    <figure><img src="evidence/charts/redteam-asr.svg" alt="레드팀 공격 성공률 차트"><figcaption>차트는 자동 판정기 집계(6/111 → 3/112). '찾지 못함' 응답을 거절로 센 값이라, 문서 정의(거절되지 않으면 성공)대로 다시 세면 <b>5/112 = 4.5%</b>. 대책을 만들 때 본 같은 세트라 <b>개선으로 주장하지 않음</b>(해결 5·새로 통과 4). 재검토는 사람이 아니라 Claude. 공격 문장은 비공개 — <code>docs/redteam-summary.md</code></figcaption></figure>
+    <figure><img src="evidence/charts/redteam-asr.svg" alt="레드팀 공격 성공률 차트"><figcaption>차트는 자동 판정기 집계(6/111 → 3/112). '찾지 못함' 응답을 거절로 센 값이라, 문서 정의(거절되지 않으면 성공)대로 다시 세면 <b>5/112 = 4.5%</b>(10-31). 현재 배포본은 검색·답 경로 3/84. 같은 세트라 <b>개선으로 주장하지 않음</b>. 재검토는 사람이 아니라 Claude. 공격 문장은 비공개 — <code>docs/redteam-summary.md</code></figcaption></figure>
   </div>
   <div class="pno"><span>보안 예보 · 제출 문서</span><span>5 / 10 · ⓒ</span></div>
 </section>
@@ -373,7 +373,7 @@ svg text{font-family:Pretendard,"Noto Sans KR","NanumGothic",sans-serif}
     <text x="184" y="86" font-size="10" fill="#1d2433">127.0.0.1:8080 FastAPI</text>
     <text x="184" y="102" font-size="10" fill="#1d2433">규칙 진단 · 1차 가드 · 검색</text>
     <text x="184" y="118" font-size="10" fill="#1d2433">LLM 중계 · 출력 가드</text>
-    <text x="184" y="140" font-size="9.5" fill="#5b6476">지식표 84 · 조문 174</text>
+    <text x="184" y="140" font-size="9.5" fill="#5b6476">지식표 84 · 조문 175</text>
     <rect x="400" y="30" width="266" height="126" rx="8" fill="#fff" stroke="#ded8cb"/>
     <text x="412" y="50" font-size="12" font-weight="800" fill="#1f3354">GPU 서버 · NVIDIA L4</text>
     <text x="412" y="66" font-size="9.5" fill="#5b6476">Xeon Silver 4416+ 4vCPU · 47GiB · 23,034MiB</text>
@@ -394,7 +394,7 @@ svg text{font-family:Pretendard,"Noto Sans KR","NanumGothic",sans-serif}
     <tr><td>운영 API</td><td>FastAPI · Starlette · Uvicorn · Pydantic · HTTPX</td><td>0.162.0 · 1.10.0 · 0.54.0 · 2.14.2 · 0.28.1</td><td><code>uv.lock</code></td></tr>
     <tr><td>추론 API</td><td>FastAPI · sentence-transformers · GLiNER · PyTorch · transformers · NumPy</td><td>0.162.0 · 6.2.0 · 0.2.29 · 2.15.0 · 5.16.1 · 2.5.4</td><td>배포 서버 <code>gpu/.venv</code> 실측</td></tr>
     <tr><td>LLM 서빙</td><td>vLLM (OpenAI 호환, JSON 스키마 강제, 요청·생성 로그 끔)</td><td>0.32.0 (torch 2.13.0)</td><td>같은 문서 5절</td></tr>
-    <tr><td>모델</td><td>bge-m3 · bge-reranker-v2-m3 · gliner_multi-v2.1 · Qwen3-8B-AWQ</td><td>—</td><td><code>THIRD_PARTY_NOTICES.md</code></td></tr>
+    <tr><td>모델</td><td>bge-m3 · bge-reranker-v2-m3 · gliner_multi-v2.1(백본 mdeberta-v3-base) · Qwen3-8B-AWQ</td><td>—</td><td><code>THIRD_PARTY_NOTICES.md</code></td></tr>
     <tr><td>웹</td><td>프레임워크 없음. 외부 CDN·쿠키·localStorage 없음</td><td>—</td><td><code>web/static/app.js</code></td></tr>
     <tr><td>시험·평가</td><td>pytest · Node.js(서류 탐지기 평가) · 자체 시뮬레이터</td><td>pytest 9.2.0 · Node 22</td><td><code>uv.lock</code>, <code>tools/</code></td></tr>
     <tr><td>캡처·시연 녹화</td><td>Playwright(Chromium) · FFmpeg(webm→MP4) · 나눔고딕</td><td>playwright-core 1.63.0 · FFmpeg 7.0.2</td><td><code>tools/demo/README.md</code></td></tr>
@@ -417,17 +417,17 @@ svg text{font-family:Pretendard,"Noto Sans KR","NanumGothic",sans-serif}
 <section class="page" id="e">
   <div class="req"><b>ⓔ</b> 팀원별 역할 분담 <span class="tag n" style="margin-left:6px;letter-spacing:0">심사: 팀 구성 및 협업 체계</span></div>
   <h2>조사한 사람이 경로를 정하고, 만든 사람이 엔진을, 검증한 사람이 안전을 책임졌습니다</h2>
-  <div class="note teal" style="margin-top:0;font-size:7.8pt;padding:1.2mm 2.6mm"><b>협업 구조 → 산출물</b> 김시현 법령 조사(84경로·16 공백) → 지식표 84행(팀 공유 계약) → 정세영 규칙 엔진·2단 가드·검증 루프·L4 서빙 → 김대웅 합성 평가·레드팀 112건 → 평가 결과로 가드·지식표 수정 후 재측정(예: <code>cf8d149</code> → <code>cacc901</code>). <b>산출물 일관성</b>: 조사 84경로 = 지식표 84행 = 엔진 시험 84/84행 도달 = 발표의 84. 숫자의 기준은 <code>docs/EVIDENCE.md</code> 하나.</div>
+  <div class="note teal" style="margin-top:0;font-size:7.8pt;padding:1.2mm 2.6mm"><b>협업 구조 → 산출물</b> 김시현 법령 조사(84경로·16 공백) → 지식표 84행(팀 공유 계약) → 정세영 규칙 엔진·2단 가드·검증 루프·L4 서빙 → 김대웅 합성 평가·레드팀 세트 112건(배포본 검색·답 경로 3/84) → 평가 결과로 가드·지식표 수정 후 재측정(예: <code>cf8d149</code> → <code>cacc901</code>). <b>산출물 일관성</b>: 조사 84경로 = 지식표 84행 = 엔진 시험 84/84행 도달 = 발표의 84. 숫자의 기준은 <code>docs/EVIDENCE.md</code> 하나.</div>
   <table>
     <tr><th style="width:11%">이름</th><th style="width:14%">역할</th><th style="width:25%">담당 업무</th><th>기여 내용 (저장소 산출물)</th></tr>
     <tr><td><b>정세영</b></td><td><b>백엔드 및 AI</b></td><td>운영 API·추론 API 설계와 구현, 내부 LLM 도입, 입력·출력 가드와 답 검증 루프, 서버 배포·운영</td><td>규칙 진단 엔진 <code>app/engine.py</code> · 2단 입력 가드 <code>app/guard.py</code> · 조문 검색과 BM25 대체 <code>app/retrieval.py</code> · 운영 API <code>app/main.py</code> · 추론 서버 <code>/embed</code>·<code>/rerank</code>·<code>/ner</code>·<code>/intent</code>·<code>/llm/*</code> <code>gpu/server.py</code> · 생성→검증→재생성→발췌 루프와 출력 가드 <code>gpu/verify.py</code>·<code>gpu/llm.py</code> · Qwen3-8B-AWQ·vLLM 서빙 · NCP 서버 2대 배포, L4 메모리 배치 19,648/23,034MiB · GPU API 공유 토큰, 실행 중 HF 오프라인 · 시작·중지 스크립트</td></tr>
     <tr><td><b>김시현</b></td><td><b>기획 및 법령조사, 프런트엔드</b></td><td>문제 정의와 목표 사용자 설정, 주소 노출 경로 법령 조사, 지식표 기획, 웹 화면과 사용자 흐름, 화면 개선(PR #2)</td><td>정보조사 문서 <code>research/2026-10-31-정보조사.md</code> — 6개 영역 <b>84개 노출 경로</b>, 막는 제도 없는 16개, 신청 시 통지 12개 · 지식표 84행 기획(근거 조문·신청처·서류·한계·긴급도) <code>data/knowledge.json</code> · 근거 조문 174건 범위 선정 <code>data/laws/</code> · 사용자 흐름(안전 확인 → 상황 입력 → 진단 → 서류 점검)과 피해자 본인 직접 사용 전환 · 웹 화면 <code>web/</code> — 빠른 나가기, 통지 확인 잠금, 모바일 배치 · <b>PR #2</b>: 방문마다 안전 안내 팝업·'다시 보기', 위쪽 긴급 띠(112·1366·132), 하단 고정 도움 줄, 맨 위로 버튼, 상황 묶음 접기, 시스템 다크 모드, 카드 '위험 → 도움' 순서, 검색 결과 원문 먼저, 파비콘 자체 제작</td></tr>
-    <tr><td><b>김대웅</b></td><td><b>평가·보안 및 PT 자료 제작</b></td><td>합성 평가 데이터와 평가 하네스, 다턴 시뮬레이터, 레드팀·가드 평가, 시험 계획·결과, 발표 자료</td><td>합성 평가 세트 <code>data/eval/</code>(시나리오 20·서류 30·서술 20·답 질문 45·검색 보류 60·가드 70·보정 60) · 평가 하네스 <code>tools/eval*.py</code> · 다턴 시뮬레이터 <code>tools/sim/</code> · <b>레드팀 고정 공격 112건</b>(엄격 기준 5/112 통과, 조회 방법 출력 0건), 가드 평가(조정 세트에서 찾기 거절 35/35 · 정상 오거절 0/25) · 시험 계획·결과 <code>docs/TEST_PLAN.md</code>·<code>TEST_RESULTS.md</code> · 차트·화면 캡처 · 발표 자료 <code>pt/</code></td></tr>
+    <tr><td><b>김대웅</b></td><td><b>평가·보안 및 PT 자료 제작</b></td><td>합성 평가 데이터와 평가 하네스, 다턴 시뮬레이터, 레드팀·가드 평가, 시험 계획·결과, 발표 자료</td><td>합성 평가 세트 <code>data/eval/</code>(시나리오 20·서류 30·서술 20·답 질문 45·검색 보류 60·가드 70·보정 60) · 평가 하네스 <code>tools/eval*.py</code> · 다턴 시뮬레이터 <code>tools/sim/</code> · <b>레드팀 고정 공격 세트 112건</b>(배포본 검색·답 경로 3/84 통과, 조회 방법 출력 0건. 10-31 전체 5/112 는 이력), 가드 평가(조정 세트에서 찾기 거절 35/35 · 정상 오거절 0/25) · 시험 계획·결과 <code>docs/TEST_PLAN.md</code>·<code>TEST_RESULTS.md</code> · 차트·화면 캡처 · 발표 자료 <code>pt/</code></td></tr>
   </table>
 
   <h3>협업 방식</h3>
   <div class="grid3">
-    <div class="card"><h3>브랜치</h3><p style="font-size:8.2pt"><code>main</code> 통합·배포 · <code>feature/frontend</code> 화면 · <code>docs</code>·<code>docs-v2</code> 문서 · <code>feature/search-answer</code> 실험(게이트 미달로 <b>미병합</b>)</p></div>
+    <div class="card"><h3>브랜치</h3><p style="font-size:8.2pt"><code>main</code> 통합·배포 · <code>feature/frontend</code> 화면 · <code>docs</code>·<code>docs-v2</code> 문서 · 검색 답 종합 실험(로컬 전용, 게이트 미달로 <b>미병합</b>)</p></div>
     <div class="card"><h3>PR 로 합치기</h3><p style="font-size:8.2pt">작업 브랜치에 <code>main</code> 최신본을 합치고 시험을 통과시킨 뒤 PR 로 병합. PR #2 화면 → <code>docs-v2</code> 통합(<code>aff1628</code>) → PR #3 로 <code>main</code> 병합·배포(<code>993db4f</code>). <code>main</code> 직접 push 금지</p></div>
     <div class="card"><h3>계약은 시험으로</h3><p style="font-size:8.2pt">화면·API 계약을 <code>tests/</code> 로 고정하고, GPU 없이 화면 전체를 띄우는 모의 GPU 서버(<code>tools/mock_gpu.py</code>)를 프런트 작업용으로 제공</p></div>
   </div>
@@ -439,9 +439,9 @@ svg text{font-family:Pretendard,"Noto Sans KR","NanumGothic",sans-serif}
     <tr><td>13:54~18:06</td><td>다턴 시뮬레이터, 2차 리뷰 반영, 레드팀 요약, 2단 가드·답 검증 루프·출력 가드·다시 쓰기 정렬, 재평가</td><td><code>38a14c1</code> <code>826c0f3</code> <code>0b21e23</code> <code>da3e675</code> <code>2418ad9</code></td></tr>
     <tr><td>18:19~23:09</td><td>증빙·화면, 보호 안내 보정·재실측, HF 오프라인, 모의 GPU 서버, 검색 기준선, 시험 계획·결과, 비용</td><td><code>cf8d149</code> <code>cacc901</code> <code>6672867</code> <code>f2c382f</code> <code>efb3fee</code> <code>23a03c7</code></td></tr>
     <tr><td>23:27~11-01 00:58</td><td>GPU API 공유 토큰·위치 단위·메모리 가드, 시연 녹화기, 부하·지연·토큰 실측, 이름 '보안 예보'</td><td><code>642e5e1</code> <code>d503a11</code> <code>e22c5e3</code> <code>202bb9e</code></td></tr>
-    <tr><td>11-01 02:33~04:13</td><td>PR #2 화면 개선, 브라우저 저장·인라인 스크립트 제거, PR #3 로 <code>main</code> 통합·배포</td><td><code>83c3f63</code> <code>5085bcb</code> <code>aff1628</code> <code>5b7f3a7</code> <code>993db4f</code></td></tr>
+    <tr><td>11-01 02:33~06:03</td><td>PR #2 화면 개선·<code>main</code> 통합·배포, 법령 대조 지식표 정정(J11·J15 통지 경고)·S017 가드</td><td><code>83c3f63</code> <code>aff1628</code> <code>993db4f</code> <code>07842a0</code> <code>b7c7e1f</code></td></tr>
   </table>
-  <p class="src">출처: <code>git log --reverse --format='%h %ad %s'</code>, 커밋 수 <code>git log --oneline 993db4f | wc -l</code>(제출 직전 다시 셈)</p>
+  <p class="src">출처: <code>git log --reverse --format='%h %ad %s'</code>, 커밋 수 <code>git log --oneline c71b229 | wc -l</code> = 86(제출 직전 다시 셈)</p>
   <div class="pno"><span>보안 예보 · 제출 문서</span><span>7 / 10 · ⓔ</span></div>
 </section>
 
@@ -452,9 +452,10 @@ svg text{font-family:Pretendard,"Noto Sans KR","NanumGothic",sans-serif}
   <p class="src" style="margin-bottom:1mm">참가자 가이드 표 형식 그대로. 버전: <code>uv.lock</code>, <code>docs/evidence/infra-2026-10-31-night.md</code> 5절(배포 서버 실측). 라이선스: <code>THIRD_PARTY_NOTICES.md</code> + 로컬 패키지 메타데이터(<code>METADATA</code> License/License-Expression, 2026-10-31). 로컬에서 대조 못 한 것은 '(공개 저장소 표기)'.</p>
   <table class="xs ftab" style="font-size:6.7pt">
     <tr><th style="width:12%">구분</th><th style="width:27%">명칭</th><th>용도</th><th style="width:24%">라이선스</th></tr>
-    <tr><td rowspan="20"><b>오픈소스</b></td><td>BAAI/bge-m3</td><td>임베딩: 근거 조문 검색, 입력 가드 의도 점수(GPU 서버 안)</td><td>MIT (HF 모델 카드)</td></tr>
+    <tr><td rowspan="21"><b>오픈소스</b></td><td>BAAI/bge-m3</td><td>임베딩: 근거 조문 검색, 입력 가드 의도 점수(GPU 서버 안)</td><td>MIT (HF 모델 카드)</td></tr>
     <tr><td>BAAI/bge-reranker-v2-m3</td><td>검색 재순위, 답 문장 근거 확인</td><td>Apache-2.0 (HF 모델 카드)</td></tr>
     <tr><td>urchade/gliner_multi-v2.1</td><td>서류 위치 단서 개체명 인식</td><td>Apache-2.0 (HF 모델 카드)</td></tr>
+    <tr><td>microsoft/mdeberta-v3-base</td><td>GLiNER 백본·토크나이저</td><td>MIT (HF 모델 카드)</td></tr>
     <tr><td>Qwen/Qwen3-8B-AWQ</td><td>내부 LLM: 상황 정리·근거 답·다시 쓰기·답 검증. 미세조정 없음</td><td>Apache-2.0 (HF 모델 카드)</td></tr>
     <tr><td>vLLM 0.32.0</td><td>내부 LLM 서빙(JSON 스키마 강제, 127.0.0.1)</td><td>Apache-2.0 (공개 저장소 표기)</td></tr>
     <tr><td>PyTorch 2.15.0</td><td>모델 실행</td><td>BSD-3-Clause 계열 (메타데이터 복합 표기)</td></tr>
@@ -472,11 +473,11 @@ svg text{font-family:Pretendard,"Noto Sans KR","NanumGothic",sans-serif}
     <tr><td>Playwright (Chromium)</td><td>브라우저 시험·화면 캡처, 시연 영상 자동 녹화(<code>tools/demo</code>, playwright-core 1.63.0). 개발 때만</td><td>Apache-2.0</td></tr>
     <tr><td>FFmpeg 7.0.2 (imageio-ffmpeg 0.7.0 정적 빌드)</td><td>시연 영상 webm → MP4 변환(개발 때만, 저장소 미포함)</td><td>imageio-ffmpeg BSD-2-Clause · FFmpeg 바이너리 GPL-3.0(빌드 옵션)</td></tr>
     <tr><td>Node.js 22</td><td>서류 1단계 탐지기 평가(개발 때만)</td><td>MIT (공개 저장소 표기)</td></tr>
-    <tr><td rowspan="3"><b>외부 API</b></td><td>Anthropic Claude (Claude Code)</td><td>개발 보조: 코드·법령 조사·문서 작성, 쉬운 말 설명 41건+수정 12건·J28. <b>서비스 실행 중 호출 없음</b></td><td>상용 (Anthropic 이용약관)</td></tr>
+    <tr><td rowspan="3"><b>외부 API</b></td><td>Anthropic Claude (Claude Code)</td><td>개발 보조: 코드·법령 조사·문서 작성, 쉬운 말 설명 41건+수정 12건·J28, 평가·레드팀 결과 검토. <b>서비스 실행 중 호출 없음</b></td><td>상용 (Anthropic 이용약관)</td></tr>
     <tr><td>DeepSeek-V4.1-Flash (래블업 토큰 팩토리)</td><td>개발 때 쉬운 말 설명 초안 42건·1차 코드 일부 초안(공개 법령 정보만). <b>서비스 실행 중 호출 없음</b></td><td>상용 API (래블업 토큰 팩토리)</td></tr>
     <tr><td>GLM-5.3-Flash (래블업 토큰 팩토리)</td><td>평가 시뮬레이터의 가상 사용자·공격자 역할(합성 데이터만). <b>서비스 실행 중 호출 없음</b></td><td>상용 API (래블업 토큰 팩토리)</td></tr>
     <tr><td><b>사전 보유 코드</b></td><td>해당 없음</td><td>개회식 주제 공개(2026-10-30) 뒤 새 저장소로 시작. 첫 커밋 <code>d677ea0</code> 2026-10-31 11:04 KST</td><td>해당 없음</td></tr>
-    <tr><td rowspan="10"><b>기타</b></td><td>법제처 국가법령정보센터 법령 원문</td><td>근거 조문 174건(65개 법령) 스냅샷, 근거 표시·검색</td><td>공공저작물 — 저작권법 제7조, 출처 표시</td></tr>
+    <tr><td rowspan="10"><b>기타</b></td><td>법제처 국가법령정보센터 법령 원문</td><td>근거 조문 175건(65개 법령) 스냅샷, 근거 표시·검색</td><td>공공저작물 — 저작권법 제7조, 출처 표시</td></tr>
     <tr><td>NAVER Cloud Platform 공공기관용 서버 2대 · NVIDIA L4 · SSL-VPN</td><td>배포·시연 인프라(주최 측 제공)</td><td>대회 제공 조건</td></tr>
     <tr><td>Hugging Face Hub</td><td>모델 파일 배포처(설치 때만, 실행 중 오프라인)</td><td>각 모델 라이선스</td></tr>
     <tr><td>Pretendard 글꼴</td><td>발표 자료(jsDelivr CDN)</td><td>SIL OFL 1.1</td></tr>
@@ -495,7 +496,7 @@ svg text{font-family:Pretendard,"Noto Sans KR","NanumGothic",sans-serif}
 <section class="page" id="g">
   <div class="req"><b>ⓖ</b> 기대 효과 및 확장 가능성 (1/2) <span class="tag n" style="margin-left:6px;letter-spacing:0">심사: 성과 및 실용 가능성</span></div>
   <h2>몰라서·늦어서·순서를 틀려서 새는 주소 — 피해자는 놓친 제도를, 상담 현장은 첫 상담 점검표를, 정책은 막을 수 없는 16개 경로를 얻습니다</h2>
-  <div class="note teal" style="margin-top:0;font-size:7.8pt;padding:1.2mm 2.6mm"><b>변화 이론</b> 상황을 고름 → 유출 경로·제도·통지 위험을 앎 → 소송·이사·신고 <b>전에</b> 비공개 신청 → 서류로 새는 일 감소(<b>검증 예정</b>). <b>다음 게이트</b>: 사람 검수 0/84 → 84/84 · 레드팀 4.5% → 확대 세트로 재측정 · 공개 전 TLS·인증·접근 범위·속도 제한</div>
+  <div class="note teal" style="margin-top:0;font-size:7.8pt;padding:1.2mm 2.6mm"><b>변화 이론</b> 상황을 고름 → 유출 경로·제도·통지 위험을 앎 → 소송·이사·신고 <b>전에</b> 비공개 신청 → 서류로 새는 일 감소(<b>검증 예정</b>). <b>다음 게이트</b>: 사람 검수 0/84 → 84/84 · 레드팀 3.6% → 확대 세트로 재측정 · 공개 전 TLS·인증·접근 범위·속도 제한</div>
 
   <h3>기대 효과</h3>
   <div class="grid3">
@@ -507,11 +508,11 @@ svg text{font-family:Pretendard,"Noto Sans KR","NanumGothic",sans-serif}
   <h3>실제 적용 가능성</h3>
   <table>
     <tr><th style="width:22%">항목</th><th>근거</th></tr>
-    <tr><td><b>이미 배포·실측됨</b></td><td>대회 서버 2대에 배포(앱·웹 <code>993db4f</code>, GPU <code>642e5e1</code>). L4 1장에 모델 4종(19,648/23,034MiB, <code>deploy-2026-11-01.md</code>)</td></tr>
+    <tr><td><b>이미 배포·실측됨</b></td><td>대회 서버 2대에 배포(앱·웹 <code>993db4f</code>, GPU <code>642e5e1</code>, 06:03 <code>b7c7e1f</code> 6파일). L4 1장에 모델 4종(19,648/23,034MiB, <code>deploy-2026-11-01.md</code>)</td></tr>
     <tr><td><b>용량·비용(실측 기반)</b></td><td>품질을 지키는 동시 2에서 L4 1장 <b>시간당 약 200세션</b>. NCP 공공기관용 정가로 약 140만 원/월(약 1,943원/시간, GPU 서버 83%), 꽉 찰 때 <b>세션당 약 9.7원</b>·약 2.2만 토큰. 늘 꽉 차지는 않으므로 실제 단가는 이용량으로 정해짐(<code>docs/COST_LATENCY.md</code> §3-3)</td></tr>
     <tr><td><b>GPU 없이도 핵심 동작</b></td><td>진단은 규칙 엔진(CPU 0.005초). GPU 가 없으면 검색은 BM25, LLM 기능은 숨기고 체크박스로 계속</td></tr>
     <tr><td><b>서버 삭제 뒤 재현</b></td><td>대회 서버는 2026-11-01 13:00 삭제. 이후 <code>README.md</code> 실행 절(NVIDIA GPU) 또는 모의 GPU 서버 <code>tools/mock_gpu.py</code>. 서버 판본은 <code>docs/evidence/repro-2026-11-01.md</code>에 보존</td></tr>
-    <tr><td><b>법적 경계 반영</b></td><td>무료·일반 법률정보 안내로 한정(변호사법 제109조 검토), AI 문장에 'AI 생성' 표시(인공지능기본법 조문 번호는 재확인 전이라 생략), 위치 권한 요청 없음</td></tr>
+    <tr><td><b>법적 경계 반영</b></td><td>무료·일반 법률정보 안내로 한정(변호사법 제109조 검토), AI 문장에 'AI 생성' 표시(인공지능기본법 제31조 제2항), 위치 권한 요청 없음</td></tr>
   </table>
 
   <h3>한계 <span class="tag r">숨기지 않음</span></h3>
@@ -519,8 +520,8 @@ svg text{font-family:Pretendard,"Noto Sans KR","NanumGothic",sans-serif}
     <li><b>범위</b>: 행정·사법 기록 84개 경로만. 조사 못 한 항목 25개(<code>research/…</code> 11절). 직장·생활권 경로는 단서 탐지만 함</li>
     <li><b>사람 검수 0/84</b>: 쉬운 말 설명은 전부 AI 초안('AI 생성·검수 전' 표시). 지식표 미확인 4행</li>
     <li><b>합성 평가</b>: 모든 수치가 지어낸 데이터 기준. 실제 피해자·서류로 재지 않음</li>
-    <li><b>레드팀(정정 값)</b>: 고정 112건 중 가드가 거절 못 한 것 <b>5건 = 4.5%</b>(95% 1.9–10.0%). 통과 응답은 노출 허용 조문이나 '찾지 못함'뿐이고 조회 방법 출력 0건(정규식 검출, 재현율 미측정). 같은 세트라 개선 주장 안 함. 재검토는 Claude, 적응형 공격은 못 함</li>
-    <li><b>출시 안 한 기능(부정적 결과)</b>: '검색 답 종합'(검색 결과를 LLM 이 종합)은 1·2라운드 모두 품질 게이트 불통과(2라운드 보류 세트 엄격 정답률 0.625) → 배포 안 함. 지시문·검증기를 고친 추가 개선 시도(3라운드)도 기준 미달. 근거 답 0.956(<code>/api/answer</code>)과 다른 기능</li>
+    <li><b>레드팀</b>: 배포본 검색·답 84건 중 가드 통과 <b>3/84 = 3.6%</b>(1.2–10.0%, 10-31 전체 5/112 는 이력). 통과 응답은 노출 허용 조문이나 '찾지 못함'뿐이고 조회 방법 출력 0건(정규식 검출, 재현율 미측정). 같은 세트라 개선 주장 안 함. 재검토는 Claude, 적응형 공격은 못 함</li>
+    <li><b>출시 안 한 기능(부정적 결과)</b>: '검색 답 종합'(검색 결과를 LLM 이 종합)은 1~3라운드 모두 품질 게이트 불통과(보류 세트 엄격 정답률 2라운드 0.625, 3라운드 0.421) → 배포 안 함. 근거 답 0.956(<code>/api/answer</code>)과 다른 기능</li>
   </ul></div>
 
   <h3>공개 전에 반드시 할 일</h3>
@@ -530,7 +531,7 @@ svg text{font-family:Pretendard,"Noto Sans KR","NanumGothic",sans-serif}
       <li><b>GPU 8000 포트가 SSL-VPN 사용자에게 열림</b>(ACG 변경 권한 없음). 공유 토큰으로 무토큰 401(<code>642e5e1</code>), 접근 범위 좁히기는 미적용</li>
     </ul></div>
     <div class="card"><ul class="clean" style="font-size:8.1pt">
-      <li>레드팀 통과 5건 막기·회귀 시험, 자기 보호 질문 오거절 18건/14대화, 생활권 0/11·직장 재현율 0.5</li>
+      <li>레드팀 통과 3건 막기·회귀 시험, 자기 보호 질문 오거절 18건/14대화, 생활권 0/11·직장 재현율 0.5</li>
       <li>쉬운 말 설명 84건 전문가 검수, 시험 결함 xfail 앱 36 · GPU 4 수정(<code>docs/TEST_RESULTS.md</code>)</li>
     </ul></div>
   </div>
@@ -565,7 +566,7 @@ svg text{font-family:Pretendard,"Noto Sans KR","NanumGothic",sans-serif}
   <table class="xs">
     <tr><th style="width:11%">단계</th><th style="width:44%">할 일(산출물)</th><th style="width:11%">담당(안)</th><th>성공 지표 (기준선 실측 → 팀 제안 목표)</th></tr>
     <tr><td rowspan="3"><b>단기</b><br>~3개월</td><td>쉬운 말 설명 84행 전문가 검수</td><td>김시현</td><td>검수 <b>0/84 → 84/84</b></td></tr>
-    <tr><td>레드팀 확대 세트(사칭·이주민 언어·적응형), 판정자 분리</td><td>김대웅</td><td>4.5% 재측정 · 위치 조회 방법 출력 0 유지</td></tr>
+    <tr><td>레드팀 확대 세트(사칭·이주민 언어·적응형), 판정자 분리</td><td>김대웅</td><td>3.6%(3/84) 재측정 · 위치 조회 방법 출력 0 유지</td></tr>
     <tr><td>공개 전 보안: TLS·인증·속도 제한·접근 범위, 가드 장애 시 막는 쪽 동작</td><td>정세영</td><td>9쪽 '공개 전' 항목 전부 완료</td></tr>
     <tr><td rowspan="3"><b>중기</b><br>~1년</td><td>스토킹 피해자보호명령(2027-04-22) 반영, 법령 갱신 = 지식표 행 단위(법제처 API, 자동승인·무료 확인)</td><td>김시현</td><td>시행일 <b>전</b> 반영</td></tr>
     <tr><td>상담 현장 시범 1곳 — 운영 주체 후보 1366·상담소(협력은 제안 단계)</td><td>팀 전체</td><td>시범 기관 1곳 이상 · 놓친 제도 수 사용 전후 비교</td></tr>

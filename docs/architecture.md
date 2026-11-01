@@ -3,14 +3,15 @@
 근거 조사: `../research/2026-10-31-정보조사.md`. 명세: `SPEC.md`(§11 이 실제 동작의 정본). 실증 자료: `EVIDENCE.md`. 발표 자료: `../pt/index.html`.
 처음 초안(2026-10-31 오전)은 git 이력 `d677ea0` 에 있다. 이 문서는 배포본을 그대로 적는다.
 
-**배포본 (2026-11-01 기준)**
+**배포본 (2026-11-01 06:03 KST 기준)**
 | 부분 | 배포된 커밋 | 근거 |
 |---|---|---|
-| 앱 `app/`·웹 `web/` | `993db4f` (2026-11-01 04:14 KST 배포. PR #2 화면 개편·이름 변경·파비콘 포함) | `evidence/deploy-2026-11-01.md`. 이 문서를 고친 05시대에는 그 문서에 `993db4f` 절이 아직 없었다 |
-| GPU `gpu/` | `642e5e1` (토큰·위치 단위·메모리 가드). 그 뒤 `gpu/` 변경 없음 | `evidence/deploy-2026-11-01.md` 「배포 파일 sha256」 |
+| 앱 `app/`·웹 `web/` | `993db4f` (2026-11-01 04:14 KST 배포. PR #2 화면 개편·이름 변경·파비콘 포함) + 06:03 에 `b7c7e1f` 의 `app/guard.py`·`app/humanize.py` | `evidence/deploy-2026-11-01.md` 「04:14 배포」·「06:03 배포」 |
+| 데이터 `data/knowledge.json`·`data/laws/articles.jsonl` | `b7c7e1f` (06:03 배포. J11·J15 통지 경고, 법령 대조 정정, L7, 조문 175건) | 같은 문서 「06:03 배포」 |
+| GPU `gpu/` | `642e5e1` (토큰·위치 단위·메모리 가드) + 06:03 에 `b7c7e1f` 의 `gpu/guard.py`·`gpu/excluded_ngrams.json`(앱 가드 사본 동기화) | `evidence/deploy-2026-11-01.md` 「배포 파일 sha256」·「06:03 배포」 |
 | vLLM 프로세스 | 2026-10-31 13:01(서버 로그 시각) 기동 뒤 재시작 없음 | 재현 정보 `evidence/repro-2026-11-01.md` |
 
-`642e5e1` → `993db4f` 사이 앱 코드 변경은 `app/main.py` 의 자리 표시 제목과 `/favicon.ico` 경로뿐이다(`git diff --stat 642e5e1 993db4f -- app gpu`). 그래서 `642e5e1` 에서 잰 부하·지연 수치(`COST_LATENCY.md`)는 지금 배포본에도 그대로 쓴다. 2026-10-31 밤의 옛 대조(`6672867`, `evidence/infra-2026-10-31-night.md` 6절)는 기록으로만 남긴다.
+`642e5e1` → `993db4f` 사이 앱 코드 변경은 `app/main.py` 의 자리 표시 제목과 `/favicon.ico` 경로뿐이다(`git diff --stat 642e5e1 993db4f -- app gpu`). 그래서 `642e5e1` 에서 잰 부하·지연 수치(`COST_LATENCY.md`)는 지금 배포본에도 그대로 쓴다. 06:03 배포는 가드 낱말 목록·제도 이름 표시·지식표·조문 데이터만 바꿨고 부하는 다시 재지 않았다(GPU uvicorn 재시작 뒤 GPU 메모리도 미측정). 2026-10-31 밤의 옛 대조(`6672867`, `evidence/infra-2026-10-31-night.md` 6절)는 기록으로만 남긴다.
 
 ## 원칙
 1. 사용자는 피해자 본인과 가족·지인이다(2026-10-31 오너 결정으로 상담원 경유 제거). 인증 없이 쓰되 안전한 기기 안내·빠른 나가기·기록 비저장으로 보완하고, 결과마다 1366·132(급하면 112)를 붙인다.
@@ -48,7 +49,7 @@
  │ 127.0.0.1:18090 GLM 중계 터널 끝점 (위와 같음, 런타임 미사용)                  │
  └────────────────────────────────────────────────────────────────────────────────┘
 
- [빌드 시점, 경계 밖]  국가법령정보센터 현행 조문 → data/laws/articles.jsonl(174건)
+ [빌드 시점, 경계 밖]  국가법령정보센터 현행 조문 → data/laws/articles.jsonl(175건)
                        → exposable·발췌 표시(tools/mark_exposable.py) → 지식표 data/knowledge.json(84행)
 ```
 
@@ -58,7 +59,7 @@
 | 웹 클라이언트 | 브라우저 (`web/`) | 바닐라 JS, 외부 CDN·인라인 스크립트 없음. 방문마다 여는 안전 안내 팝업('안전 안내 다시 보기'), 긴급 연락처 띠, 접히는 상황 묶음, 위험 → 도움 순 카드, 서류 점검 1단계(`detect.js`), 통지 경고 확인 체크, intake 미리 선택 확인 뒤 제출, 빠른 나가기(Esc 두 번). 화면 명세는 `SPEC.md` §11.11 |
 | 운영 API | hk-ops `127.0.0.1:8080` (`app/`) | `/api/diagnose`·`/api/search`·`/api/doccheck`·`/api/intake`·`/api/answer`·`/api/rewrite`·`/api/features`·`/api/health` |
 | 진단 엔진 | `app/engine.py` | 지식표 행의 `victim_types`·`triggers` 평가, 급한 순(urgency → 영역 → id) 정렬, pending·잔여 위험·'이 유형엔 제도 없음' 분리 |
-| 지식 데이터 | `data/knowledge.json`, `data/laws/articles.jsonl` (읽기 전용) | 84행(시행 67·시행 예정 1·막을 제도 없음 16), 조문 174건(노출 가능 131, 발췌 7) |
+| 지식 데이터 | `data/knowledge.json`, `data/laws/articles.jsonl` (읽기 전용) | 84행(시행 67·시행 예정 1·막을 제도 없음 16), 조문 175건(노출 가능 131 · 노출 불가 44, 발췌 7) |
 | 추론 API | hk-gpu `0.0.0.0:8000` (`gpu/`) | 임베딩·재순위·NER(700자 조각)·의도 점수·LLM 3기능 프록시와 검증. `GET /health` 밖 모든 경로에 공유 토큰 `X-Internal-Token` 필요(`SPEC.md` §11.10) |
 | 내부 LLM | hk-gpu `127.0.0.1:8001` | vLLM OpenAI 호환, `qwen3-8b`, `--max-model-len 8192`, JSON 스키마 강제 디코딩 |
 

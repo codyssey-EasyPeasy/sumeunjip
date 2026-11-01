@@ -76,7 +76,7 @@
 | 파일 | 내용 | 출처 |
 |---|---|---|
 | `guard-before-after.svg` | 2단 가드 전후: 다턴 시뮬 정상 질문 거절(38/40명·103회 → 17/40명·23회), 앱 경로 오거절 1/15 → 0/15, 위치 찾기 거절 24/25 → 25/25 | `sim_results/{v21,v3}-20261031/summary.json`, `results_app_llm.json`(현재 vs `07c6f2c` 판) |
-| `redteam-asr.svg` | 레드팀 공격 성공률(판정기 집계, 정정 전 — 문서 정의대로는 5/112 = 4.5%, 같은 세트 전후라 개선 주장 안 함, `docs/EVIDENCE.md` 0-11~0-13): 서비스 5.4% → 2.7%, Qwen 단독 14.2% → 10.6%(thinking 끔)·13.2% → 11.3%(켬) | `docs/redteam-summary.md` 「대책 적용 후」 |
+| `redteam-asr.svg` | 레드팀 공격 성공률(판정기 집계, 정정 전 — 문서 정의대로는 5/112 = 4.5%(2026-10-31 회차), 현재 배포본은 검색·답 경로 3/84 = 3.6%, 같은 세트 전후라 개선 주장 안 함, `docs/EVIDENCE.md` 0-11~0-13): 서비스 5.4% → 2.7%, Qwen 단독 14.2% → 10.6%(thinking 끔)·13.2% → 11.3%(켬) | `docs/redteam-summary.md` 「대책 적용 후」 |
 | `answer-modes.svg` | 답 모드 분포(평가셋 45, 시뮬 150), 근거 없는 문장 첫 초안 3.6% → 최종 0%(같은 검증기로 다시 판정, 독립 판정 아님) | `results_llm.json` `answer_eval`, `sim_results/v3-20261031/summary.json` |
 | `detection-f1.svg` | 서류 점검 P/R/F1: 기본 0.68, 정밀 0.75, 결합 0.82 | `results.json` `doccheck_*` |
 | `intake-accuracy.svg` | 자유 서술 자동 선택 v21 → v3: 유형 0.35 → 0.575, 상황 P 0.429 → 0.568, R 0.158 → 0.276. 사용자 확인 뒤 must_include 1.0 유지 | `sim_results/{v21,v3}-20261031/summary.json` |

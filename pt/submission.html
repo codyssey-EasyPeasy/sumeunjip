@@ -311,7 +311,7 @@ table.road td{line-height:1.38}
       <table class="tight" style="font-size:15px">
         <tr><td style="width:30%"><b>bge-m3</b></td><td>조문 검색·가드 신호 | 신호 하나로만 쓰는 판정 규칙</td></tr>
         <tr><td><b>bge-reranker</b></td><td>재순위·근거 확인 | 문장별 근거 판정 루프</td></tr>
-        <tr><td><b>GLiNER</b></td><td>서류 단서 | 라벨 정의·긴 문서 조각 병합·정규식 결합</td></tr>
+        <tr><td><b>GLiNER</b></td><td>서류 단서(백본 mDeBERTa) | 라벨 정의·긴 문서 조각 병합·정규식 결합</td></tr>
         <tr><td><b>Qwen3-8B-AWQ</b></td><td>설명·상황 정리·다시 쓰기 | 프롬프트·검증·재생성·발췌 전부</td></tr>
       </table>
     </div>
@@ -328,7 +328,7 @@ table.road td{line-height:1.38}
     <div>
       <h3 style="font-size:17px">설계 결정 4개와 실측 근거</h3>
       <div class="dec"><b>1</b><p><b>권고는 LLM 이 아니라 규칙이 정합니다.</b> 결정적, 0.005초, 같은 입력엔 같은 결과</p></div>
-      <div class="dec"><b>2</b><p><b>품질 게이트 0.90.</b> '검색 답 종합'은 보류 세트 0.625로 미달 → <b>출시 안 함</b>. 추가 개선 시도도 기준 미달</p></div>
+      <div class="dec"><b>2</b><p><b>품질 게이트 0.90.</b> '검색 답 종합'은 보류 세트 0.625로 미달 → <b>출시 안 함</b>. 1~3라운드 모두 기준 미달</p></div>
       <div class="dec"><b>3</b><p><b>가드를 앱과 GPU 로 나눴습니다.</b> GPU 가 없어도 1단 규칙 가드는 계속 동작</p></div>
       <div class="dec"><b>4</b><p><b>작은 이득도 그대로 공개합니다.</b> 재순위기 이득은 R@5 0.945 → 0.964, 1문항</p></div>
       <p class="small" style="margin-top:8px">개발에 쓴 AI(서비스엔 없음): Claude Code 코딩·조사·문서 보조(폭넓게) · DeepSeek 설명 초안 42/84 · GLM 평가 역할극. 쉬운 말 설명 사람 검수 0/84 → 화면에 'AI 생성(검수 전)'</p>
@@ -337,7 +337,7 @@ table.road td{line-height:1.38}
       <p class="synth">모든 수치는 합성 데이터 기준입니다</p>
       <div class="row-h">안전</div>
       <div class="grid2" style="gap:10px;margin-bottom:10px">
-        <div class="stat"><div class="v">5/112 <span class="bd dev">개발</span></div><div class="l" style="font-size:13.5px">레드팀 고정 112건 중 가드 통과 4.5%(95% 1.9–10.0%) · <b>위치 조회 방법 출력 0</b></div></div>
+        <div class="stat"><div class="v">3/84 <span class="bd dev">개발</span></div><div class="l" style="font-size:13.5px">레드팀 검색·답 경로 84건 중 가드 통과 3.6%(95% 1.2–10.0%, 배포본) · <b>위치 조회 방법 출력 0</b></div></div>
         <div class="stat"><div class="v">35/35 · 0/25 <span class="bd tune">조정</span></div><div class="l" style="font-size:13.5px">찾기 질문 거절 · 정상 질문 오거절</div></div>
       </div>
       <div class="row-h">정확</div>
@@ -348,7 +348,7 @@ table.road td{line-height:1.38}
         <div class="stat"><div class="v">0.823 <span class="bd dev">개발</span></div><div class="l" style="font-size:13.5px">서류 단서 F1</div></div>
       </div>
       <div class="stat amber"><div class="v" style="font-size:20px">미출시 0.625 &lt; 0.90 <span class="bd hold">보류</span></div><div class="l" style="font-size:13.5px">검색 답 종합 — 게이트가 우리 기능을 막았습니다</div></div>
-      <p class="small" style="margin-top:8px">통과한 레드팀 응답은 공개 조문이나 '찾지 못함'뿐 — 서비스에 개인 위치 데이터가 없습니다. 대책 전후는 같은 세트라 개선을 주장하지 않습니다. 남은 약점: 자기 보호 질문 오거절(다턴 18/225 응답). 자동 시험 앱 572 · GPU 188 통과</p>
+      <p class="small" style="margin-top:8px">통과한 레드팀 응답은 공개 조문이나 '찾지 못함'뿐 — 서비스에 개인 위치 데이터가 없습니다. 대책 전후는 같은 세트라 개선을 주장하지 않습니다. 남은 약점: 자기 보호 질문 오거절(다턴 18/225 응답). 자동 시험 앱 598 · GPU 188 통과</p>
     </div>
   </div>
   <div class="foot"><span>세트 배지 — 보류: 조정에 안 쓴 세트 · 개발: 만들며 본 세트 · 조정: 규칙을 맞춘 세트 · 출처 docs/EVIDENCE.md 0절</span><span>5쪽 · ⓒ</span></div>
@@ -403,7 +403,7 @@ table.road td{line-height:1.38}
     <div><b>김시현</b> 법령 조사<br>84경로·16 공백</div><i>→</i>
     <div class="mid"><b>지식표 84행</b><br>팀 공유 계약</div><i>→</i>
     <div><b>정세영</b> 규칙 엔진·가드<br>검증 루프·L4 서빙</div><i>→</i>
-    <div><b>김대웅</b> 합성 평가<br>레드팀 112건</div><i>→</i>
+    <div><b>김대웅</b> 합성 평가<br>레드팀 세트 112건</div><i>→</i>
     <div class="back">↺ 평가 결과로 가드·지식표 수정<br>→ 재측정 <code>cf8d149→cacc901</code></div>
   </div>
   <div class="grid3" style="gap:12px;margin-top:12px">
@@ -417,17 +417,17 @@ table.road td{line-height:1.38}
       <p class="cm">대표 커밋 <code>d677ea0</code> <code>a9028c5</code> · PR #2 <code>34edc21</code> <code>83c3f63</code> <code>b8f6631</code> <code>ac7520e</code> <code>5085bcb</code></p></div>
     <div class="card pcard"><h3><b>김대웅</b> <span class="tag t">평가·보안·PT</span></h3>
       <p>합성 평가 세트·하네스, 다턴 시뮬레이터, 레드팀·가드 평가, 시험 계획·결과, 발표 자료</p>
-      <p class="kpi">레드팀 5/112 · 조회 방법 출력 0</p>
+      <p class="kpi">레드팀 3/84(검색·답 경로) · 조회 방법 출력 0</p>
       <p class="cm">대표 커밋 <code>fbf4d15</code> <code>38a14c1</code> <code>efb3fee</code> <code>23a03c7</code></p></div>
   </div>
   <div class="grid4" style="gap:10px;margin-top:12px">
-    <div class="card mini"><h3>브랜치</h3><p><code>main</code> 통합·배포 · <code>feature/frontend</code> 화면 · <code>docs-v2</code> 문서 · <code>feature/search-answer</code> 실험(게이트 미달로 <b>미병합</b>)</p></div>
+    <div class="card mini"><h3>브랜치</h3><p><code>main</code> 통합·배포 · <code>feature/frontend</code> 화면 · <code>docs-v2</code> 문서 · 검색 답 종합 실험(로컬, 게이트 미달로 <b>미병합</b>)</p></div>
     <div class="card mini"><h3>PR 로만 main 에</h3><p>main 최신본 합치기 → 시험 통과 → PR. PR #2 화면 → docs-v2 통합 → PR #3 로 main 병합·배포</p></div>
     <div class="card mini"><h3>계약은 시험으로</h3><p>API 계약을 <code>tests/</code> 로 고정, GPU 없이 화면을 띄우는 모의 GPU 서버(<code>f2c382f</code>)</p></div>
     <div class="card mini"><h3>수치는 한 곳에서</h3><p>모든 숫자의 기준 <code>docs/EVIDENCE.md</code> → 덱·제출 문서·README 가 같은 값</p></div>
   </div>
-  <div class="band" style="margin-top:auto;font-size:14.5px"><b>산출물 일관성</b><span>조사 84경로 → 지식표 84행 → 엔진 시험 84/84행 도달 → 1쪽·진단 화면의 84</span><span style="margin-left:auto">레드팀 5/112 → 5쪽·제출 문서·README 같은 값</span></div>
-  <div class="foot"><span>커밋 77건 · 2026-10-31 11:04 → 11-01 04:13 · AI 도구가 맡은 부분은 ⓒ·ⓕ 에 따로 적음</span><span>7쪽 · ⓔ</span></div>
+  <div class="band" style="margin-top:auto;font-size:14.5px"><b>산출물 일관성</b><span>조사 84경로 → 지식표 84행 → 엔진 시험 84/84행 도달 → 1쪽·진단 화면의 84</span><span style="margin-left:auto">레드팀 3/84 → 5쪽·제출 문서·README 같은 값</span></div>
+  <div class="foot"><span>커밋 86건(<code>c71b229</code> 기준) · 2026-10-31 11:04 → 11-01 06:03 · AI 도구가 맡은 부분은 ⓒ·ⓕ 에 따로 적음</span><span>7쪽 · ⓔ</span></div>
 </section>
 
 <!-- 9. ⓕ -->
@@ -437,9 +437,10 @@ table.road td{line-height:1.38}
   <div class="grid2" style="gap:14px;align-items:start">
     <table class="ftab">
       <tr><th style="width:11%">구분</th><th style="width:33%">명칭</th><th>용도</th><th style="width:27%">라이선스</th></tr>
-      <tr><td rowspan="20" class="cat">오픈소스</td><td>BAAI/bge-m3</td><td>임베딩·의도 분류</td><td>MIT</td></tr>
+      <tr><td rowspan="21" class="cat">오픈소스</td><td>BAAI/bge-m3</td><td>임베딩·의도 분류</td><td>MIT</td></tr>
       <tr><td>BAAI/bge-reranker-v2-m3</td><td>재순위·답변 검증</td><td>Apache-2.0</td></tr>
       <tr><td>urchade/gliner_multi-v2.1</td><td>서류 위치 단서 개체명 인식</td><td>Apache-2.0</td></tr>
+      <tr><td>microsoft/mdeberta-v3-base</td><td>GLiNER 백본·토크나이저</td><td>MIT</td></tr>
       <tr><td>Qwen/Qwen3-8B-AWQ</td><td>내부 LLM(미세조정 없음)</td><td>Apache-2.0</td></tr>
       <tr><td>vLLM 0.32.0</td><td>LLM 서빙</td><td>Apache-2.0 *</td></tr>
       <tr><td>PyTorch 2.15.0</td><td>모델 실행</td><td>BSD-3 계열</td></tr>
@@ -461,11 +462,11 @@ table.road td{line-height:1.38}
     <div>
       <table class="ftab">
         <tr><th style="width:11%">구분</th><th style="width:30%">명칭</th><th>용도</th><th style="width:25%">라이선스</th></tr>
-        <tr><td rowspan="3" class="cat">외부 API</td><td>Anthropic Claude (Claude Code)</td><td>개발 보조: 코드·조사·문서 작성. <b>서비스 실행 중 호출 없음</b></td><td>상용</td></tr>
+        <tr><td rowspan="3" class="cat">외부 API</td><td>Anthropic Claude (Claude Code)</td><td>개발 보조: 코드·조사·문서 작성, 평가·레드팀 결과 검토. <b>서비스 실행 중 호출 없음</b></td><td>상용</td></tr>
         <tr><td>DeepSeek-V4.1-Flash (래블업 토큰 팩토리)</td><td>쉬운 말 설명 초안 42건·1차 코드 일부. <b>서비스 실행 중 호출 없음</b></td><td>상용 API (래블업 토큰 팩토리)</td></tr>
         <tr><td>GLM-5.3-Flash (래블업 토큰 팩토리)</td><td>평가 시뮬레이터의 가상 사용자·공격자. <b>서비스 실행 중 호출 없음</b></td><td>상용 API (래블업 토큰 팩토리)</td></tr>
         <tr><td class="cat">사전 보유 코드</td><td>해당 없음</td><td>주제 공개(10-30) 뒤 새 저장소. 첫 커밋 <code>d677ea0</code> 2026-10-31 11:04</td><td>해당 없음</td></tr>
-        <tr><td rowspan="10" class="cat">기타</td><td>법제처 국가법령정보센터 법령 원문</td><td>조문 174건 스냅샷, 근거 표시·검색</td><td>공공저작물(저작권법 제7조)</td></tr>
+        <tr><td rowspan="10" class="cat">기타</td><td>법제처 국가법령정보센터 법령 원문</td><td>조문 175건 스냅샷, 근거 표시·검색</td><td>공공저작물(저작권법 제7조)</td></tr>
         <tr><td>NAVER Cloud Platform 공공기관용 서버 · L4 · SSL-VPN</td><td>배포·시연(주최 측 제공)</td><td>대회 제공 조건</td></tr>
         <tr><td>Hugging Face Hub</td><td>모델 배포처(설치 때만)</td><td>각 모델 라이선스</td></tr>
         <tr><td>Pretendard 글꼴</td><td>발표 자료</td><td>SIL OFL 1.1</td></tr>
@@ -505,13 +506,13 @@ table.road td{line-height:1.38}
         <div class="stat"><div class="v" style="font-size:28px">약 9.7원</div><div class="l" style="font-size:14px">세션당(꽉 찰 때), 약 2.2만 토큰</div></div>
         <div class="stat"><div class="v" style="font-size:28px">GPU 없이</div><div class="l" style="font-size:14px">규칙 진단 + BM25 + 체크박스로 핵심 동작</div></div>
       </div>
-      <p class="small" style="margin-top:10px;font-size:14px">무료 법률정보 안내(법률상담 아님) · AI 문장엔 'AI 생성' 표시 · 위치 권한 요청 없음</p>
+      <p class="small" style="margin-top:10px;font-size:14px">무료 법률정보 안내(법률상담 아님) · AI 문장엔 'AI 생성' 표시(인공지능기본법 제31조) · 위치 권한 요청 없음</p>
     </div>
     <div class="card gate">
       <h3>아직 증명 안 된 것 → 다음 게이트</h3>
       <ul class="clean">
         <li>사람 검수 <b>0/84 → 84/84</b></li>
-        <li>레드팀 4.5% → <b>확대 세트로 재측정</b></li>
+        <li>레드팀 3.6%(3/84) → <b>확대 세트로 재측정</b></li>
         <li>공개 전 TLS·인증·접근 범위·속도 제한</li>
       </ul>
       <p class="small" style="font-size:13px;margin-top:4px">실제 이용자 효과는 미검증(합성 평가만). 상세 한계는 저장소에 공개</p>
@@ -528,7 +529,7 @@ table.road td{line-height:1.38}
     <table class="tight road" style="font-size:14.5px">
       <tr><th style="width:11%">단계</th><th>할 일(산출물)</th><th style="width:15%">담당(안)</th><th style="width:31%">성공 지표 (기준선 실측 → 목표)</th></tr>
       <tr><td rowspan="3"><b style="color:#b43c3c">단기</b><br>~3개월</td><td>쉬운 말 설명 84행 전문가 검수</td><td>김시현</td><td>검수 <b>0/84 → 84/84</b></td></tr>
-      <tr><td>레드팀 확대 세트(사칭·이주민 언어·적응형), 판정자 분리</td><td>김대웅</td><td>4.5% 재측정 · 조회 방법 출력 0 유지</td></tr>
+      <tr><td>레드팀 확대 세트(사칭·이주민 언어·적응형), 판정자 분리</td><td>김대웅</td><td>3.6%(3/84) 재측정 · 조회 방법 출력 0 유지</td></tr>
       <tr><td>공개 전 보안: TLS·인증·속도 제한·접근 범위, 가드 장애 시 막는 쪽 동작</td><td>정세영</td><td>공개 전 점검 항목 전부 완료</td></tr>
       <tr><td rowspan="3"><b style="color:#1e7a72">중기</b><br>~1년</td><td>스토킹 피해자보호명령(2027-04-22 시행) 반영, 법령 갱신 = 지식표 행 단위</td><td>김시현</td><td>시행일 <b>전</b> 반영</td></tr>
       <tr><td>상담 현장 시범 1곳 — 운영 주체 후보 1366·상담소(협력은 제안 단계)</td><td>팀 전체</td><td>시범 기관 ≥1 · 놓친 제도 수 사전·사후 비교</td></tr>
@@ -566,7 +567,7 @@ table.road td{line-height:1.38}
   <div class="kicker">부록: 실증 자료 (2/4) · ⓒ 근거</div>
   <h2 style="margin-bottom:14px">찾기 질문 거절과 정상 질문 오거절 (합성 데이터 기준)</h2>
   <div class="grid2" style="gap:20px">
-    <div><img class="chart" src="../docs/evidence/charts/redteam-asr.svg" alt="레드팀 공격 성공률 대책 전후" style="width:100%"><p class="cap"><b>레드팀</b> 차트는 판정기 집계(3/112). 문서 정의대로 다시 세면 <b>5/112 = 4.5%</b>. 같은 세트의 전후라 개선 주장 안 함. 조회 방법 출력 0건(정규식 검출). 공격 문장은 싣지 않음</p></div>
+    <div><img class="chart" src="../docs/evidence/charts/redteam-asr.svg" alt="레드팀 공격 성공률 대책 전후" style="width:100%"><p class="cap"><b>레드팀</b> 차트는 10-31 판정기 집계(3/112). 정의대로 다시 세면 <b>5/112 = 4.5%</b>, 현재 배포본은 검색·답 경로 <b>3/84</b>. 같은 세트라 개선 주장 안 함. 조회 방법 출력 0건(정규식 검출). 공격 문장은 싣지 않음</p></div>
     <div><img class="chart" src="../docs/evidence/charts/guard-before-after.svg" alt="다턴 시뮬 오거절 대책 전후" style="width:100%"><p class="cap"><b>다턴 시뮬</b> 정상 사용자 오거절 대책 전후. 남은 오거절 18건/14대화는 과제로 둠</p></div>
   </div>
   <div class="foot"><span>출처: docs/redteam-summary.md · notice_calibration_summary.md · docs/evidence/charts/</span><span>A2 · 부록</span></div>
