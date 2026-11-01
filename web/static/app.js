@@ -57,6 +57,8 @@
   var LLM_DOWN_MSG = '지금은 이 기능을 쓸 수 없습니다. 체크 항목으로 계속 진행할 수 있습니다.';
   var REWRITE_MAX = 1500; // app/main.py REWRITE_MAX_CHARS 와 같게
   var intakePending = false; // '말로 설명하기'로 미리 고른 뒤 사용자가 확인하기 전까지 true
+  var diagnoseBusy = false;
+  var doccheckBusy = false;
   // 다턴 이력: 이 페이지 메모리에만 둔다(저장소·쿠키에 쓰지 않음). 새로 고침·빠른 나가기로 사라진다.
   // 서버 상한(app/main.py HISTORY_*)과 같게: 최근 6턴, 턴당 500자, 합계 3000자.
   var HISTORY_MAX_TURNS = 6, HISTORY_TURN_CHARS = 500, HISTORY_TOTAL_CHARS = 3000;
@@ -267,6 +269,7 @@
   /* ---------- diagnose ---------- */
   function onDiagnoseSubmit(ev) {
     ev.preventDefault();
+    if (diagnoseBusy) return;
     var form = ev.currentTarget;
     var victim = form.querySelector('input[name="victim_type"]:checked');
     if (!victim) {
@@ -287,8 +290,9 @@
     var checked = form.querySelectorAll('input[name="flags"]:checked');
     for (var i = 0; i < checked.length; i++) flags.push(checked[i].value);
 
+    diagnoseBusy = true;
+    $('diagnose-submit').disabled = true;
     setStatus('diagnose-status', '보호 제도를 정리하고 있습니다...');
-    $('diagnose-results').textContent = '';
 
     fetch('/api/diagnose', {
       method: 'POST',
@@ -306,7 +310,11 @@
         if (rh) rh.focus();
       })
       .catch(function () {
-        setStatus('diagnose-status', '결과를 불러오지 못했습니다. 잠시 뒤 다시 시도해 주세요.');
+        setStatus('diagnose-status', '결과를 불러오지 못했습니다. 입력은 그대로 있습니다. 다시 시도해 주세요.');
+      })
+      .then(function () {
+        diagnoseBusy = false;
+        $('diagnose-submit').disabled = false;
       });
   }
 
@@ -430,6 +438,12 @@
     if (gate && plainSummary) howto.appendChild(plainSummary);
     if (item.where) howto.appendChild(detailsBlock('어디서 신청하나요', item.where));
     if (item.documents) howto.appendChild(detailsBlock('필요한 서류', item.documents));
+    var org = supportOrgFor(item.where || '');
+    if (org) {
+      var support = el('p', 'support-card-link', '관련 상담: ');
+      support.appendChild(supportAnchor(org));
+      howto.appendChild(support);
+    }
     if (howto.childNodes.length) {
       if (gate) {
         howto.id = gate.id;
@@ -486,6 +500,46 @@
     if (llmOn && item.id) card.appendChild(buildAskBox(item.id));
 
     return card;
+  }
+
+  var SUPPORT_ORGS = {
+    police: { name: '경찰 긴급신고', href: 'tel:112', detail: '위험이 급하거나 현장 보호가 필요할 때' },
+    women: { name: '여성긴급전화 1366', href: 'tel:1366', detail: '긴급 상담과 지원기관 연결' },
+    legal: { name: '대한법률구조공단', href: 'https://www.klac.or.kr/', detail: '법률 상담 · 전화 132' },
+    victim: { name: '전국범죄피해자지원연합회', href: 'https://www.kcva.or.kr/', detail: '지역 범죄피해자지원센터·지원 안내' }
+  };
+
+  function supportOrgFor(where) {
+    if (/경찰|112/.test(where)) return SUPPORT_ORGS.police;
+    if (/법원|소송|법률구조/.test(where)) return SUPPORT_ORGS.legal;
+    if (/1366|상담|보호시설|쉼터/.test(where)) return SUPPORT_ORGS.women;
+    return null;
+  }
+
+  function supportAnchor(org) {
+    var a = el('a', null, org.name);
+    a.href = org.href;
+    if (org.href.indexOf('https://') === 0) {
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+    }
+    return a;
+  }
+
+  function buildSupportDirectory() {
+    var section = el('section', 'support-directory');
+    section.appendChild(el('h2', null, '상담·보호 신청 연결'));
+    section.appendChild(el('p', 'meta', '신청 전에는 아래 카드의 신청처·필요 서류·통지 경고를 확인해 주세요. 연결은 선택 사항이며 입력한 글은 자동 전송되지 않습니다.'));
+    var list = el('ul', 'support-list');
+    ['police', 'women', 'legal', 'victim'].forEach(function (key) {
+      var org = SUPPORT_ORGS[key];
+      var li = el('li');
+      li.appendChild(supportAnchor(org));
+      li.appendChild(el('span', null, ' — ' + org.detail));
+      list.appendChild(li);
+    });
+    section.appendChild(list);
+    return section;
   }
 
   /* ---------- (LLM) 이게 무슨 뜻인가요? ---------- */
@@ -654,6 +708,7 @@
 
     var checklist = Array.isArray(data.checklist) ? data.checklist : [];
     var residual = Array.isArray(data.residual) ? data.residual : [];
+    root.appendChild(buildSupportDirectory());
     var TOP_MAX = 5;
     var top = [];
     var rest = [];
@@ -793,6 +848,7 @@
         sg.textContent = '→ ' + s.suggestion;
         li.appendChild(sg);
       }
+      if (s.reason) li.appendChild(el('div', 'finding-reason', '탐지 근거: ' + s.reason));
       ul.appendChild(li);
     }
     root.appendChild(ul);
@@ -807,7 +863,8 @@
     var text = $('doc-text').value;
     var spans = (typeof window.detectSpans === 'function') ? window.detectSpans(text) : [];
     tier1Spans = spans.map(function (s) {
-      return { start: s.start, end: s.end, label: s.label, text: s.text, suggestion: s.suggestion, tier: 1 };
+      return { start: s.start, end: s.end, label: s.label, text: s.text, suggestion: s.suggestion,
+        reason: s.reason || null, risk_type: s.risk_type || null, tier: 1 };
     });
     renderDocResults(text, tier1Spans);
     lastSpans = tier1Spans.slice();
@@ -838,11 +895,16 @@
   }
 
   function runTier2() {
+    if (doccheckBusy) return;
     var text = $('doc-text').value;
     if (!text || !text.trim()) {
       setStatus('doc-status', '서류 내용을 먼저 붙여 넣어 주세요.');
       return;
     }
+    // 정밀 점검이 실패해도 브라우저의 규칙 결과를 바로 볼 수 있게 한다.
+    runTier1();
+    doccheckBusy = true;
+    $('doc-tier2').disabled = true;
     setStatus('doc-status', '정밀 점검 중입니다...');
     fetch('/api/doccheck', {
       method: 'POST',
@@ -854,8 +916,9 @@
         return res.json();
       })
       .then(function (data) {
+        if ($('doc-text').value !== text) return;
         if (!data || data.available === false) {
-          setStatus('doc-status', '지금은 정밀 점검을 쓸 수 없습니다. 기본 점검 결과를 참고해 주세요.');
+          setStatus('doc-status', '정밀 점검을 쓸 수 없어 기본 점검 결과를 보여 드립니다. 제출 전 원문을 다시 확인해 주세요.');
           return;
         }
         var raw = Array.isArray(data.spans) ? data.spans : [];
@@ -870,6 +933,8 @@
             label: s.label || '기타',
             text: typeof s.text === 'string' ? s.text : text.slice(s.start, s.end),
             suggestion: null,
+            reason: typeof s.reason === 'string' ? s.reason : null,
+            risk_type: typeof s.risk_type === 'string' ? s.risk_type : null,
             tier: 2
           });
         }
@@ -880,7 +945,11 @@
         setStatus('doc-status', '정밀 점검을 마쳤습니다. 단서 ' + merged.length + '건을 찾았습니다.');
       })
       .catch(function () {
-        setStatus('doc-status', '지금은 정밀 점검을 쓸 수 없습니다. 기본 점검 결과를 참고해 주세요.');
+        setStatus('doc-status', '정밀 점검을 쓸 수 없어 기본 점검 결과를 보여 드립니다. 제출 전 원문을 다시 확인해 주세요.');
+      })
+      .then(function () {
+        doccheckBusy = false;
+        $('doc-tier2').disabled = false;
       });
   }
 
@@ -1277,7 +1346,7 @@
     btn.addEventListener('click', closeSafety);
     backdrop.addEventListener('click', closeSafety);
     reopen.addEventListener('click', openSafety);
-    // 방문 기록을 기기에 남기지 않도록(저장소 사용 금지) 들어올 때마다 안내를 연다.
+    // 공유 기기 위험을 먼저 알리되 방문 기록이 지워진다고 안내하지 않는다.
     openSafety();
   }
 
@@ -1340,7 +1409,8 @@
         else el.value = '';
       }
       document.title = '날씨';
-      document.body.textContent = '';
+      document.body.textContent = '날씨';
+      document.body.className = 'quick-hidden';
     } catch (e) { /* noop */ }
     var tries = 0;
     var go = function () {

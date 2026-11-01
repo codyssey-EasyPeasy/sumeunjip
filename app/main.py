@@ -27,6 +27,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from . import guard as _guard
 from . import humanize as _hz
 from . import llm as _llm
+from . import location as _location
 from . import offsets as _offsets
 from . import retrieval as _retrieval
 from .engine import VICTIM_LABEL, VICTIM_TYPES, Engine, load_knowledge
@@ -370,6 +371,13 @@ def create_app(
             spans = data.get("spans") or []
             if not isinstance(spans, list):
                 raise TypeError("spans")
+            # GLiNER가 놓치기 쉬운 개인 생활권 단서를 경량 규칙으로 보강한다.
+            for clue in _location.contextual_spans(req.text):
+                if not any(isinstance(s, dict) and isinstance(s.get("start"), int)
+                           and isinstance(s.get("end"), int)
+                           and s["start"] < clue["end"] and clue["start"] < s["end"]
+                           for s in spans):
+                    spans.append(clue)
             # GPU 는 파이썬 코드 포인트 위치를 준다 → 브라우저 문자열 위치(UTF-16)로 바꿔 돌려준다(P0-04).
             return {"available": True, "offset_unit": _offsets.OFFSET_UNIT,
                     "spans": _offsets.spans_to_client(req.text, spans)}
