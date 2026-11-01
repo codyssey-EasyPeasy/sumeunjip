@@ -68,7 +68,7 @@ def knowledge():
 
 
 def test_p0_11_counts():
-    assert len(NON) == 43
+    assert len(NON) == 44  # 2026-11-01: A22 근거 주택임대차보호법 시행령 제6조(열람 범위 조문, DENY) 추가로 43 → 44
     assert not (NON_KEYS & EXP_KEYS), sorted(NON_KEYS & EXP_KEYS)
 
 

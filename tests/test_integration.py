@@ -135,6 +135,26 @@ def test_a6_inherits_a1_notify_warning():
     assert by["A6"]["notify_inherited_from"] == "A1"
 
 
+def test_j15_has_own_notify_warning():
+    # 전자장치 부착도 스토킹 잠정조치라 결정 내용이 행위자에게 고지된다(스토킹처벌법 제10조 제2항).
+    # J13 을 물려받으면 "'긴급응급조치' 신청과 함께" 문장이 붙는데, 전자장치는 긴급응급조치로 할 수 없다.
+    e = Engine(load_knowledge())
+    by = {it["id"]: it for it in e.items}
+    w = by["J15"]["notify_warning"]
+    assert "고지" in w and "제10조 제2항" in w
+    assert "긴급응급조치" not in w
+    assert "notify_inherited_from" not in by["J15"]
+
+
+def test_j11_has_own_notify_warning_and_basis():
+    # 가정폭력 임시조치 내용은 집행 때 행위자에게 고지된다(가정폭력처벌법 제29조의2 제1항).
+    k = load_knowledge()
+    j11 = next(it for it in k["items"] if it["id"] == "J11")
+    assert "고지" in j11["notify_warning"] and "새 주거·직장" in j11["notify_warning"]
+    assert any(b["article"].startswith("제29조의2") and b["url"].startswith("https://www.law.go.kr/")
+               for b in j11["basis"])
+
+
 def test_exposable_articles_have_no_restriction_lifting_routes():
     """검색에 노출되는 조문(발췌 우선)에 제한 해제·배제·제3자 취소 경로 문단이 없어야 한다."""
     import json
