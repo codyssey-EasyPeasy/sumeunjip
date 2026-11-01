@@ -70,6 +70,6 @@
     { "id": "doccheck", "maxSec": 18, "dwellMs": 4500, "caption": "서류 점검 — 1단계는 이 브라우저 안에서만, 2단계 정밀 점검(GLiNER + 규칙)은 누를 때만 우리 서버로" },
     { "id": "rewrite",  "maxSec": 32, "dwellMs": 5000, "waitCaption": "문장을 만들고 원문에 없던 단서가 생기지 않았는지 검사하는 중 — 실제 서버 대기 시간 그대로", "caption": "위치 단서를 지운 문장 제안 — 원문에 없던 숫자·이름·장소가 나오면 모델 출력을 버리고 규칙으로 가립니다" },
     { "id": "locate",   "maxSec": 18, "dwellMs": 5000, "caption": "상대가 지금 사는 곳을 알아내려는 질문(입력칸은 가림)은 두 번 판정해 거절하고, 내 정보를 지키는 제도를 안내합니다" },
-    { "id": "exit",     "maxSec": 10, "dwellMs": 3500, "caption": "Esc 두 번이면 화면이 지워지고 날씨 검색으로 — 입력은 저장하지 않습니다 · github.com/codyssey-EasyPeasy/sumeunjip" }
+    { "id": "exit",     "maxSec": 10, "dwellMs": 3500, "caption": "Esc 두 번이면 화면이 지워지고 날씨 검색으로 — 입력은 저장하지 않습니다 · github.com/codyssey-EasyPeasy/boan-yebo" }
   ]
 }

@@ -1,6 +1,6 @@
 # 보안 예보 — 서비스 설명서
 
-> 2026 해커톤 주제 02 · AI 기반 정보보호 서비스 · 팀 EasyPeasy · 저장소 https://github.com/codyssey-EasyPeasy/sumeunjip (branch `main`)
+> 2026 해커톤 주제 02 · AI 기반 정보보호 서비스 · 팀 EasyPeasy · 저장소 https://github.com/codyssey-EasyPeasy/boan-yebo (branch `main`)
 > 기준: 2026-11-01 오전(최신은 `git log -1 -- docs/OVERVIEW.md`). 배포본은 **앱·웹 `993db4f`(2026-11-01 04:14 KST 배포), GPU 서버 `642e5e1`, 그리고 06:03 KST 에 `b7c7e1f` 의 가드·지식표·조문 파일 6개**(`docs/architecture.md` 머리말, `docs/evidence/deploy-2026-11-01.md`).
 > 대회 서버는 **2026-11-01 13:00 에 삭제**됩니다. 그 뒤에는 GPU 없는 로컬 모드(`docs/LOCAL_DEV.md`)나 직접 구성(`README.md`, `docs/evidence/repro-2026-11-01.md`)으로만 띄울 수 있습니다.
 > 그림 포함 판: `docs/OVERVIEW.html` (브라우저로 열기, 인쇄 가능)

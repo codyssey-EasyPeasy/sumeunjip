@@ -4,7 +4,7 @@ GPU·해커톤 서버 없이 노트북에서 서비스 전체 화면을 띄워 �
 
 ## 준비
 - Python 3.12, [uv](https://docs.astral.sh/uv/) (Windows·macOS·Linux 모두 가능)
-- 저장소: `git clone https://github.com/codyssey-EasyPeasy/sumeunjip`
+- 저장소: `git clone https://github.com/codyssey-EasyPeasy/boan-yebo`
 - 처음 한 번: `uv sync --frozen`
 
 ## 실행 (터미널 2개)
