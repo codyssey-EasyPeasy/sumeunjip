@@ -14,7 +14,7 @@
 `642e5e1` → `993db4f` 사이 앱 코드 변경은 `app/main.py` 의 자리 표시 제목과 `/favicon.ico` 경로뿐이다(`git diff --stat 642e5e1 993db4f -- app gpu`). 그래서 `642e5e1` 에서 잰 부하·지연 수치(`COST_LATENCY.md`)는 지금 배포본에도 그대로 쓴다. 06:03 배포는 가드 낱말 목록·제도 이름 표시·지식표·조문 데이터만 바꿨고 부하는 다시 재지 않았다(GPU uvicorn 재시작 뒤 GPU 메모리도 미측정). 2026-10-31 밤의 옛 대조(`6672867`, `evidence/infra-2026-10-31-night.md` 6절)는 기록으로만 남긴다.
 
 ## 원칙
-1. 사용자는 피해자 본인과 가족·지인이다(2026-10-31 오너 결정으로 상담원 경유 제거). 인증 없이 쓰되 안전한 기기 안내·빠른 나가기·기록 비저장으로 보완하고, 결과마다 1366·132(급하면 112)를 붙인다.
+1. 사용자는 가정폭력 피해자, 스토킹 피해자, 이혼·소송 당사자, 가해자와의 분리·신변 보호가 필요한 일반 시민(팀 발표 자료 4쪽 목표 사용자)과 교제폭력·성폭력 피해자, 그리고 피해자 본인의 가족·지인이다(2026-10-31 오너 결정으로 상담원 경유 제거). 인증 없이 쓰되 안전한 기기 안내·빠른 나가기·기록 비저장으로 보완하고, 결과마다 1366·132(급하면 112)를 붙인다.
 2. 출력은 **막는 제도만**. 사람을 찾는 방법·조회 요건·순서는 다루지 않는다. 열람·교부 절차 조문은 검색 말뭉치에서 뺀다.
 3. **어떤 제도를 권할지는 규칙 엔진이 정한다.** AI 는 검색·재순위·서류 단서 탐지·의도 신호·문장 보조(상황 정리, 근거 답, 다시 쓰기)에만 쓴다.
 4. 사례 정보(상황 체크값·자유서술·서류 원문·대화 이력·결과)는 서버에 저장하지 않고 로그에 남기지 않는다.
@@ -52,6 +52,26 @@
  [빌드 시점, 경계 밖]  국가법령정보센터 현행 조문 → data/laws/articles.jsonl(175건)
                        → exposable·발췌 표시(tools/mark_exposable.py) → 지식표 data/knowledge.json(84행)
 ```
+
+## 발표 자료 구성 요소 이름 (팀 발표 자료 7쪽)
+서비스 흐름(발표 자료 5쪽): 상황 입력 → AI 상황 정리(`/api/intake`) → 노출 경로 진단(`/api/diagnose`) → 대응 안내(결과 카드·통지 경고·잔여 위험·`/api/answer`). 핵심 기능(6쪽): 서류 점검(`/api/doccheck`·`/api/rewrite`) / 긴급 대응(긴급 연락처 띠·빠른 나가기·통지 경고) / 근거 조문 검색(`/api/search`).
+
+| 발표 자료 이름 | 코드·위치 |
+|---|---|
+| Frontend (Vanilla HTML/JS) | `web/` (`index.html`, `static/app.js`, `static/detect.js`) |
+| Application Server · FastAPI :8080 | `app/main.py` (hk-ops) |
+| └ Input Guard | `app/guard.py` (2단 가드의 1차, 정규화·intake 강화) |
+| └ Rule-based Diagnosis | `app/engine.py` (규칙 진단 엔진) |
+| └ Knowledge Retrieval | `app/retrieval.py` (조문 검색, GPU 없으면 BM25) |
+| └ LLM Proxy | `app/llm.py` (내부 LLM 중계, 출력 가드 호출) |
+| Knowledge Base | `data/knowledge.json`(84개 경로) + `data/laws/articles.jsonl`(법령 조문 175건, 노출 가능 131) |
+| GPU Inference Server · FastAPI :8000 | `gpu/server.py` (hk-gpu, `/health` 밖은 공유 토큰) |
+| └ BGE-M3 / BGE-Reranker-v2-M3 | `/embed` / `/rerank` |
+| └ GLiNER multi-v2.1 | `/ner` (서류 정밀 점검, 700자 조각) |
+| └ vLLM :8001 · Qwen3-8B-AWQ | `gpu/llm_start.sh`, `127.0.0.1:8001` |
+| └ Output Guard / Verify | `gpu/verify.py` (공통 출력 가드, 문장별 근거 검증) |
+
+발표 자료 11쪽의 Security Policy · Intent Classifier · Task Router · GPU Scheduler 는 **향후 아키텍처(계획)**이며 지금 코드에는 없습니다(현재 의도 점수 `/intent` 는 가드 신호로만 씁니다).
 
 ## 구성 요소
 | 구성 요소 | 위치·포트 | 역할 |

@@ -50,10 +50,10 @@ li.chk{list-style:none;margin-left:-22px}.box{display:inline-block;width:14px;he
 <body>
 <main>
 <header class="hero"><p class="kicker">발표자 안내서 · 2026-11-01 · 11/2 대면 심사</p><h1>보안 예보</h1><p class="sub">발표자 안내서 (11/2 대면 심사)</p></header>
-<div class="note">2026 해커톤 주제 02 'AI 기반 정보보호 서비스' · 팀 EasyPeasy(정세영 백엔드·AI / 김시현 기획·법령조사·프런트엔드 / 김대웅 평가·보안·PT 자료)<br>기준: 2026-11-01 오전(최신은 <code>git log -1 -- docs/PT_HANDOFF.md</code>). 배포본은 앱·웹 <code>993db4f</code>, GPU <code>642e5e1</code>, 06:03 KST 에 <code>b7c7e1f</code> 의 가드·지식표·조문 파일 6개(J11·J15 통지 경고, S017 가드). <strong>대회 서버는 2026-11-01 13:00 에 삭제</strong>되므로 11/2 라이브 시연은 노트북의 로컬 모드로 합니다(4절, 모드는 운영진 답에 따라 정함).<br>그림 포함 판: <code>docs/PT_HANDOFF.html</code></div>
+<div class="note">2026 해커톤 주제 02 'AI 기반 정보보호 서비스' · 팀 EasyPeasy(정세영 Backend · AI 시스템 / 김대웅 Backend · 서비스 로직 / 김시현 Frontend · 기획 · 운영 — 팀 발표 자료 8쪽 기준)<br>기준: 2026-11-01 오전(최신은 <code>git log -1 -- docs/PT_HANDOFF.md</code>). 배포본은 앱·웹 <code>993db4f</code>, GPU <code>642e5e1</code>, 06:03 KST 에 <code>b7c7e1f</code> 의 가드·지식표·조문 파일 6개(J11·J15 통지 경고, S017 가드). <strong>대회 서버는 2026-11-01 13:00 에 삭제</strong>되므로 11/2 라이브 시연은 노트북의 로컬 모드로 합니다(4절, 모드는 운영진 답에 따라 정함).<br>그림 포함 판: <code>docs/PT_HANDOFF.html</code></div>
 <p><strong>이 문서는 발표하는 사람용입니다.</strong> 서비스 설명(기술 스택·아키텍처·서비스 구조·흐름·사용자 절차)은 다시 적지 않고 아래 문서를 가리킵니다.</p>
 <div class="tw"><table><thead><tr><th>필요한 것</th><th>볼 문서</th></tr></thead><tbody><tr><td>서비스가 무엇이고 어떻게 동작하는지</td><td><code>docs/OVERVIEW.md</code> (1~7절)</td></tr><tr><td>채점 요건 ⓐ~ⓖ 순서의 내용, 모델 선택 이유, 직접 개발 범위, 외부 자원, 한계, 해외 비교</td><td><code>docs/SUBMISSION.md</code></td></tr><tr><td><strong>모든 숫자의 기준값</strong>(번호 0-1~0-23)</td><td><code>docs/EVIDENCE.md</code> 0절 「대표 수치」</td></tr><tr><td>레드팀 집계(공격 문장 없음)</td><td><code>docs/redteam-summary.md</code></td></tr><tr><td>해외 제도·사례</td><td><code>docs/research/2026-11-01-해외레퍼런스.md</code></td></tr><tr><td>발전 방향·향후 계획 근거</td><td><code>docs/research/2026-11-01-발전방향.md</code></td></tr><tr><td>노트북에서 GPU 없이 띄우기</td><td><code>docs/LOCAL_DEV.md</code></td></tr><tr><td>1차 제출 영상(2분) 샷 리스트·자막·녹화기</td><td><code>tools/demo/README.md</code> 「2분 영상 샷 리스트와 자막」</td></tr></tbody></table></div>
-<p><strong>꼭 지켜 주세요 (4가지)</strong></p>
+<p><strong>꼭 지켜 주세요 (5가지)</strong></p>
 <ol>
 <li><strong>공격 문장 원문, 사람을 찾는 방법·조회 방법은 어떤 형태로도 말하거나 띄우지 않습니다.</strong> 공격 결과는 집계 숫자로만 말합니다.
 </li>
@@ -62,6 +62,8 @@ li.chk{list-style:none;margin-left:-22px}.box{display:inline-block;width:14px;he
 <li>근거가 없는 것은 <strong>미확인</strong>이라고 말합니다. 모르는 질문에는 "확인하지 못했습니다"라고 답합니다(7절 정직성 원칙).
 </li>
 <li><strong>라이브로 '다른 사람 찾기' 질문을 입력하지 않습니다.</strong> 즉석 질문도 4.4절의 확인된 문장만 씁니다.
+</li>
+<li><strong>팀 발표 PDF(17쪽)는 1~11쪽만 씁니다. 12~17쪽은 템플릿에 남은 내용이라 쓰지 않습니다.</strong> 그 쪽의 수치(예: '식별 정확도 92.4%', '우선순위 매칭 87.6%')와 기능(이미지 메타데이터 검사, 타임스탬프·해시 증거 보존 등), 연락처 자리 표시는 우리 서비스·실측이 아닙니다. 9쪽의 ⓕ '사전 보유 코드: 확인 필요' 문구도 쓰지 않고 <code>docs/SUBMISSION.md</code> ⓕ 표(사전 보유 코드 해당 없음)를 따릅니다.
 </li></ol>
 <hr>
 <h2 id="s1">목차</h2>
@@ -115,11 +117,15 @@ li.chk{list-style:none;margin-left:-22px}.box{display:inline-block;width:14px;he
 <ul>
 <li><strong>설명 합계 3분 50초(4분 이내) + 라이브 3분 10초 = 7분.</strong> 라이브는 3분 아래로 줄이지 않습니다(시연을 안 하면 기술 점수 0).
 </li>
-<li>3쪽(화면)·6쪽(스택)·7쪽(역할)·8쪽(외부 자원)은 화면에 남기되 넘깁니다(필수 항목이라 삭제 금지). 7쪽을 넘길 때 김대웅이 "세 사람의 산출물이 한 파이프라인으로 이어집니다 — 조사한 사람이 경로를, 만든 사람이 엔진을, 검증한 사람이 안전을 맡았습니다" 한 문장을 말합니다.
+<li>3쪽(화면)·6쪽(스택)·7쪽(역할)·8쪽(외부 자원)은 화면에 남기되 넘깁니다(필수 항목이라 삭제 금지). 7쪽을 넘길 때 김대웅이 "세 사람의 일이 한 파이프라인으로 이어집니다 — 화면과 기획(김시현), 진단 규칙·입력 가드·지식 검색(김대웅), GPU 추론·모델·출력 검증(정세영)" 한 문장을 말합니다.
 </li>
 <li><strong>시계는 김대웅</strong>이 듭니다. 라이브 2:30 에 손신호, 설명이 밀리면 9쪽을 한 문장으로 줄입니다. 세 사람이 모두 말하고 넘겨주는 동작으로 '팀워크'를 보입니다.
 </li>
-<li>Q&amp;A 담당(제안): 기술·시연 정세영, 제도·법령·해외 김시현, 평가·보안·수치 김대웅(5절 문항별 표시).
+<li>Q&amp;A 담당(제안, 팀 발표 자료 8쪽 역할 기준): GPU 추론·모델·출력 검증·배포 정세영, 진단 규칙·제도 추천·입력 가드·지식베이스·수치 김대웅, 화면·사용자 흐름·기획·제도 안내·발표 자료 김시현(5절 문항별 표시).
+</li>
+<li><strong>발표 자료와 시연 준비는 김시현</strong>이 맡습니다(덱 쪽 번호 맞추기, 4.2 사전 준비 점검 포함). 라이브 조작은 정세영, 해설은 김시현입니다.
+</li>
+<li>역할 표기 주의: 커밋은 공용 개발 환경(정세영 계정)에서 함께 했고, 팀원 개인 계정 기여는 PR #2(김시현, 화면)·PR #4(김대웅, 생활권 단서 탐지·입력 가드 오탐 감소·안전 UX)입니다. 커밋 해시는 작성자가 아니라 산출물로 말합니다.
 </li></ul>
 <hr>
 <h2 id="s5">4. 라이브 시연 (모드 결정 · 대본 · 실패 대비)</h2>
@@ -279,10 +285,12 @@ li.chk{list-style:none;margin-left:-22px}.box{display:inline-block;width:14px;he
 <li class="chk"><span class="box"></span>마지막 쪽에 "법률정보 안내이며 법률상담이 아닙니다 · 112 · 1366 · 132 · 시연 데이터는 합성"
 </li>
 <li class="chk"><span class="box"></span>부록을 띄워도 되는지 운영진에게 확인
+</li>
+<li class="chk"><span class="box"></span>팀 발표 PDF 12~17쪽(템플릿 잔여)이 덱에 들어가지 않았는지
 </li></ul>
 <hr>
 <h2 id="s11">10. 덱·자료에서 확인할 것</h2>
-<div class="tw"><table><thead><tr><th>항목</th><th>확인할 내용</th></tr></thead><tbody><tr><td><code>pt/index.html</code>(25장 발표판)</td><td>10쪽을 넘으므로 2차 발표 덱으로 그대로 쓰지 않습니다(1절). 쓸 문구만 1차 제출본 범위 안에서 옮깁니다</td></tr><tr><td>레드팀 수치</td><td>덱·차트에 '5.4% → 2.7%'가 남아 있으면 0-12 값으로 바꾸거나 생략. <code>docs/evidence/charts/redteam-asr.svg</code> 는 판정기 집계라 단독으로 쓰지 않음('정의대로 5/112 = 4.5%(2026-10-31), 현재 배포본 3/84, 개선 주장 안 함' 캡션과 함께만)</td></tr><tr><td>가드 35/35·0/25</td><td>'조정 세트' 단서</td></tr><tr><td>정보보호 낱말</td><td>표지·1쪽 헤드라인에 '개인정보'·'정보보호'가 있는지(주제 적합성)</td></tr><tr><td>화면 캡처</td><td><code>docs/screens/v3-*</code>·<code>v4-*</code> 는 PR #2 화면 개편 <strong>전</strong> 화면입니다. 지금 화면은 MP4 나 새 캡처로 보여 줍니다</td></tr><tr><td><code>v3-11</code> 거절 캡처</td><td>입력칸에 찾기 질문 문장이 보이므로 쓰면 반드시 가림</td></tr><tr><td>1차 영상(2분)</td><td>샷 리스트·자막은 <code>tools/demo/README.md</code> 「2분 영상 샷 리스트와 자막」. 덱 2쪽 흐름과 같은 순서</td></tr><tr><td>출처 줄</td><td>숫자 옆 출처 파일 경로 유지</td></tr><tr><td>저장소 주소</td><td><a href="https://github.com/codyssey-EasyPeasy/boan-yebo">https://github.com/codyssey-EasyPeasy/boan-yebo</a></td></tr></tbody></table></div>
+<div class="tw"><table><thead><tr><th>항목</th><th>확인할 내용</th></tr></thead><tbody><tr><td>팀 발표 PDF(17쪽, 김시현 작성)</td><td><strong>1~11쪽만 기준</strong>(표지·노출 세 갈래·사례·문제 정의·흐름·핵심 기능·아키텍처·역할·기술 스택·결과·기대 효과와 로드맵). <strong>12~17쪽은 템플릿 잔여 내용이라 쓰지 않음</strong>(92.4%·87.6% 같은 수치, 이미지 메타데이터 검사, 타임스탬프·해시 증거 보존, 연락처 자리 표시는 우리 것이 아님). 3쪽 사례는 '보도에 따르면'으로 말하고 출처([1] 연합뉴스 2026.09.02, [2] 대구여성의전화 2026.10.27)를 붙임. 9쪽 ⓕ '사전 보유 코드 확인 필요'는 <code>docs/SUBMISSION.md</code> ⓕ(해당 없음)로 대체. 11쪽의 Security Policy·Intent Classifier·Task Router·GPU Scheduler 는 <strong>계획</strong>이라고 말함</td></tr><tr><td><code>pt/index.html</code>(25장 발표판)</td><td>10쪽을 넘으므로 2차 발표 덱으로 그대로 쓰지 않습니다(1절). 쓸 문구만 1차 제출본 범위 안에서 옮깁니다</td></tr><tr><td>레드팀 수치</td><td>덱·차트에 '5.4% → 2.7%'가 남아 있으면 0-12 값으로 바꾸거나 생략. <code>docs/evidence/charts/redteam-asr.svg</code> 는 판정기 집계라 단독으로 쓰지 않음('정의대로 5/112 = 4.5%(2026-10-31), 현재 배포본 3/84, 개선 주장 안 함' 캡션과 함께만)</td></tr><tr><td>가드 35/35·0/25</td><td>'조정 세트' 단서</td></tr><tr><td>정보보호 낱말</td><td>표지·1쪽 헤드라인에 '개인정보'·'정보보호'가 있는지(주제 적합성)</td></tr><tr><td>화면 캡처</td><td><code>docs/screens/v3-*</code>·<code>v4-*</code> 는 PR #2 화면 개편 <strong>전</strong> 화면입니다. 지금 화면은 MP4 나 새 캡처로 보여 줍니다</td></tr><tr><td><code>v3-11</code> 거절 캡처</td><td>입력칸에 찾기 질문 문장이 보이므로 쓰면 반드시 가림</td></tr><tr><td>1차 영상(2분)</td><td>샷 리스트·자막은 <code>tools/demo/README.md</code> 「2분 영상 샷 리스트와 자막」. 덱 2쪽 흐름과 같은 순서</td></tr><tr><td>출처 줄</td><td>숫자 옆 출처 파일 경로 유지</td></tr><tr><td>저장소 주소</td><td><a href="https://github.com/codyssey-EasyPeasy/boan-yebo">https://github.com/codyssey-EasyPeasy/boan-yebo</a></td></tr></tbody></table></div>
 </main>
 </body>
 </html>
