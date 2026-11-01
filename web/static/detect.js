@@ -27,6 +27,8 @@
         return '차량번호 가림';
       case '이메일':
         return '이메일 가림';
+      case '생활권':
+        return '반복 방문·집/학교/직장과의 관계를 지우고 장소를 비식별 표현으로 대체';
       default:
         return '비식별 처리';
     }
@@ -51,11 +53,39 @@
     ];
   }
 
+  // 장소 이름만으로는 표시하지 않는다. 같은 문장 안에서 개인의 거주·통학·출퇴근·
+  // 반복 방문과 연결된 시설만 생활권 단서로 취급한다.
+  function contextualSpans(text) {
+    var out = [];
+    var places = [
+      /(?:[가-힣○]{2,}(?:역|시장|동|아파트|캠퍼스)\s*(?:\d+번\s*출구\s*)?(?:앞|옆|입구|지하)?\s*)?[가-힣○]{2,}(?:마트|카페|미용실|공원|병원|의원|복지관|아동센터|태권도장|교회|필라테스|주차장)(?:\s*○○점)?/g,
+      /[가-힣○]{2,}동\s+[가-힣○]{2,}센터\s*옆\s*공원/g,
+      /[가-힣○]{2,}(?:필라테스|교회)(?:\s*○○점|\(가명\))?/g
+    ];
+    var personal = /피해자|고소인|원고|신청인|진술인|진정인|청구인|자녀|아들|딸|저는|제가|제|내|우리/;
+    var routine = /매일|매주|평일|주로|자주|반복|출퇴근|등하교|통학|출근|퇴근|하원|방과\s*후|들르|방문|다니|산책|공부|주차|귀가|데려다|일을\s*마치/;
+    var relation = /집\s*(?:근처|인근|앞|옆)|자택\s*(?:근처|인근)|거주지\s*(?:근처|인근)|도보\s*\d+분|학교\s*(?:근처|앞|옆|주변)|직장\s*(?:근처|앞|옆|주변)|캠퍼스\s*앞|아파트\s*지하|주소.{0,45}(?:병원|의원)/;
+    for (var p = 0; p < places.length; p++) {
+      var m;
+      while ((m = places[p].exec(text)) !== null) {
+        if (/병원$/.test(m[0]) && /.{0,20}근무/.test(text.slice(m.index + m[0].length, m.index + m[0].length + 25))) continue;
+        var left = Math.max(text.lastIndexOf('.', m.index - 1), text.lastIndexOf('。', m.index - 1), text.lastIndexOf('\n', m.index - 1)) + 1;
+        var right = text.indexOf('.', m.index);
+        if (right === -1) right = text.length;
+        var context = text.slice(left, right);
+        if (!personal.test(context) || !(routine.test(context) || relation.test(context))) continue;
+        out.push({ start: m.index, end: m.index + m[0].length, label: '생활권', text: m[0], priority: 20,
+          risk_type: 'routine_location', reason: routine.test(context) ? '개인의 반복 이동·방문과 연결됨' : '거주지·학교·직장과의 관계가 드러남' });
+      }
+    }
+    return out;
+  }
+
   function detectSpans(text) {
     if (typeof text !== 'string' || text.length === 0) return [];
 
     var patterns = buildPatterns();
-    var candidates = [];
+    var candidates = contextualSpans(text);
 
     for (var p = 0; p < patterns.length; p++) {
       var label = patterns[p][0];
@@ -110,6 +140,10 @@
         text: sp.text,
         suggestion: suggestFor(sp.label, sp.text)
       });
+      if (sp.risk_type) {
+        out[out.length - 1].risk_type = sp.risk_type;
+        out[out.length - 1].reason = sp.reason;
+      }
     }
     return out;
   }
