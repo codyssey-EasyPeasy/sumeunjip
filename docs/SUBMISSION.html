@@ -511,7 +511,7 @@ svg text{font-family:Pretendard,"Noto Sans KR","NanumGothic",sans-serif}
     <tr><td><b>이미 배포·실측됨</b></td><td>대회 서버 2대에 배포(앱·웹 <code>993db4f</code>, GPU <code>642e5e1</code>, 06:03 <code>b7c7e1f</code> 6파일). L4 1장에 모델 4종(19,648/23,034MiB, <code>deploy-2026-11-01.md</code>)</td></tr>
     <tr><td><b>용량·비용(실측 기반)</b></td><td>품질을 지키는 동시 2에서 L4 1장 <b>시간당 약 200세션</b>. NCP 공공기관용 정가로 약 140만 원/월(약 1,943원/시간, GPU 서버 83%), 꽉 찰 때 <b>세션당 약 9.7원</b>·약 2.2만 토큰. 늘 꽉 차지는 않으므로 실제 단가는 이용량으로 정해짐(<code>docs/COST_LATENCY.md</code> §3-3)</td></tr>
     <tr><td><b>GPU 없이도 핵심 동작</b></td><td>진단은 규칙 엔진(CPU 0.005초). GPU 가 없으면 검색은 BM25, LLM 기능은 숨기고 체크박스로 계속</td></tr>
-    <tr><td><b>서버 삭제 뒤 재현</b></td><td>대회 서버는 2026-11-01 13:00 삭제. 이후 <code>README.md</code> 실행 절(NVIDIA GPU) 또는 모의 GPU 서버 <code>tools/mock_gpu.py</code>. 서버 판본은 <code>docs/evidence/repro-2026-11-01.md</code>에 보존</td></tr>
+    <tr><td><b>서버 밖 재현</b></td><td>대회 서버는 11/2 2차 심사까지 유지(운영 측의 '2026-11-01 13:00 삭제' 안내는 오기로 확인). 대회 VPN 밖에서는 <code>README.md</code> 실행 절(NVIDIA GPU) 또는 모의 GPU 서버 <code>tools/mock_gpu.py</code>. 서버 판본은 <code>docs/evidence/repro-2026-11-01.md</code>에 보존</td></tr>
     <tr><td><b>법적 경계 반영</b></td><td>무료·일반 법률정보 안내로 한정(변호사법 제109조 검토), AI 문장에 'AI 생성' 표시(인공지능기본법 제31조 제2항), 위치 권한 요청 없음</td></tr>
   </table>
 

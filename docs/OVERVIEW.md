@@ -1,8 +1,8 @@
 # 보안 예보 — 서비스 설명서
 
 > 2026 해커톤 주제 02 · AI 기반 정보보호 서비스 · 팀 EasyPeasy · 저장소 https://github.com/codyssey-EasyPeasy/boan-yebo (branch `main`)
-> 기준: 2026-11-01 오전(최신은 `git log -1 -- docs/OVERVIEW.md`). 배포본은 **앱·웹 `993db4f`(2026-11-01 04:14 KST 배포), GPU 서버 `642e5e1`, 그리고 06:03 KST 에 `b7c7e1f` 의 가드·지식표·조문 파일 6개**(`docs/architecture.md` 머리말, `docs/evidence/deploy-2026-11-01.md`).
-> 대회 서버는 **2026-11-01 13:00 에 삭제**됩니다. 그 뒤에는 GPU 없는 로컬 모드(`docs/LOCAL_DEV.md`)나 직접 구성(`README.md`, `docs/evidence/repro-2026-11-01.md`)으로만 띄울 수 있습니다.
+> 기준: 2026-11-01 오전(최신은 `git log -1 -- docs/OVERVIEW.md`). 배포본은 **09:40 KST PR #4 통합본 `6d08c6a`(앱·웹·가드), 06:03 KST `b7c7e1f` 의 지식표·조문, GPU 서버 `642e5e1` + 가드 사본** — 런타임 파일은 main 과 같습니다(`docs/architecture.md` 머리말, `docs/evidence/deploy-2026-11-01.md`).
+> 대회 서버는 **11/2 2차 심사까지 유지**됩니다(운영 측의 '2026-11-01 13:00 삭제' 안내는 오기로 확인, 2026-11-01 밤 접속 확인, 그 뒤 유지 여부는 미확인). 서버는 대회 SSL-VPN 으로만 닿으므로, 서버 없이 띄우려면 GPU 없는 로컬 모드(`docs/LOCAL_DEV.md`)나 직접 구성(`README.md`, `docs/evidence/repro-2026-11-01.md`)을 씁니다.
 > 그림 포함 판: `docs/OVERVIEW.html` (브라우저로 열기, 인쇄 가능)
 
 이 문서는 **서비스가 무엇이고 어떻게 동작하는지**를 한곳에 정리한 설명서입니다. 다른 문서와의 관계는 아래와 같습니다.
@@ -290,7 +290,7 @@
 
 ## 6. 사용자 이용 절차
 
-화면은 PR #2(팀원 김시현) 병합판, 배포본 앱·웹 `993db4f` 기준입니다(`docs/SPEC.md` §11.11, `web/index.html`, `web/static/app.js`).
+화면은 PR #2(팀원 김시현) 병합판, 배포본 앱·웹 `6d08c6a`(PR #4 포함) 기준입니다(`docs/SPEC.md` §11.11, `web/index.html`, `web/static/app.js`).
 
 ### 단계 1. 들어오면 — 안전 안내 팝업
 - 들어올 때마다 **'시작하기 전에 확인해 주세요' 팝업**이 뜹니다. 방문 기록을 기기에 남기지 않으려고 '이미 봤음'을 저장하지 않기 때문입니다(브라우저 저장소를 쓰지 않음).
