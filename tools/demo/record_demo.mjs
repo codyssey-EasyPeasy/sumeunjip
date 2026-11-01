@@ -7,23 +7,27 @@
 // 선택 인자
 //   --scenario PATH   시나리오(기본: 이 폴더의 scenario.json)
 //   --stub-exit       빠른 나가기 이동처(google)를 로컬 스텁으로 바꾼다(리허설용. 실제 녹화에는 쓰지 않는다)
+//   --exit-card       빠른 나가기 이동처는 그대로 두고, 구글 로봇 확인 화면 대신 실제 이동 주소를 보여 주는 안내 화면으로 바꾼다(제출 녹화용)
 //   --ffmpeg PATH     ffmpeg 실행 파일(기본: $FFMPEG, 없으면 uv 로 imageio-ffmpeg 에서 찾는다)
 //   --no-mp4          webm 만 남긴다
 //   --headed          창을 띄워서 실행(녹화도 함께)
 //   --only a,b        해당 단계만 실행(디버그용, 녹화 길이 검사는 그대로)
 //   --pace X          모든 dwellMs 에 X 를 곱한다(예: 1.2 = 20% 더 오래 보여 줌). 전체 길이 조절용
 //
-// 캡션 띠·강조 고리는 녹화 화면에만 덧씌운 요소다(page.evaluate 로 주입, 앱에는 없다).
+// 캡션 띠·강조 고리·대기 표시는 녹화 화면에만 덧씌운 요소다(page.evaluate 로 주입, 앱에는 없다).
+// 캡션 띠는 앱의 고정 도움 줄(.help-footer) 바로 위에 놓아 그 줄(1366·132·112)을 가리지 않는다.
+// '맨 위로' 버튼(#scroll-top)은 녹화 화면에서만 주입 CSS 로 숨긴다(앱 코드는 그대로).
 // 입력은 scenario.json 의 합성 문장만 쓴다.
 
 import { chromium } from 'playwright-core';
 import { readFileSync, mkdirSync, writeFileSync, renameSync, existsSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { dirname, resolve, join } from 'node:path';
+import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
-const DEFAULT_OUT = '/tmp/claude-1000/-home-ashofrondol/7682b48e-686a-4a42-9902-a98bf6b1332d/scratchpad/demo';
+const DEFAULT_OUT = join(tmpdir(), 'sumeunjip-demo');   // 저장소 밖. 영상은 커밋하지 않는다
 
 // ---------------------------------------------------------------- args
 function parseArgs(argv) {
@@ -37,12 +41,13 @@ function parseArgs(argv) {
     else if (k === '--out') a.out = resolve(v());
     else if (k === '--check') a.check = true;
     else if (k === '--stub-exit') a.stubExit = true;
+    else if (k === '--exit-card') a.exitCard = true;
     else if (k === '--no-mp4') a.mp4 = false;
     else if (k === '--headed') a.headed = true;
     else if (k === '--ffmpeg') a.ffmpeg = v();
     else if (k === '--only') a.only = v().split(',');
     else if (k === '--pace') a.pace = parseFloat(v());
-    else if (k === '-h' || k === '--help') { console.log(readFileSync(fileURLToPath(import.meta.url), 'utf8').split('\n').slice(1, 18).join('\n')); process.exit(0); }
+    else if (k === '-h' || k === '--help') { console.log(readFileSync(fileURLToPath(import.meta.url), 'utf8').split('\n').slice(1, 20).join('\n')); process.exit(0); }
     else { console.error('unknown arg: ' + k); process.exit(64); }
   }
   if (a.check) a.stubExit = true;
@@ -129,6 +134,10 @@ async function findAll(scope, key, timeout = 3000, optional = false) {
 async function overlay(page) {
   await page.evaluate(() => {
     if (document.getElementById('__demo_cap')) return;
+    const st = document.createElement('style');
+    st.id = '__demo_style';
+    st.textContent = '#scroll-top,.scroll-top{display:none!important}';
+    (document.head || document.documentElement).appendChild(st);
     const cap = document.createElement('div');
     cap.id = '__demo_cap';
     cap.setAttribute('aria-hidden', 'true');
@@ -141,8 +150,24 @@ async function overlay(page) {
     num.style.cssText = 'flex:none;background:#f59e0b;color:#111;border-radius:999px;padding:4px 16px;font-size:24px;font-weight:800';
     const txt = document.createElement('span');
     txt.id = '__demo_txt';
-    cap.append(num, txt);
+    const col = document.createElement('span');
+    col.style.cssText = 'display:flex;flex-direction:column;gap:6px;min-width:0';
+    const sub = document.createElement('span');
+    sub.id = '__demo_sub';
+    sub.style.cssText = 'display:none;font-size:24px;font-weight:600;color:#fcd34d';
+    col.append(txt, sub);
+    cap.append(num, col);
     document.documentElement.appendChild(cap);
+    // 고정 도움 줄 위에 띠를 놓는다. 화면 확대(zoom)·창 크기가 바뀌어도 따라가게 주기적으로 다시 잰다.
+    const place = () => {
+      const f = document.querySelector('.help-footer');
+      const r = f && getComputedStyle(f).display !== 'none' ? f.getBoundingClientRect() : null;
+      const off = r && r.height > 0 ? Math.max(0, Math.round(window.innerHeight - r.top)) : 0;
+      cap.style.bottom = off + 'px';
+    };
+    place();
+    window.__demoPlace = place;
+    setInterval(place, 400);
     const ring = document.createElement('div');
     ring.id = '__demo_ring';
     ring.setAttribute('aria-hidden', 'true');
@@ -161,6 +186,15 @@ async function caption(page, text, n) {
     if (tx) tx.textContent = t;
     if (nm) nm.textContent = n;
   }, [text, n]).catch(() => {});
+}
+// 응답을 기다리는 동안 캡션 아래 줄에 대기 표시를 띄운다(빈 문자열이면 숨김).
+async function waitNote(page, text) {
+  await page.evaluate((t) => {
+    const s = document.getElementById('__demo_sub');
+    if (!s) return;
+    s.textContent = t || '';
+    s.style.display = t ? 'block' : 'none';
+  }, text || '').catch(() => {});
 }
 async function ring(page, loc, ms = 900) {
   const b = await loc.boundingBox().catch(() => null);
@@ -208,10 +242,13 @@ async function typeInto(loc, text) {
   else await loc.fill(text);
 }
 // 응답을 기다리며 클릭한다(고정 sleep 대신).
-async function clickAndWait(page, loc, apiPath, timeout) {
+// note 가 있으면 클릭 뒤 응답이 올 때까지 캡션 아래 줄에 대기 표시를 띄운다.
+async function clickAndWait(page, loc, apiPath, timeout, note) {
   const resp = page.waitForResponse((r) => r.url().includes(apiPath) && r.request().method() === 'POST', { timeout });
   await click(page, loc);
-  const r = await resp;
+  if (note) await waitNote(page, note);
+  let r;
+  try { r = await resp; } finally { if (note) await waitNote(page, ''); }
   if (!r.ok()) throw new Error(apiPath + ' http ' + r.status());
   return r;
 }
@@ -229,14 +266,19 @@ async function waitText(loc, re, timeout) {
 function stepDefs(page, ctxState) {
   return {
     async intro(T) {
-      await find(page, 'safetyNotice', { optional: true, timeout: 2500 });
+      // 팝업을 먼저 보여 주고(약 2.5초) 닫은 뒤, 어두운 배경이 걷힌 화면에서 긴급 연락처·빠른 나가기를 강조한다.
+      const notice = await find(page, 'safetyNotice', { optional: true, timeout: 2500 });
+      if (notice) {
+        await sleep(T.popupMs);
+        const close = await find(page, 'safetyClose', { optional: true, timeout: 1000 });
+        if (close) { await click(page, close); await sleep(500); }
+      }
       const em = await find(page, 'emergency', { timeout: 3000 });
+      await show(em, 'center');
       await ring(page, em, 1600);
       const qe = await find(page, 'quickExit');
       await ring(page, qe, 1800);
       await sleep(T.dwell);
-      const close = await find(page, 'safetyClose', { optional: true, timeout: 1000 });
-      if (close) { await click(page, close); await sleep(400); }
     },
     async intake(T) {
       const tab = await find(page, 'tabDiagnose', { optional: true, timeout: 1000 });
@@ -310,7 +352,7 @@ function stepDefs(page, ctxState) {
       const inp = await find(card, 'askInput', { timeout: 2000 });
       await typeInto(inp, IN.askQuestion);
       const sb = await find(card, 'askSubmit');
-      await clickAndWait(page, sb, '/api/answer', T.budget);
+      await clickAndWait(page, sb, '/api/answer', T.budget, T.waitCaption);
       const out = await find(card, 'askOut', { visible: false });
       const done = await find(out, 'answerDone', { timeout: 4000 });
       await show(done, 'center');
@@ -337,7 +379,7 @@ function stepDefs(page, ctxState) {
     },
     async rewrite(T) {
       const b = await find(page, 'docRewrite', { timeout: 2000 });
-      await clickAndWait(page, b, '/api/rewrite', T.budget);
+      await clickAndWait(page, b, '/api/rewrite', T.budget, T.waitCaption);
       const res = await find(page, 'rewriteResult', { timeout: 4000 });
       await show(res, 'start');
       await sleep(T.dwell);
@@ -428,6 +470,19 @@ async function main() {
       body: '<!doctype html><meta charset="utf-8"><title>날씨 - 검색</title><body style="font:20px sans-serif;padding:40px">' +
         '<p style="color:#888">(리허설 스텁 — 실제 녹화에서는 구글 날씨 검색 화면)</p><h1>날씨</h1></body>',
     }));
+  } else if (args.exitCard) {
+    // 헤드리스 녹화 환경에서는 구글이 로봇 확인 화면(접속 IP 표시)을 띄운다. 구글 화면을 흉내 내지 않고
+    // 실제로 요청된 이동 주소만 보여 준다. 앱의 빠른 나가기 동작(화면 지우기 → location.replace)은 그대로다.
+    await context.route(/https:\/\/www\.google\.[a-z.]+\/.*/, (route) => {
+      const u = route.request().url().replace(/[<>&"]/g, '');
+      route.fulfill({
+        status: 200, contentType: 'text/html; charset=utf-8',
+        body: '<!doctype html><meta charset="utf-8"><title>날씨 - 검색</title><body style="font:28px sans-serif;padding:80px;color:#222">' +
+          '<p>빠른 나가기로 이동한 주소</p><p style="font-size:26px;color:#1a0dab;word-break:break-all">' + decodeURI(u) + '</p>' +
+          '<p style="font-size:20px;color:#666;margin-top:40px">녹화 환경(자동 브라우저)에서는 구글이 로봇 확인 화면을 띄워 이동 주소만 표시합니다. ' +
+          '실제 브라우저에서는 이 주소의 구글 \'날씨\' 검색 결과가 열립니다.</p></body>',
+      });
+    });
   }
   const t0 = Date.now();
   const page = await context.newPage();
@@ -458,7 +513,8 @@ async function main() {
       let timer;
       try {
         await Promise.race([
-          defs[s.id]({ dwell: args.check ? 0 : Math.round((s.dwellMs || 0) * args.pace), budget: budgetMs }),
+          defs[s.id]({ dwell: args.check ? 0 : Math.round((s.dwellMs || 0) * args.pace), budget: budgetMs,
+            popupMs: args.check ? 0 : (s.popupMs || 0), waitCaption: s.waitCaption || '' }),
           new Promise((_, rej) => { timer = setTimeout(() => rej(new Error(`step ${s.id} exceeded ${budgetMs / 1000}s`)), budgetMs); }),
         ]);
       } catch (e) {

@@ -26,6 +26,8 @@ SHORT_NAME: dict[str, str] = {
 
 # 같은 방문·같은 서식으로 함께 신청하는 항목: 원 항목의 통지 경고를 그대로 보여 준다.
 # A6(전입과 같은 방문에서 하는 제한 신청) → A1 의 서면 통지, A9(공시제한, A8 과 같은 서식) → A8 의 고지.
+# J15(전자장치 부착)는 물려받지 않고 지식표에 자기 경고를 둔다: 물려받으면 "'긴급응급조치' 신청과 함께 합니다"가
+# 붙는데, 전자장치 부착은 법원 잠정조치로만 할 수 있다(tools/build_knowledge.py NW_J15).
 NOTIFY_INHERIT: dict[str, str] = {"A6": "A1", "A9": "A8"}
 
 USER_FIELDS = ("path", "exposure", "measure", "timing", "where", "documents", "limits",

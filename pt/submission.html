@@ -98,8 +98,8 @@ pre.cmd .c{color:#9fb0c8}
   .slide{display:flex!important;position:relative;page-break-after:always;break-after:page;box-shadow:none;border-radius:0;width:1280px;height:720px}
   #nav,#bar{display:none}
 }
-table.ftab{font-size:12px;border:1px solid var(--line)}
-table.ftab th,table.ftab td{padding:4.5px 7px;line-height:1.32}
+table.ftab{font-size:11.5px;border:1px solid var(--line)}
+table.ftab th,table.ftab td{padding:3.4px 6px;line-height:1.28}
 table.ftab th{font-size:12px}
 table.ftab td.cat{background:var(--teal-soft);color:var(--teal);font-weight:800;vertical-align:middle;text-align:center;border-right:1px solid var(--line);font-size:11.5px}
 table.team td{padding:9px 10px}
@@ -107,262 +107,341 @@ table.team code,.slide code{font-family:ui-monospace,Menlo,Consolas,"DejaVu Sans
 .stat.sm .v{font-size:20px}.stat.sm .l{font-size:12px}
 .card.navy h3{color:#fff}
 .small code,.src code{font-family:ui-monospace,Menlo,Consolas,"DejaVu Sans Mono",Pretendard,"Noto Sans KR",monospace}
+.slide{word-break:keep-all;overflow-wrap:anywhere}
+.khead{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:8px}
+.khead .kicker{margin-bottom:0}
+.crit{flex:none;font-size:12.5px;font-weight:700;color:var(--sub);background:#f1f3f7;border:1px solid #d9dfe9;border-radius:99px;padding:3px 11px}
+.crit b{color:var(--navy)}
+h2.hl{font-size:29px;line-height:1.32;margin-bottom:16px}
+.case{background:var(--red-soft);border:1px solid #ecc2bd;border-radius:10px;padding:9px 14px;font-size:15px;line-height:1.45;margin-bottom:8px}
+.case .tag{float:right;margin:0 0 0 8px}
+.step .kn{font-size:13.5px;color:var(--teal);margin-top:6px;line-height:1.4;border-top:1px dashed var(--line);padding-top:6px}
+.band{margin-top:12px;background:var(--navy);color:#fff;border-radius:10px;padding:9px 14px;display:flex;gap:14px;flex-wrap:wrap;font-size:14px;align-items:center}
+.band b{color:#9fe0d6}
+.capbig{font-size:19px;font-weight:800;color:var(--navy);margin-top:10px;text-align:center;background:var(--amber-soft);border-radius:10px;padding:10px}
+.pipe{display:flex;align-items:stretch;gap:6px}
+.pipe i{align-self:center;color:var(--teal);font-weight:800;font-style:normal;font-size:20px}
+.pipe .nd{flex:1;border:1px solid var(--line);background:#fff;border-radius:10px;padding:12px 10px;text-align:center}
+.pipe .nd b{display:block;font-size:17px;color:var(--navy);margin-bottom:3px}
+.pipe .nd span{font-size:14px;line-height:1.35;color:var(--ink)}
+.pipe .nd em{display:inline-block;font-style:normal;font-size:11.5px;color:var(--amber);font-weight:700}
+.pipe .nd.own{background:var(--teal-soft);border-color:#9fd0c7}
+.pipe .nd.ext{background:var(--amber-soft);border-color:#efd3a8}
+.pipe .nd.key{outline:3px solid var(--teal);outline-offset:-1px}
+.sw{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-1px;margin-right:4px}
+.sw.own{background:var(--teal-soft);border:1px solid #9fd0c7}.sw.ext{background:var(--amber-soft);border:1px solid #efd3a8}
+.dec{display:flex;gap:10px;align-items:flex-start;background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 12px;margin-bottom:8px}
+.dec>b{flex:none;width:26px;height:26px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px}
+.dec p{font-size:15.5px;line-height:1.45}
+.synth{font-size:15px;font-weight:800;color:var(--red);margin-bottom:6px}
+.row-h{font-size:13px;font-weight:800;color:var(--sub);letter-spacing:.06em;margin:2px 0 4px}
+.bd{font-size:11.5px;font-weight:800;padding:1px 7px;border-radius:99px;vertical-align:4px;letter-spacing:0}
+.bd.hold{background:var(--teal);color:#fff}.bd.dev{background:var(--grey-soft);color:var(--sub)}.bd.tune{background:var(--amber-soft);color:var(--amber)}
+.layer{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+.layer b{display:block;font-size:16px;color:var(--navy);margin-bottom:2px}
+.layer b em{font-style:normal;font-size:12.5px;color:var(--sub);font-weight:600;margin-left:6px}
+.layer span{font-size:14px;line-height:1.45}
+.layer.gpu{background:var(--teal-soft);border-color:#9fd0c7}
+.ldown{text-align:center;color:var(--teal);font-weight:800;font-size:13px;line-height:1.6}
+.cflow{display:flex;gap:6px;align-items:stretch}
+.cflow>div{flex:1;background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 10px;font-size:15px;line-height:1.4;text-align:center}
+.cflow>div b{color:var(--navy)}
+.cflow>div.mid{background:var(--teal-soft);border-color:#9fd0c7}
+.cflow>div.back{flex:1.4;background:var(--amber-soft);border-color:#efd3a8}
+.cflow i{align-self:center;color:var(--teal);font-weight:800;font-style:normal}
+.pcard{padding:14px 16px}.pcard h3{font-size:18px;margin-bottom:6px}.pcard p{font-size:15px;line-height:1.5}
+.pcard .kpi{font-weight:800;color:var(--teal);margin-top:8px;font-size:16.5px!important}
+.pcard .cm{font-size:13px!important;color:var(--sub);margin-top:6px}
+.card.mini{padding:10px 13px}.card.mini h3{font-size:15.5px;margin-bottom:3px}.card.mini p{font-size:14px;line-height:1.45}
+.toc{display:flex;gap:8px;align-items:stretch}
+.toc>div{flex:1;background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;text-align:center;font-size:17px;line-height:1.4}
+.toc>div b{color:var(--navy)}
+.toc>div.goal{background:var(--navy);color:#fff;border-color:var(--navy);font-weight:700}
+.toc>div.goal span{font-size:12.5px;color:#f3c98f;font-weight:700}
+.toc i{align-self:center;color:var(--teal);font-weight:800;font-style:normal;font-size:20px}
+.card.gate{background:var(--red-soft);border-color:#ecc2bd;padding:10px 14px}
+.card.gate h3{font-size:17px;color:var(--red);margin-bottom:2px}
+.card.gate li{font-size:16px;margin:2px 0;line-height:1.45}
+.closing{margin-top:auto;display:flex;align-items:baseline;justify-content:space-between;gap:16px;border-top:2px solid var(--navy);padding-top:8px}
+.closing p{font-size:22px;font-weight:800;color:var(--navy)}
+.closing span{font-size:12.5px;color:var(--sub);text-align:right}
+table.road td{line-height:1.38}
 </style>
 </head>
 <body>
 <div id="bar"></div>
 <div id="stage"><div class="deck" id="deck">
 
+
 <!-- 1. 표지 -->
 <section class="slide title-slide">
   <div style="margin-top:auto">
     <div class="kicker">코디세이 AI 해커톤 2026 · 주제 02 · AI 기반 정보보호 서비스</div>
     <h1>보안 예보</h1>
-    <p class="sub" style="font-size:24px;margin-top:14px;line-height:1.5">피해자의 새 주소가 새는 경로를 진단하고<br>막는 제도를 근거와 함께 안내하는 <b style="color:#fff">피해자 본인용 AI 자가 점검 도구</b></p>
-    <p class="sub" style="font-size:22px;margin-top:22px;color:#fff"><b>EasyPeasy 팀</b> · 정세영 · 김시현 · 김대웅</p>
+    <p class="sub" style="font-size:27px;margin-top:16px;line-height:1.45;color:#fff;font-weight:700">가장 위험한 개인정보, 피해자의 새 주소가 새는<br>84개 경로를 먼저 진단하는 정보보호 AI</p>
+    <p class="sub" style="font-size:19px;margin-top:12px;line-height:1.5">해킹이 아니라 <b style="color:#fff">합법적인 행정·사법 절차로 새는 개인정보</b>를 막습니다</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:18px">
+      <span class="tag" style="background:rgba(255,255,255,.16);color:#fff;font-size:14px;padding:5px 12px">입력 저장 0</span>
+      <span class="tag" style="background:rgba(255,255,255,.16);color:#fff;font-size:14px;padding:5px 12px">서비스 실행 중 외부 AI 호출 0</span>
+      <span class="tag" style="background:rgba(255,255,255,.16);color:#fff;font-size:14px;padding:5px 12px">타인 위치 찾기 거절</span>
+    </div>
   </div>
   <div style="margin-top:auto">
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
-      <span class="tag" style="background:rgba(255,255,255,.15);color:#fff">ⓐ 문제·대상</span>
-      <span class="tag" style="background:rgba(255,255,255,.15);color:#fff">ⓑ 해결·기능</span>
-      <span class="tag" style="background:rgba(255,255,255,.15);color:#fff">ⓒ AI 기술·직접 개발</span>
-      <span class="tag" style="background:rgba(255,255,255,.15);color:#fff">ⓓ 개발 환경</span>
-      <span class="tag" style="background:rgba(255,255,255,.15);color:#fff">ⓔ 역할 분담</span>
-      <span class="tag" style="background:rgba(255,255,255,.15);color:#fff">ⓕ 외부 자원</span>
-      <span class="tag" style="background:rgba(255,255,255,.15);color:#fff">ⓖ 기대 효과·확장</span>
-    </div>
-    <p class="small" style="color:#bcd0e2">github.com/codyssey-EasyPeasy/sumeunjip · 최종 커밋은 제출 파일(EasyPeasy_소스코드.txt) 기준 · 모든 평가 수치는 합성 데이터 기준</p>
+    <p class="sub" style="font-size:21px;color:#fff"><b>EasyPeasy 팀</b> · 정세영 <span style="color:#bcd0e2;font-size:16px">백엔드·AI</span> · 김시현 <span style="color:#bcd0e2;font-size:16px">기획·법령조사·프런트</span> · 김대웅 <span style="color:#bcd0e2;font-size:16px">평가·보안·PT</span></p>
+    <p class="small" style="color:#bcd0e2;margin-top:8px">github.com/codyssey-EasyPeasy/sumeunjip</p>
   </div>
 </section>
 
 <!-- 2. ⓐ -->
 <section class="slide">
-  <div class="kicker">ⓐ 문제 정의 및 목표 사용자</div>
-  <h2 style="margin-bottom:16px">피신은 했지만, 주소는 서류를 타고 새어 나갑니다</h2>
-  <div class="grid2" style="grid-template-columns:1.05fr 1fr;gap:20px">
+  <div class="khead"><div class="kicker">ⓐ 문제 정의 및 목표 사용자</div><span class="crit">심사 ▸ <b>기획 구체성 · 기획 창의성</b></span></div>
+  <h2 class="hl">피신해도 새 주소는 해킹이 아니라 소장·결정문·통보서로 샙니다 — 공식 경로 84개 중 16개는 막을 제도조차 없습니다</h2>
+  <div class="grid2" style="grid-template-columns:1fr 1fr;gap:22px">
     <div>
-      <div class="grid2" style="gap:12px;margin-bottom:12px">
-        <div class="card red" style="padding:14px 16px"><h3 style="font-size:16px">2026.9 광주 <span class="tag r">보도</span></h3><p style="font-size:14px;line-height:1.5"><b>이혼 소장</b>으로 피신 주소가 드러난 뒤 살해. 주소 비공개 신청은 하지 않은 상태</p></div>
-        <div class="card red" style="padding:14px 16px"><h3 style="font-size:16px">2026.10 대구 <span class="tag r">보도</span></h3><p style="font-size:14px;line-height:1.5">잠정조치 결정문 가해자 주소란에 피해자 <b>새 주소</b>가 적혀 전달됨</p></div>
-      </div>
-      <div class="grid3" style="gap:10px;margin-bottom:12px">
-        <div class="stat"><div class="v">4.5만 건</div><div class="l">스토킹 신고 2025<br>(2024년 3.2만)</div></div>
-        <div class="stat"><div class="v">10.5만 건</div><div class="l">교제폭력 신고 2025<br>(2024년 8.8만)</div></div>
-        <div class="stat"><div class="v">3천여 건</div><div class="l">연 주민등록 열람제한<br>(가정폭력 상담 18~20만)</div></div>
-      </div>
-      <div class="card" style="padding:14px 18px">
-        <h3 style="font-size:16px">문제를 겪는 대상</h3>
+      <div class="case"><span class="tag r">보도</span><b>2026.9 광주</b> 이혼 <b>소장</b>으로 피신 주소가 드러난 뒤 살해 — 주소 비공개 신청은 안 한 상태</div>
+      <div class="case"><span class="tag r">보도</span><b>2026.10 대구</b> 잠정조치 <b>결정문</b> 가해자 주소란에 피해자 새 주소가 적혀 전달</div>
+      <div class="case"><span class="tag r">보도</span><b>2025.8 서울 강서</b> 경찰이 스토킹 <b>통보서</b>를 가해자 휴대전화로 오발송</div>
+      <p style="font-size:17px;font-weight:800;color:var(--red);margin:8px 0 12px">→ 셋 다 해킹이 아니라 서류로 샜습니다</p>
+      <div class="card" style="padding:12px 16px">
+        <h3 style="font-size:16px;margin-bottom:4px">목표 사용자</h3>
         <table class="tight" style="font-size:13.5px">
-          <tr><td style="width:24%"><b>1차 사용자</b></td><td>스토킹·가정폭력·교제폭력·성폭력 <b>피해자 본인</b> — 막 이사했거나 소송 중, 법률 비전문가, 기기를 감시당할 수 있음</td></tr>
-          <tr><td>2차 사용자</td><td>피해자의 가족·지인</td></tr>
-          <tr><td>다루지 않음</td><td>다른 사람의 위치를 <b>찾으려는</b> 사람 → 거절 + 보호 제도 안내</td></tr>
+          <tr><td style="width:23%"><b>1차</b></td><td>스토킹·가정폭력·교제폭력·성폭력 <b>피해자 본인</b> — 막 이사했거나 소송 중, 법률 비전문가, 기기를 감시당할 수 있음</td></tr>
+          <tr><td><b>2차</b></td><td>대신 찾아봐 주는 가족·지인</td></tr>
+          <tr><td><b>막는 사람</b></td><td>남의 위치를 <b>찾으려는</b> 사람 → 거절 + 보호 제도 안내</td></tr>
         </table>
       </div>
     </div>
     <div>
-      <div class="grid2" style="gap:10px;margin-bottom:12px">
-        <div class="stat teal"><div class="v">84</div><div class="l">주소가 드러날 수 있는 기록·절차 경로(6개 영역)</div></div>
-        <div class="stat amber"><div class="v">16</div><div class="l">막는 제도가 <b>없는</b> 경로 (+시행 예정 1)</div></div>
+      <div class="grid2" style="gap:12px;margin-bottom:12px">
+        <div class="stat teal" style="padding:12px 16px"><div class="v" style="font-size:46px">84</div><div class="l" style="font-size:14px"><b>유출 경로</b> — 새 주소가 드러날 수 있는 기록·절차(6개 영역)</div></div>
+        <div class="stat amber" style="padding:12px 16px"><div class="v" style="font-size:46px">16</div><div class="l" style="font-size:14px"><b>차단 통제 없음</b> — 막는 제도가 없는 경로 = 잔여 위험</div></div>
       </div>
-      <div class="card amber" style="padding:14px 18px">
-        <h3 style="font-size:16px">막는 제도가 있어도 새는 이유</h3>
-        <ul class="clean" style="margin-top:4px">
-          <li style="font-size:14.5px"><b>신청주의</b> — 신청해야만 작동, 법원 사전 안내 의무 없음 (민사소송법 제163조 제2항)</li>
-          <li style="font-size:14.5px"><b>유형별 공백</b> — 교부 제한·보호명령은 가정폭력 전용. 비가족 스토킹·교제폭력엔 없음</li>
-          <li style="font-size:14.5px"><b>역노출</b> — 제한을 신청하면 그 사실이 가해자에게 통지 (주민등록법 제29조 제7항 후단 등)</li>
+      <div class="card amber" style="padding:12px 16px;margin-bottom:12px">
+        <h3 style="font-size:16px;margin-bottom:2px">통제가 있어도 기본값은 '노출'</h3>
+        <ul class="clean">
+          <li style="font-size:14.5px;margin:3px 0"><b>신청주의</b> — 신청해야만 작동, 미리 안내할 의무 없음</li>
+          <li style="font-size:14.5px;margin:3px 0"><b>유형별 공백</b> — 교부 제한·보호명령은 가정폭력 전용</li>
+          <li style="font-size:14.5px;margin:3px 0"><b>역노출</b> — 제한을 신청하면 그 사유가 가해자에게 통지</li>
         </ul>
       </div>
-      <p class="src" style="margin-top:10px">사례·통계: 경인일보·경북매일·헤럴드경제·서울신문 보도, <code>research/2026-10-31-정보조사.md</code> 5절(보도 기준, 원자료 미확인). 원인: 같은 문서 1절. 84·16: <code>data/knowledge.json</code>. 대상 변경: 상담사용 → 피해자 본인(<code>docs/SPEC.md</code> §7)</p>
+      <div class="stat" style="padding:10px 16px;display:flex;align-items:center;gap:14px"><div class="v" style="white-space:nowrap">43.9만 건</div><div class="l" style="font-size:14px">관계성 범죄 신고, 2025년 — 전년 대비 +23.1%</div></div>
     </div>
   </div>
-  <div class="foot"><span>보안 예보 · 제출 요약</span><span>1쪽 · ⓐ</span></div>
+  <p class="src" style="margin-top:auto">사례: 경인일보·경북매일·YTN 보도 · 신고 통계: 성평등가족부·경찰청 공동 발표(2026-05-18) · 84·16: 자체 법령 조사 지식표(법령 원문 대조) · 상세 출처 docs/SUBMISSION.md ⓐ</p>
+  <div class="foot"><span>보안 예보</span><span>1쪽 · ⓐ</span></div>
 </section>
 
 <!-- 3. ⓑ 개요 -->
 <section class="slide">
-  <div class="kicker">ⓑ 해결 방안 및 주요 기능 (1/2)</div>
-  <h2 style="margin-bottom:12px">피해자가 직접 쓰는 '주소 노출 점검표'</h2>
-  <p style="font-size:17px;margin-bottom:16px">이름·주소 없이 상황만 고르거나 말로 적으면, <b>새 주소가 샐 수 있는 경로</b>와 <b>그 경로를 막는 제도</b>를 근거 조문·신청처·서류·통지 경고와 함께 <b>급한 순서</b>로 보여 줍니다.</p>
-  <div class="flow" style="margin-bottom:16px">
-    <div class="step" style="padding:14px"><div class="n">1</div><h3>안전 확인</h3><p>긴급 연락처, 시크릿 창 권장, 빠른 나가기 위치</p></div>
+  <div class="khead"><div class="kicker">ⓑ 해결 방안 및 주요 기능 (1/2)</div><span class="crit">심사 ▸ <b>기획 구체성 · 실용 가능성</b></span></div>
+  <h2 class="hl">이름도 주소도 묻지 않습니다 — 상황만 고르면 새 주소의 유출 경로와 막을 제도를 급한 순서로 보여 줍니다</h2>
+  <div class="flow" style="margin-bottom:12px">
+    <div class="step" style="padding:12px 14px"><div class="n">1</div><h3 style="margin-bottom:4px">안전 확인</h3><p>안전 안내 팝업, 긴급 띠 112·1366·132</p><p class="kn">감시당하는 기기일 수 있다 → <b>빠른 나가기</b></p></div>
     <div class="arrow">→</div>
-    <div class="step" style="padding:14px"><div class="n">2</div><h3>상황 입력</h3><p>유형 + 상황 체크, 또는 말로 적기 → AI 미리 선택 → <b>본인 확인</b></p></div>
+    <div class="step" style="padding:12px 14px"><div class="n">2</div><h3 style="margin-bottom:4px">상황 고르기</h3><p>체크하거나 말로 적기 → AI 가 미리 고름 → <b>본인 확인</b></p><p class="kn">무엇을 말해야 할지 몰랐다 → <b>상황만 고르면 됨</b></p></div>
     <div class="arrow">→</div>
-    <div class="step" style="padding:14px"><div class="n">3</div><h3>진단 결과</h3><p>급한 순서 체크리스트, 통지 경고 확인, 잔여 위험, 인쇄</p></div>
+    <div class="step" style="padding:12px 14px"><div class="n">3</div><h3 style="margin-bottom:4px">진단</h3><p>'지금 먼저 할 일', 카드는 위험 → 도움, 통지 경고</p><p class="kn">어디서 샐지 몰랐다 → <b>경로와 순서를 앎</b></p></div>
     <div class="arrow">→</div>
-    <div class="step" style="padding:14px"><div class="n">4</div><h3>서류 점검</h3><p>위치 단서 표시, 안전한 문장 제안</p></div>
+    <div class="step" style="padding:12px 14px"><div class="n">4</div><h3 style="margin-bottom:4px">서류 점검</h3><p>제출할 초안의 위치 단서 표시, 안전한 문장 제안</p><p class="kn">내 서류가 주소를 흘렸다 → <b>내기 전에 지움</b></p></div>
   </div>
   <table class="tight" style="font-size:14px">
-    <tr><th style="width:20%">핵심 기능</th><th>하는 일</th><th style="width:17%">AI</th></tr>
-    <tr><td><b>① 노출 경로 진단</b></td><td>피해 유형 4 + 상황 항목 30 → 84개 경로 중 해당하는 것을 급한 순서로, '지금 먼저 할 일' 최대 5건</td><td>안 씀 (규칙 엔진)</td></tr>
-    <tr><td><b>② 막는 제도 안내</b></td><td>근거 조문(시행일)·신청처·서류·한계·확인 수준. 통지되는 제도는 <b>확인 체크 뒤에만</b> 신청 방법. 잔여 위험 따로</td><td>안 씀</td></tr>
-    <tr><td><b>③ 말로 설명하기</b></td><td>자유 서술 → 체크 항목 미리 선택. 주입 지시문 제거, 근거 낱말 없는 항목 버림</td><td>내부 LLM</td></tr>
-    <tr><td><b>④ 근거 답</b></td><td>지식표·공개 조문만으로 답. 생성 → 문장별 검증 → 1회 재생성 → 원문 발췌</td><td>내부 LLM + 재순위</td></tr>
-    <tr><td><b>⑤ 서류 점검·다시 쓰기</b></td><td>주소·학교·직장·차량·전화 단서 표시(1단계는 브라우저 안에서만), 원문과 정렬되는 안전한 문장 제안</td><td>규칙 + GLiNER + LLM</td></tr>
-    <tr><td><b>⑥ 안전 장치</b></td><td>빠른 나가기(버튼·Esc 두 번), 2단 가드(타인 찾기 거절 + 보호 대안 + 1366·132·112), 입력 저장 0</td><td>규칙 + 임베딩</td></tr>
+    <tr><th style="width:21%">핵심 기능</th><th>하는 일</th><th style="width:31%">판단 주체</th></tr>
+    <tr><td><b>① 노출 경로 진단</b></td><td>피해 유형 4 + 상황 30 → 84개 경로 중 해당하는 것을 급한 순서로</td><td><b>결정적 규칙</b> (의도적: 틀리면 위험한 판단은 AI 배제)</td></tr>
+    <tr><td><b>② 막는 제도 안내</b></td><td>근거 조문(시행일)·신청처·서류. 통지되는 제도는 <b>확인 체크 뒤에만</b> 신청 방법</td><td><b>결정적 규칙</b> (같은 입력 → 같은 결과)</td></tr>
+    <tr><td><b>③ 말로 설명하기</b></td><td>자유 서술 → 체크 항목 미리 선택(JSON 스키마)</td><td>자체 호스팅 LLM 제안 → <b>본인이 확정</b></td></tr>
+    <tr><td><b>④ 근거 답</b></td><td>공개 조문만으로 설명, 문장마다 근거 확인, 실패 시 원문 발췌</td><td>LLM 설명 + 근거 검증 통과분만</td></tr>
+    <tr><td><b>⑤ 서류 점검·다시 쓰기</b></td><td>주소·학교·직장·차량·전화 단서(1단계는 브라우저 안에서만)</td><td>규칙 + 개체명 모델 + LLM</td></tr>
+    <tr><td><b>⑥ 안전 장치</b></td><td>빠른 나가기(버튼·Esc 두 번)·긴급 띠·찾기 질문 거절 + 보호 대안</td><td>규칙 + 임베딩 신호(2단 가드)</td></tr>
   </table>
-  <div class="foot"><span>출처: docs/OVERVIEW.md 5–7절 · docs/SPEC.md §11 · app/engine.py</span><span>2쪽 · ⓑ</span></div>
+  <div class="band"><b>안전 설계 4원칙</b><span>① 감시당하는 기기 전제(저장 0·빠른 나가기)</span><span>② 역노출 방지(통지 경고 확인 뒤 신청 방법)</span><span>③ 찾기 거절 + 보호 대안</span><span>④ 막는 법만, 찾는 법은 말하지 않음</span></div>
+  <p style="font-size:16px;font-weight:800;color:var(--teal);margin-top:10px">→ AI 가 틀려도 권할 제도는 바뀌지 않습니다</p>
+  <div class="foot"><span>상세: docs/SUBMISSION.md ⓑ</span><span>2쪽 · ⓑ</span></div>
 </section>
 
 <!-- 4. ⓑ 화면 -->
 <section class="slide">
-  <div class="kicker">ⓑ 해결 방안 및 주요 기능 (2/2)</div>
-  <h2 style="margin-bottom:14px">배포본 화면 (합성 입력)</h2>
-  <div class="grid3" style="gap:16px">
-    <div><div class="shot" style="height:200px"><img src="../docs/screens/v3-02-intake-prefill-confirm.png" alt="" style="width:100%"></div><p class="cap"><b>③</b> AI 가 미리 고른 항목 — 본인 확인 뒤 제출</p></div>
-    <div><div class="shot" style="height:200px"><img src="../docs/screens/v3-03-diagnose-top.png" alt="" style="width:100%"></div><p class="cap"><b>①②</b> 진단 결과 '지금 먼저 할 일'</p></div>
-    <div><div class="shot" style="height:200px"><img src="../docs/screens/v3-04-notify-before-confirm.png" alt="" style="width:100%"></div><p class="cap"><b>②</b> 통지 경고 — 확인 체크 전엔 신청 방법이 가려짐</p></div>
-    <div><div class="shot" style="height:200px"><img src="../docs/screens/v4-07-answer-generated.png" alt="" style="width:100%"></div><p class="cap"><b>④</b> 근거 답 — 'AI 생성 + 문장별 근거 확인'</p></div>
-    <div><div class="shot" style="height:200px"><img src="../docs/screens/v3-09-doccheck-tier1-tier2.png" alt="" style="width:100%"></div><p class="cap"><b>⑤</b> 서류 점검 — 단서 색칠과 바꾸는 방법</p></div>
-    <div><div class="shot" style="height:200px"><img src="../docs/screens/v3-10-rewrite-before-after.png" alt="" style="width:100%"></div><p class="cap"><b>⑤</b> 다시 쓰기 — 원래 문장 / 바꾼 문장</p></div>
+  <div class="khead"><div class="kicker">ⓑ 해결 방안 및 주요 기능 (2/2) · 배포본 화면, 합성 입력</div><span class="crit">심사 ▸ <b>기술 완성도 · 실용 가능성</b></span></div>
+  <h2 class="hl">가장 위험한 순간 — '신청했더니 가해자에게 통지됐다'를 신청 전에 막습니다</h2>
+  <div style="display:grid;grid-template-columns:1.35fr 1fr;gap:20px">
+    <div>
+      <div class="shot" style="height:165px"><img src="../docs/screens/v5-07-notify-before.png" alt="통지 경고, 확인 체크 전" style="width:100%;margin-top:-140px"></div>
+      <p class="cap" style="margin-bottom:8px;font-size:14.5px"><b>① 체크 전</b> — "신청하면 상대에게 알려질 수 있습니다" 를 확인해야 신청 방법이 열립니다</p>
+      <div class="shot" style="height:250px"><img src="../docs/screens/v5-08-notify-after.png" alt="통지 경고 확인 뒤 열린 도움 안내" style="width:100%;margin-top:-140px"></div>
+      <p class="cap" style="font-size:14.5px"><b>② 확인 뒤</b> — 쉬운 설명·신청처가 열림. 통지를 알고, <b>신청 전에</b> 안전계획을 세웁니다</p>
+    </div>
+    <div>
+      <div class="shot" style="height:128px"><img src="../docs/screens/v5-05-diagnose-top.png" alt="진단 결과 지금 먼저 할 일" style="width:142.9%;margin-left:-21.4%;margin-top:-21.4%"></div>
+      <p class="cap" style="margin-bottom:10px"><b>진단</b> '지금 먼저 할 일' — 무엇부터 할지 급한 순서로</p>
+      <div class="shot" style="height:96px"><img src="../docs/screens/v5-11c-doccheck-crop.png" alt="서류 점검 단서 색칠" style="width:100%"></div>
+      <p class="cap" style="margin-bottom:10px"><b>서류 점검</b> 내 서류 속 주소·전화 단서를 색칠</p>
+      <div class="shot" style="height:118px"><img src="../docs/screens/v5-12c-rewrite-crop.png" alt="원래 문장과 바꾼 문장" style="width:100%"></div>
+      <p class="cap"><b>다시 쓰기</b> 단서를 지운 문장 제안 — 'AI 생성' 표시, 본인이 확인</p>
+    </div>
   </div>
-  <div class="foot"><span>출처: docs/screens/ (Playwright 촬영, docs/evidence/README.md)</span><span>3쪽 · ⓑ</span></div>
+  <div class="foot"><span>나머지 화면(AI 미리 선택·근거 답·찾기 거절·모바일)은 시연 영상과 부록 A3·A4</span><span>3쪽 · ⓑ</span></div>
 </section>
 
 <!-- 5. ⓒ AI -->
 <section class="slide">
-  <div class="kicker">ⓒ 활용 AI 기술 및 직접 개발 범위 (1/2)</div>
-  <h2 style="margin-bottom:12px">공개 모델 4종은 그대로, 판단·검증은 직접 만들었습니다</h2>
-  <table class="tight" style="font-size:13.5px;margin-bottom:12px">
-    <tr><th style="width:21%">모델 <span style="color:#c9781e">(외부·그대로)</span></th><th style="width:17%">적용 기능</th><th>적용 방식 <span style="color:#1e7a72">(직접 만든 부분)</span></th></tr>
-    <tr><td><b>BAAI/bge-m3</b> <span class="small">MIT</span></td><td>조문 검색, 가드 의도 점수</td><td>노출 가능 조문 131건 임베딩 → 상위 30. 가드는 자체 시드 max-sim 점수를 <b>신호 하나로만</b>(0.16 초과 + 타인 지시어 + 보호 맥락 없음일 때만 거절 근거)</td></tr>
-    <tr><td><b>bge-reranker-v2-m3</b> <span class="small">Apache-2.0</span></td><td>재순위, 답 근거 확인</td><td>30 → 5. 답 문장마다 근거 조각 3개, 0.01 미만이면 '근거 없음'</td></tr>
-    <tr><td><b>gliner_multi-v2.1</b> <span class="small">Apache-2.0</span></td><td>서류 정밀 점검</td><td>자체 라벨 매핑, 700자 조각 나눔·병합, 정규식 결합</td></tr>
-    <tr><td><b>Qwen3-8B-AWQ</b> + vLLM <span class="small">Apache-2.0</span></td><td>상황 정리·근거 답·다시 쓰기·검증기</td><td>thinking 끔, <b>JSON 스키마 강제 출력</b>. 프롬프트·전후처리·검증 루프 전부 자체. 미세조정 없음</td></tr>
-  </table>
-  <div class="grid2" style="grid-template-columns:1.1fr 1fr;gap:16px">
-    <div class="card teal" style="padding:14px 18px">
-      <h3>자체 알고리즘</h3>
-      <ul class="clean">
-        <li style="font-size:14px"><b>규칙 진단 엔진</b> — 84행 결정적 판정, AI 없음, 0.005초</li>
-        <li style="font-size:14px"><b>2단 가드</b> — 정규화(NFKC·자모·디코딩 변형) → 규칙·구문 → 임베딩, 5등급, 다턴 결합, 앱·GPU 두 번</li>
-        <li style="font-size:14px"><b>근거 답 루프</b> — 생성 → 규칙·재순위·Qwen 검증 → 1회 재생성 → 발췌(12초 예산)</li>
-        <li style="font-size:14px"><b>공통 출력 가드</b> — 프롬프트 유출·금지 조문(해시 24,995)·과잉 약속·목록 밖 인용·반복</li>
-        <li style="font-size:14px"><b>다시 쓰기 정렬</b> — 새 숫자·이름·장소, 정렬 비율 0.6 미만이면 규칙 치환</li>
-      </ul>
-    </div>
-    <div class="card navy" style="padding:14px 18px;background:#1f3354;color:#fff">
-      <h3 style="color:#fff">런타임 외부 AI API 호출 0</h3>
-      <p style="font-size:14.5px;color:#e8ecf2">LLM 은 GPU 서버에 직접 띄운 Qwen 하나뿐. 실패해도 다른 LLM 으로 넘기지 않고 체크박스 방식으로 계속. 실행 중 <code>HF_HUB_OFFLINE=1</code>.</p>
-      <p style="font-size:13.5px;color:#bcd0e2;margin-top:8px">우리가 만든 API — 운영: /api/diagnose · search · doccheck · intake · answer · rewrite · flags · features · health / 추론: /embed · /rerank · /ner · /intent · /llm/{intake,answer,rewrite}</p>
-    </div>
+  <div class="khead"><div class="kicker">ⓒ 활용 AI 기술 및 직접 개발 범위 (1/2)</div><span class="crit">심사 ▸ <b>기획 창의성 · 기술 완성도</b></span></div>
+  <h2 class="hl" style="font-size:27px">AI 는 판단하지 않습니다 — 제도는 규칙이 정하고, AI 문장은 근거 검증을 통과해야 나가며, 피해자의 글은 우리 GPU 밖으로 나가지 않습니다</h2>
+  <div class="pipe">
+    <div class="nd"><b>입력</b><span>상황·질문·서류<br>저장 0</span></div><i>→</i>
+    <div class="nd own"><b>1단 가드</b><span>앱 규칙·정규화<br>찾기 질문 거절</span></div><i>→</i>
+    <div class="nd own"><b>2단 가드</b><span>GPU 임베딩 신호<br><em>bge-m3</em></span></div><i>→</i>
+    <div class="nd own key"><b>규칙 엔진 84행</b><span>권할 제도 결정<br>AI 없음 · 결정적</span></div><i>→</i>
+    <div class="nd ext"><b>Qwen3-8B 설명</b><span>JSON 스키마 강제<br>프롬프트는 자체</span></div><i>→</i>
+    <div class="nd own"><b>문장별 근거 검증</b><span>실패 → 1회 재생성<br>→ 원문 발췌 <em>재순위기</em></span></div><i>→</i>
+    <div class="nd own"><b>출력 가드</b><span>금지 조문·목록 밖<br>인용 차단</span></div>
   </div>
-  <div class="foot"><span>출처: docs/SPEC.md §11 · gpu/server.py · gpu/verify.py · app/guard.py · THIRD_PARTY_NOTICES.md</span><span>4쪽 · ⓒ</span></div>
-</section>
-
-<!-- 6. ⓒ 직접 vs 외부 -->
-<section class="slide">
-  <div class="kicker">ⓒ 활용 AI 기술 및 직접 개발 범위 (2/2)</div>
-  <h2 style="margin-bottom:12px">직접 만든 것 · 가져다 쓴 것 · 개발에 쓴 AI</h2>
-  <div class="grid3" style="grid-template-columns:1.25fr .8fr 1fr;gap:14px;margin-bottom:12px">
-    <div class="card teal" style="padding:12px 16px">
-      <h3>직접 만든 것 <span class="small">(<code>wc -l</code>)</span></h3>
-      <table class="tight" style="font-size:12.5px">
-        <tr><td>규칙 엔진</td><td>engine.py 203</td></tr>
-        <tr><td>지식표 84행 (자체 법령 조사, 근거 224건)</td><td>knowledge.json</td></tr>
-        <tr><td>2단 가드·정규화</td><td>guard.py 1,045</td></tr>
-        <tr><td>검증 루프·출력 가드</td><td>verify 582 · llm 693·497</td></tr>
-        <tr><td>운영·추론 API</td><td>main 501 · server 613</td></tr>
-        <tr><td>웹 화면·단서 탐지</td><td>app.js 1,381 · detect 126</td></tr>
-        <tr><td>평가·시뮬레이터·레드팀</td><td>tools 3,626 + sim 1,946</td></tr>
-        <tr><td>자동 시험 (572 · 188 passed)</td><td>tests 3,359 · 1,722</td></tr>
+  <p class="small" style="margin:6px 0 12px"><span class="sw own"></span>직접 설계·구현 <span class="sw ext" style="margin-left:12px"></span>공개 모델 그대로(미세조정 없음) <span class="tag t" style="margin-left:14px">런타임 외부 AI 호출 0 · NVIDIA L4 1장 자체 호스팅</span></p>
+  <div class="grid2" style="grid-template-columns:1.08fr 1fr;gap:18px">
+    <div>
+      <h3 style="font-size:18px">위협 모델 — 도구 자신이 새 유출 경로가 되지 않게</h3>
+      <table class="tight" style="font-size:15px">
+        <tr><th style="width:44%">위협</th><th>막는 장치</th></tr>
+        <tr><td>① 가해자가 피해자 위치를 찾으려 도구를 씀</td><td>2단 가드, 막는 법만 출력, 서비스에 개인 위치 데이터 0</td></tr>
+        <tr><td>② 가해자가 피해자 기기를 감시</td><td>입력 저장 0·쿠키·localStorage 0, 빠른 나가기(Esc 두 번)</td></tr>
+        <tr><td>③ 서류 속 지시문(간접 주입)</td><td>지시문 제거·JSON 스키마 강제·출력 가드</td></tr>
+        <tr><td>④ 진술이 외부로 반출됨</td><td>외부 AI 호출 0, 실행 중 모델 허브 오프라인, 로그엔 입력 없음</td></tr>
       </table>
     </div>
-    <div class="card amber" style="padding:12px 16px">
-      <h3>그대로 쓴 것</h3>
-      <ul class="clean">
-        <li style="font-size:13.5px">모델 4종 — 미세조정 없음</li>
-        <li style="font-size:13.5px">vLLM · PyTorch · FastAPI 등</li>
-        <li style="font-size:13.5px">법령 원문 174건 (법제처)</li>
-        <li style="font-size:13.5px">서버 2대·L4·SSL-VPN (주최 측 NCP)</li>
-      </ul>
-    </div>
-    <div class="card" style="padding:12px 16px">
-      <h3>개발에 쓴 AI <span class="tag a">서비스엔 없음</span></h3>
-      <ul class="clean">
-        <li style="font-size:13px"><b>Claude</b>(Claude Code, Opus): 팀원 지시 아래 코딩·조사·문서 보조로 <b>폭넓게</b>. 설명 41건+수정 12건·J28</li>
-        <li style="font-size:13px"><b>DeepSeek-V4.1-Flash</b>: 설명 42/84건 초안, 1차 코드 일부 초안(공개 법령만)</li>
-        <li style="font-size:13px"><b>GLM-5.3-Flash</b>: 평가 때 합성 사용자·공격자 역할만</li>
-        <li style="font-size:13px">셋 다 <b>런타임 호출 0</b>. 설명 84건 사람 검수 전 → 'AI 생성(검수 전)'</li>
-      </ul>
+    <div>
+      <h3 style="font-size:18px">공개 모델 4종 — 맡은 일 | 우리가 만든 부분</h3>
+      <table class="tight" style="font-size:15px">
+        <tr><td style="width:30%"><b>bge-m3</b></td><td>조문 검색·가드 신호 | 신호 하나로만 쓰는 판정 규칙</td></tr>
+        <tr><td><b>bge-reranker</b></td><td>재순위·근거 확인 | 문장별 근거 판정 루프</td></tr>
+        <tr><td><b>GLiNER</b></td><td>서류 단서(백본 mDeBERTa) | 라벨 정의·긴 문서 조각 병합·정규식 결합</td></tr>
+        <tr><td><b>Qwen3-8B-AWQ</b></td><td>설명·상황 정리·다시 쓰기 | 프롬프트·검증·재생성·발췌 전부</td></tr>
+      </table>
     </div>
   </div>
-  <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px">
-    <div class="stat sm"><div class="v">56/56</div><div class="l">진단 꼭 나올 제도, 잘못 적용 0 <span class="src">results.json</span></div></div>
-    <div class="stat sm"><div class="v">0.964</div><div class="l">조문 검색 Recall@5 (BM25 0.800) <span class="src">retrieval_baseline.md</span></div></div>
-    <div class="stat sm"><div class="v">0.823</div><div class="l">서류 단서 탐지 F1 (1단계 0.682→2단계 0.748→결합) <span class="src">results.json</span></div></div>
-    <div class="stat sm"><div class="v">0.956</div><div class="l">근거 답 45문항 정답률 <span class="src">results_llm.json</span></div></div>
-    <div class="stat sm"><div class="v">35/35 · 0/25</div><div class="l">찾기 질문 거절 · 정상 질문 오거절(운영 앱) <span class="src">results_app_llm.json</span></div></div>
-    <div class="stat sm"><div class="v">5.4→2.7%</div><div class="l">레드팀 121개 서비스 경로 성공률, 조회 방법 출력 0 <span class="src">redteam-summary.md</span></div></div>
+  <div class="band" style="margin-top:auto;font-size:15px"><b>AI 가 맡는 일</b><span>자유 서술 이해 · 조문 검색·재순위 · 서류 단서 탐지 · 근거 검증형 설명</span><b style="margin-left:auto">맡기지 않는 일</b><span>권할 제도 결정(틀리면 위험)</span></div>
+  <div class="foot"><span>모델·임계값·API 상세: docs/SUBMISSION.md ⓒ · docs/SPEC.md §11</span><span>4쪽 · ⓒ</span></div>
+</section>
+
+<!-- 6. ⓒ 검증 -->
+<section class="slide">
+  <div class="khead"><div class="kicker">ⓒ 활용 AI 기술 및 직접 개발 범위 (2/2)</div><span class="crit">심사 ▸ <b>기술 완성도 · 성과</b></span></div>
+  <h2 class="hl">우리가 만든 것은 검증 장치입니다 — 그 장치가 우리 기능 하나를 출시에서 막았습니다</h2>
+  <div class="grid2" style="grid-template-columns:.92fr 1.08fr;gap:20px">
+    <div>
+      <h3 style="font-size:17px">설계 결정 4개와 실측 근거</h3>
+      <div class="dec"><b>1</b><p><b>권고는 LLM 이 아니라 규칙이 정합니다.</b> 결정적, 0.005초, 같은 입력엔 같은 결과</p></div>
+      <div class="dec"><b>2</b><p><b>품질 게이트 0.90.</b> '검색 답 종합'은 보류 세트 0.625로 미달 → <b>출시 안 함</b>. 1~3라운드 모두 기준 미달</p></div>
+      <div class="dec"><b>3</b><p><b>가드를 앱과 GPU 로 나눴습니다.</b> GPU 가 없어도 1단 규칙 가드는 계속 동작</p></div>
+      <div class="dec"><b>4</b><p><b>작은 이득도 그대로 공개합니다.</b> 재순위기 이득은 R@5 0.945 → 0.964, 1문항</p></div>
+      <p class="small" style="margin-top:8px">개발에 쓴 AI(서비스엔 없음): Claude Code 코딩·조사·문서 보조(폭넓게) · DeepSeek 설명 초안 42/84 · GLM 평가 역할극. 쉬운 말 설명 사람 검수 0/84 → 화면에 'AI 생성(검수 전)'</p>
+    </div>
+    <div>
+      <p class="synth">모든 수치는 합성 데이터 기준입니다</p>
+      <div class="row-h">안전</div>
+      <div class="grid2" style="gap:10px;margin-bottom:10px">
+        <div class="stat"><div class="v">3/84 <span class="bd dev">개발</span></div><div class="l" style="font-size:13.5px">레드팀 검색·답 경로 84건 중 가드 통과 3.6%(95% 1.2–10.0%, 배포본) · <b>위치 조회 방법 출력 0</b></div></div>
+        <div class="stat"><div class="v">35/35 · 0/25 <span class="bd tune">조정</span></div><div class="l" style="font-size:13.5px">찾기 질문 거절 · 정상 질문 오거절</div></div>
+      </div>
+      <div class="row-h">정확</div>
+      <div class="grid4" style="gap:10px;margin-bottom:10px">
+        <div class="stat"><div class="v">0.964 <span class="bd hold">보류</span></div><div class="l" style="font-size:13.5px">조문 검색 Recall@5</div></div>
+        <div class="stat"><div class="v">56/56 <span class="bd dev">개발</span></div><div class="l" style="font-size:13.5px">진단 꼭 나올 제도</div></div>
+        <div class="stat"><div class="v">0.956 <span class="bd dev">개발</span></div><div class="l" style="font-size:13.5px">근거 답 45문항</div></div>
+        <div class="stat"><div class="v">0.823 <span class="bd dev">개발</span></div><div class="l" style="font-size:13.5px">서류 단서 F1</div></div>
+      </div>
+      <div class="stat amber"><div class="v" style="font-size:20px">미출시 0.625 &lt; 0.90 <span class="bd hold">보류</span></div><div class="l" style="font-size:13.5px">검색 답 종합 — 게이트가 우리 기능을 막았습니다</div></div>
+      <p class="small" style="margin-top:8px">통과한 레드팀 응답은 공개 조문이나 '찾지 못함'뿐 — 서비스에 개인 위치 데이터가 없습니다. 대책 전후는 같은 세트라 개선을 주장하지 않습니다. 남은 약점: 자기 보호 질문 오거절(다턴 18/225 응답). 자동 시험 앱 598 · GPU 188 통과</p>
+    </div>
   </div>
-  <p class="src" style="margin-top:8px">모든 수치는 <b>합성 데이터 기준</b>. 남은 문제: 다턴 시뮬레이션 자기 보호 질문 오거절 18건/14대화(<code>notice_calibration_summary.md</code>). 근거 답 근거 없는 문장 3.6%→0 은 같은 검증기로 잰 값(독립 판정 아님).</p>
-  <div class="foot"><span>출처: data/README.md · docs/SPEC.md §11.7 · data/eval/*</span><span>5쪽 · ⓒ</span></div>
+  <div class="foot"><span>세트 배지 — 보류: 조정에 안 쓴 세트 · 개발: 만들며 본 세트 · 조정: 규칙을 맞춘 세트 · 출처 docs/EVIDENCE.md 0절</span><span>5쪽 · ⓒ</span></div>
 </section>
 
 <!-- 7. ⓓ -->
 <section class="slide">
-  <div class="kicker">ⓓ 개발 환경 및 기술 스택</div>
-  <h2 style="margin-bottom:12px">Python 3.12 · FastAPI · vLLM, GPU 1장 위의 자체 호스팅</h2>
-  <div class="grid2" style="grid-template-columns:1.25fr 1fr;gap:18px">
-    <table class="tight" style="font-size:13px">
-      <tr><th style="width:18%">계층</th><th>기술 · 버전</th></tr>
-      <tr><td>언어</td><td>Python 3.12.3 · JavaScript(바닐라) · HTML/CSS</td></tr>
-      <tr><td>패키지</td><td>uv (<code>uv.lock</code>, 개발 기기 0.12.7)</td></tr>
-      <tr><td>운영 API</td><td>FastAPI 0.162.0 · Starlette 1.10.0 · Uvicorn 0.54.0 · Pydantic 2.14.2 · HTTPX 0.28.1</td></tr>
-      <tr><td>추론 API</td><td>sentence-transformers 6.2.0 · GLiNER 0.2.29 · PyTorch 2.15.0 · transformers 5.16.1 · NumPy 2.5.4</td></tr>
-      <tr><td>LLM 서빙</td><td>vLLM 0.32.0 — JSON 스키마 강제, 요청·생성 로그 끔</td></tr>
-      <tr><td>모델</td><td>bge-m3 · bge-reranker-v2-m3 · gliner_multi-v2.1 · Qwen3-8B-AWQ</td></tr>
-      <tr><td>웹</td><td>프레임워크 없음, 외부 CDN·쿠키·localStorage 없음</td></tr>
-      <tr><td>시험·평가</td><td>pytest 9.2.0 · Node.js 22 · 자체 시뮬레이터 · Playwright(캡처)</td></tr>
-      <tr><td>실행</td><td>셸 스크립트 + PID 파일 (Docker·systemd 안 씀)</td></tr>
-    </table>
+  <div class="khead"><div class="kicker">ⓓ 개발 환경 및 기술 스택</div><span class="crit">심사 ▸ <b>기술 완성도 · 실용 가능성</b></span></div>
+  <h2 class="hl">GPU 한 장(L4) 안에서 모든 AI 가 돕니다 — 외부 AI 로 나가는 연결 0, GPU 가 없어도 핵심 진단은 돕니다</h2>
+  <div class="grid2" style="grid-template-columns:1fr 1.1fr;gap:20px">
     <div>
-      <div class="card teal" style="padding:14px 18px;margin-bottom:12px">
-        <h3>인프라 — 주최 측 제공 NCP</h3>
-        <p style="font-size:14px"><b>운영 서버</b> Xeon Gold 5220 2vCPU · 7.8GiB — 127.0.0.1:8080</p>
-        <p style="font-size:14px"><b>GPU 서버</b> Xeon Silver 4416+ 4vCPU · 47GiB · <b>NVIDIA L4</b> — :8000 추론 API, 127.0.0.1:8001 vLLM</p>
-        <p style="font-size:14px">GPU 메모리 13,948 + 5,686 = <b>19,648</b> / 23,034MiB (23:33)</p>
-        <p style="font-size:14px">접근: SSL-VPN → ssh 터널 (시연용, TLS 없음)</p>
-      </div>
-      <div class="card" style="padding:14px 18px">
-        <h3>응답 시간 (서버 안 중앙값, 합성 5회)</h3>
-        <p style="font-size:14px">진단 <b>0.005s</b> · 검색 0.945s · 상황 정리 1.827s · 근거 답 5.745s · 다시 쓰기 2.366s</p>
-        <p class="src">부하 시험 없음. 최신은 docs/COST_LATENCY.md</p>
+      <div class="layer"><b>브라우저</b><span>쿠키·localStorage·외부 CDN 0 · 서류 1단계 점검은 브라우저 안에서만</span></div>
+      <div class="ldown">↓</div>
+      <div class="layer"><b>운영 서버 <em>NCP · Python 3.12 · FastAPI</em></b><span>규칙 엔진 · 1단 가드 · 화면. GPU 가 없으면 BM25 검색 + 체크박스로 계속</span></div>
+      <div class="ldown">↓ 공유 토큰</div>
+      <div class="layer gpu"><b>GPU 서버 <em>NCP · NVIDIA L4</em></b><span>추론 API(bge-m3·재순위기·GLiNER) + vLLM(Qwen3-8B-AWQ)<br>GPU 메모리 <b>19,648 / 23,034 MiB</b></span></div>
+      <div class="grid3" style="gap:8px;margin-top:12px">
+        <div class="stat sm"><div class="v">0.005초</div><div class="l">진단(규칙)</div></div>
+        <div class="stat sm"><div class="v">5.75초</div><div class="l">근거 답 중앙값</div></div>
+        <div class="stat sm"><div class="v">9.94초</div><div class="l">근거 답 p95(순차 100회)</div></div>
       </div>
     </div>
+    <div>
+      <div class="card teal" style="padding:12px 16px;margin-bottom:12px">
+        <h3 style="font-size:16px;margin-bottom:2px">보안 설정 4줄</h3>
+        <ul class="clean">
+          <li style="font-size:14px;margin:3px 0">앱·vLLM 은 <b>127.0.0.1</b> 에만 바인드, 접근은 SSL-VPN → ssh 터널(시연용)</li>
+          <li style="font-size:14px;margin:3px 0">GPU 추론 API <b>공유 토큰</b>: 없거나 틀리면 401, 토큰 로그 출현 0건</li>
+          <li style="font-size:14px;margin:3px 0"><b>입력 저장 0</b>: DB 없음, 표지 문자열 60회 전송 뒤 로그 0건</li>
+          <li style="font-size:14px;margin:3px 0">실행 중 모델 허브 <b>오프라인</b>, 의존성 알려진 취약점 0건(OSV, 6개 패키지)</li>
+        </ul>
+      </div>
+      <table class="tight" style="font-size:13px">
+        <tr><th style="width:24%">계층</th><th>기술 · 버전 <span style="font-weight:500">(전체는 uv.lock · ⓕ)</span></th></tr>
+        <tr><td>언어</td><td>Python 3.12.3 · JavaScript(프레임워크 없음)</td></tr>
+        <tr><td>API</td><td>FastAPI 0.162.0 · Uvicorn 0.54.0 · Pydantic 2.14.2</td></tr>
+        <tr><td>모델 실행</td><td>PyTorch 2.15.0 · sentence-transformers 6.2.0 · GLiNER 0.2.29</td></tr>
+        <tr><td>LLM 서빙</td><td>vLLM 0.32.0 — JSON 스키마 강제, 요청 로그 끔</td></tr>
+        <tr><td>시험·개발</td><td>uv · pytest 9.2.0 · Playwright · Node.js 22 · Ubuntu 24.04 · Claude Code(개발 보조)</td></tr>
+        <tr><td>실행</td><td>셸 스크립트 + PID 파일(Docker 안 씀)</td></tr>
+      </table>
+    </div>
   </div>
-  <div class="foot"><span>출처: uv.lock · docs/evidence/infra.md §1–3·§7 · infra-2026-10-31-night.md 1·2·5절 · deploy-2026-11-01.md</span><span>6쪽 · ⓓ</span></div>
+  <div class="foot"><span>출처: docs/EVIDENCE.md 0·6·9절 · docs/evidence/infra.md</span><span>6쪽 · ⓓ</span></div>
 </section>
 
 <!-- 8. ⓔ -->
 <section class="slide">
-  <div class="kicker">ⓔ 팀원별 역할 분담</div>
-  <h2 style="margin-bottom:12px">세 사람, 세 영역 — 담당 업무와 기여 내용</h2>
-  <table class="tight team" style="font-size:13px">
-    <tr><th style="width:13%">이름 · 역할</th><th style="width:25%">담당 업무</th><th>기여 내용 (저장소 산출물)</th></tr>
-    <tr><td><b style="font-size:16px">정세영</b><br><span class="tag t" style="margin-top:4px">백엔드 및 AI</span></td><td>운영·추론 API 설계와 구현, 내부 LLM 도입, 입력·출력 가드와 답 검증 루프, 서버 배포·운영</td><td>규칙 진단 엔진 <code>app/engine.py</code> · 2단 입력 가드 <code>app/guard.py</code> · 조문 검색·BM25 대체 · 추론 서버 <code>/embed</code>·<code>/rerank</code>·<code>/ner</code>·<code>/intent</code>·<code>/llm/*</code> · 생성→검증→재생성→발췌 루프·출력 가드 <code>gpu/verify.py</code> · Qwen3-8B·vLLM 서빙 · NCP 2대 배포, L4 메모리 19,648/23,034MiB · GPU API 토큰·HF 오프라인</td></tr>
-    <tr><td><b style="font-size:16px">김시현</b><br><span class="tag t" style="margin-top:4px">기획 및 법령조사</span><br><span class="tag t" style="margin-top:4px">프런트엔드</span></td><td>문제 정의·목표 사용자 설정, 주소 노출 경로 법령 조사, 지식표 기획, 웹 화면과 사용자 흐름</td><td>정보조사 <code>research/…정보조사.md</code> — 6개 영역 <b>84개 노출 경로</b>, 막는 제도 없는 16개, 통지 12개 · 지식표 84행 기획 <code>data/knowledge.json</code> · 근거 조문 174건 범위 선정 · 사용자 흐름(안전 확인 → 입력 → 진단 → 서류 점검), 피해자 본인 사용 전환 · 웹 화면 <code>web/</code> — 빠른 나가기, 통지 확인 잠금, 모바일, 안전 안내 팝업</td></tr>
-    <tr><td><b style="font-size:16px">김대웅</b><br><span class="tag t" style="margin-top:4px">평가·보안</span><br><span class="tag t" style="margin-top:4px">PT 자료 제작</span></td><td>합성 평가 데이터·평가 하네스, 다턴 시뮬레이터, 레드팀·가드 평가, 시험 계획·결과, 발표 자료</td><td>합성 평가 세트 <code>data/eval/</code>(시나리오 20·서류 30·서술 20·답 45·검색 60·가드 70·보정 60) · 평가 하네스 <code>tools/eval*.py</code> · 다턴 시뮬레이터 <code>tools/sim/</code> · <b>레드팀 121개 공격</b> 5.4% → 2.7%, 가드 평가 35/35 · 오거절 0/25 · <code>TEST_PLAN</code>·<code>TEST_RESULTS</code> · 차트·화면 캡처 · 발표 자료 <code>pt/</code></td></tr>
-  </table>
-  <div class="grid3" style="gap:12px;margin-top:14px">
-    <div class="card" style="padding:12px 16px"><h3 style="font-size:16px">브랜치</h3><p style="font-size:13.5px"><code>main</code> 통합·배포 기준 · <code>feature/frontend</code> 화면 · <code>docs</code>·<code>docs-v2</code> 제출 문서</p></div>
-    <div class="card" style="padding:12px 16px"><h3 style="font-size:16px">PR 로 합치기</h3><p style="font-size:13.5px">작업 브랜치에 <code>main</code> 최신본을 합치고 시험 통과 뒤 PR 로 병합. <code>main</code> 직접 push 금지</p></div>
-    <div class="card" style="padding:12px 16px"><h3 style="font-size:16px">계약은 시험으로</h3><p style="font-size:13.5px">화면·API 계약을 <code>tests/</code> 로 고정, GPU 없이 화면을 띄우는 모의 GPU 서버 제공</p></div>
+  <div class="khead"><div class="kicker">ⓔ 팀원별 역할 분담</div><span class="crit">심사 ▸ <b>팀 구성 및 협업 체계</b></span></div>
+  <h2 class="hl">조사한 사람이 경로를 정하고, 만든 사람이 엔진을, 검증한 사람이 안전을 책임졌습니다</h2>
+  <div class="cflow">
+    <div><b>김시현</b> 법령 조사<br>84경로·16 공백</div><i>→</i>
+    <div class="mid"><b>지식표 84행</b><br>팀 공유 계약</div><i>→</i>
+    <div><b>정세영</b> 규칙 엔진·가드<br>검증 루프·L4 서빙</div><i>→</i>
+    <div><b>김대웅</b> 합성 평가<br>레드팀 세트 112건</div><i>→</i>
+    <div class="back">↺ 평가 결과로 가드·지식표 수정<br>→ 재측정 <code>cf8d149→cacc901</code></div>
   </div>
-  <p class="src" style="margin-top:8px">AI 도구가 맡은 부분(코딩·조사·문서 보조 Claude, 설명 초안 DeepSeek, 평가 역할극 GLM)은 ⓒ·ⓕ 에 따로 적음 · 협업 규칙: <code>docs/LOCAL_DEV.md</code></p>
-  <div class="foot"><span>보안 예보 · 제출 요약</span><span>7쪽 · ⓔ</span></div>
+  <div class="grid3" style="gap:12px;margin-top:12px">
+    <div class="card pcard"><h3><b>정세영</b> <span class="tag t">백엔드 및 AI</span></h3>
+      <p>운영·추론 API, 규칙 엔진, 2단 가드, 생성→검증→재생성→발췌 루프, Qwen3-8B·vLLM 서빙, NCP 2대 배포·GPU 토큰</p>
+      <p class="kpi">L4 1장에 모델 4종 · 19,648/23,034MiB</p>
+      <p class="cm">담당 산출물 <code>1664b20</code> <code>0b21e23</code> <code>da3e675</code> <code>642e5e1</code> · PR #3 → main <code>993db4f</code></p></div>
+    <div class="card pcard"><h3><b>김시현</b> <span class="tag t">기획·법령조사·프런트</span></h3>
+      <p>문제 정의·목표 사용자, 노출 경로 법령 조사, 지식표 기획, 사용자 흐름·통지 확인 잠금, 화면 개선(PR #2)</p>
+      <p class="kpi">84경로 · 막을 제도 없음 16</p>
+      <p class="cm">담당 산출물 <code>d677ea0</code> <code>a9028c5</code> · PR #2 <code>34edc21</code> <code>83c3f63</code> <code>b8f6631</code> <code>ac7520e</code> <code>5085bcb</code></p></div>
+    <div class="card pcard"><h3><b>김대웅</b> <span class="tag t">평가·보안·PT</span></h3>
+      <p>합성 평가 세트·하네스, 다턴 시뮬레이터, 레드팀·가드 평가, 시험 계획·결과, 발표 자료</p>
+      <p class="kpi">레드팀 3/84(검색·답 경로) · 조회 방법 출력 0</p>
+      <p class="cm">담당 산출물 <code>fbf4d15</code> <code>38a14c1</code> <code>efb3fee</code> <code>23a03c7</code> · PR #4 <code>e2b7b93</code> <code>6b354a2</code> <code>ef5ddf0</code> <code>f6ccc4f</code></p></div>
+  </div>
+  <p class="cm" style="margin-top:6px">※ 커밋은 공용 개발 환경(정세영 계정)에서 함께 했습니다. 팀원 개인 계정 기여는 PR #2(김시현)·PR #4(김대웅)입니다. 위 해시는 각자 맡은 산출물입니다.</p>
+  <div class="grid4" style="gap:10px;margin-top:12px">
+    <div class="card mini"><h3>브랜치</h3><p><code>main</code> 통합·배포 · <code>feature/frontend</code> 화면 · <code>docs-v2</code> 문서 · 검색 답 종합 실험(로컬, 게이트 미달로 <b>미병합</b>)</p></div>
+    <div class="card mini"><h3>PR 로만 main 에</h3><p>main 최신본 합치기 → 시험 통과 → PR. PR #2 화면 → docs-v2 통합 → PR #3 로 main 병합·배포</p></div>
+    <div class="card mini"><h3>계약은 시험으로</h3><p>API 계약을 <code>tests/</code> 로 고정, GPU 없이 화면을 띄우는 모의 GPU 서버(<code>f2c382f</code>)</p></div>
+    <div class="card mini"><h3>수치는 한 곳에서</h3><p>모든 숫자의 기준 <code>docs/EVIDENCE.md</code> → 덱·제출 문서·README 가 같은 값</p></div>
+  </div>
+  <div class="band" style="margin-top:auto;font-size:14.5px"><b>산출물 일관성</b><span>조사 84경로 → 지식표 84행 → 엔진 시험 84/84행 도달 → 1쪽·진단 화면의 84</span><span style="margin-left:auto">레드팀 3/84 → 5쪽·제출 문서·README 같은 값</span></div>
+  <div class="foot"><span>커밋 86건(<code>c71b229</code> 기준) · 2026-10-31 11:04 → 11-01 06:03 · AI 도구가 맡은 부분은 ⓒ·ⓕ 에 따로 적음</span><span>7쪽 · ⓔ</span></div>
 </section>
 
 <!-- 9. ⓕ -->
 <section class="slide" style="padding:44px 56px 52px">
-  <div class="kicker">ⓕ 외부 자원 활용 내역</div>
-  <h2 style="margin-bottom:10px;font-size:26px">외부 자원 활용 내역 <span class="small" style="font-weight:500">— 참가자 가이드 표 형식 그대로, 두 단으로 나눠 실음</span></h2>
+  <div class="khead" style="margin-bottom:4px"><div class="kicker">ⓕ 외부 자원 활용 내역</div><span class="crit">심사 ▸ <b>필수 고지 · 실행 중 외부 AI 0</b></span></div>
+  <h2 style="margin-bottom:10px;font-size:22px">공개 모델·오픈소스는 그대로 쓰고 모두 밝힙니다 — 상용 AI 는 개발 보조에만, 서비스 실행 중 호출 0</h2>
   <div class="grid2" style="gap:14px;align-items:start">
     <table class="ftab">
       <tr><th style="width:11%">구분</th><th style="width:33%">명칭</th><th>용도</th><th style="width:27%">라이선스</th></tr>
-      <tr><td rowspan="19" class="cat">오픈소스</td><td>BAAI/bge-m3</td><td>임베딩·의도 분류</td><td>MIT</td></tr>
+      <tr><td rowspan="21" class="cat">오픈소스</td><td>BAAI/bge-m3</td><td>임베딩·의도 분류</td><td>MIT</td></tr>
       <tr><td>BAAI/bge-reranker-v2-m3</td><td>재순위·답변 검증</td><td>Apache-2.0</td></tr>
       <tr><td>urchade/gliner_multi-v2.1</td><td>서류 위치 단서 개체명 인식</td><td>Apache-2.0</td></tr>
+      <tr><td>microsoft/mdeberta-v3-base</td><td>GLiNER 백본·토크나이저</td><td>MIT</td></tr>
       <tr><td>Qwen/Qwen3-8B-AWQ</td><td>내부 LLM(미세조정 없음)</td><td>Apache-2.0</td></tr>
       <tr><td>vLLM 0.32.0</td><td>LLM 서빙</td><td>Apache-2.0 *</td></tr>
       <tr><td>PyTorch 2.15.0</td><td>모델 실행</td><td>BSD-3 계열</td></tr>
@@ -377,25 +456,29 @@ table.team code,.slide code{font-family:ui-monospace,Menlo,Consolas,"DejaVu Sans
       <tr><td>NumPy 2.5.4</td><td>점수 계산</td><td>BSD-3</td></tr>
       <tr><td>uv 0.12.7</td><td>패키지 관리</td><td>MIT/Apache-2.0 *</td></tr>
       <tr><td>pytest 9.2.0</td><td>자동 시험</td><td>MIT</td></tr>
-      <tr><td>Playwright (Chromium)</td><td>시험·화면 캡처</td><td>Apache-2.0</td></tr>
+      <tr><td>Playwright (Chromium)</td><td>시험·캡처, 시연 녹화(playwright-core 1.63.0)</td><td>Apache-2.0</td></tr>
+      <tr><td>FFmpeg 7.0.2 (imageio-ffmpeg 0.7.0)</td><td>시연 영상 MP4 변환(개발)</td><td>BSD-2 · 바이너리 GPL-3.0</td></tr>
       <tr><td>Node.js 22</td><td>탐지기 평가(개발)</td><td>MIT *</td></tr>
     </table>
     <div>
       <table class="ftab">
         <tr><th style="width:11%">구분</th><th style="width:30%">명칭</th><th>용도</th><th style="width:25%">라이선스</th></tr>
-        <tr><td rowspan="3" class="cat">외부 API</td><td>Anthropic Claude (Claude Code)</td><td>개발 보조: 코드·조사·문서 작성. <b>서비스 실행 중 호출 없음</b></td><td>상용</td></tr>
+        <tr><td rowspan="3" class="cat">외부 API</td><td>Anthropic Claude (Claude Code)</td><td>개발 보조: 코드·조사·문서 작성, 평가·레드팀 결과 검토. <b>서비스 실행 중 호출 없음</b></td><td>상용</td></tr>
         <tr><td>DeepSeek-V4.1-Flash (래블업 토큰 팩토리)</td><td>쉬운 말 설명 초안 42건·1차 코드 일부. <b>서비스 실행 중 호출 없음</b></td><td>상용 API (래블업 토큰 팩토리)</td></tr>
         <tr><td>GLM-5.3-Flash (래블업 토큰 팩토리)</td><td>평가 시뮬레이터의 가상 사용자·공격자. <b>서비스 실행 중 호출 없음</b></td><td>상용 API (래블업 토큰 팩토리)</td></tr>
         <tr><td class="cat">사전 보유 코드</td><td>해당 없음</td><td>주제 공개(10-30) 뒤 새 저장소. 첫 커밋 <code>d677ea0</code> 2026-10-31 11:04</td><td>해당 없음</td></tr>
-        <tr><td rowspan="7" class="cat">기타</td><td>법제처 국가법령정보센터 법령 원문</td><td>조문 174건 스냅샷, 근거 표시·검색</td><td>공공저작물(저작권법 제7조)</td></tr>
+        <tr><td rowspan="10" class="cat">기타</td><td>법제처 국가법령정보센터 법령 원문</td><td>조문 175건 스냅샷, 근거 표시·검색</td><td>공공저작물(저작권법 제7조)</td></tr>
         <tr><td>NAVER Cloud Platform 공공기관용 서버 · L4 · SSL-VPN</td><td>배포·시연(주최 측 제공)</td><td>대회 제공 조건</td></tr>
         <tr><td>Hugging Face Hub</td><td>모델 배포처(설치 때만)</td><td>각 모델 라이선스</td></tr>
         <tr><td>Pretendard 글꼴</td><td>발표 자료</td><td>SIL OFL 1.1</td></tr>
+        <tr><td>Noto Sans KR 글꼴 (Google Fonts)</td><td>제출 PDF 원문자 대체 글꼴</td><td>SIL OFL 1.1</td></tr>
         <tr><td>나눔고딕 글꼴</td><td>화면 캡처</td><td>SIL OFL 1.1</td></tr>
+        <tr><td>서비스 파비콘</td><td>브라우저 탭 아이콘</td><td>팀 자체 제작(김시현), MIT</td></tr>
+        <tr><td>GitHub</td><td>소스 공개·협업</td><td>GitHub 이용약관</td></tr>
         <tr><td>공식 기관 페이지·언론 보도</td><td>법령 조사·문제 근거</td><td>인용·출처 표시</td></tr>
         <tr><td>개인 보유 개발 도구 (LLM 호출 중계 등)</td><td>개발 중 외부 API 호출용. 저장소 코드에 미포함</td><td>해당 없음</td></tr>
       </table>
-      <p class="src" style="margin-top:8px">버전: <code>uv.lock</code> · <code>infra-2026-10-31-night.md</code> 5절(배포 서버 실측). 라이선스: <code>THIRD_PARTY_NOTICES.md</code>(모델은 HF 모델 카드) + 로컬 패키지 메타데이터 대조. <b>*</b> 로컬 대조 못 해 공개 저장소 표기를 따름. 서비스 실행 중 외부로 나가는 것은 빠른 나가기의 Google 검색 이동과 112·1366·132 전화 링크뿐. 공공데이터포털 법제처 API 는 조건만 확인, 미사용.</p>
+      <p class="src" style="margin-top:8px">실행 중 외부로 나가는 것: 빠른 나가기의 검색 이동, 112·1366·132 전화 링크뿐 · 버전은 <code>uv.lock</code>·배포 서버 실측, 라이선스는 <code>THIRD_PARTY_NOTICES.md</code>·패키지 메타데이터 대조(<b>*</b> 공개 저장소 표기)</p>
     </div>
   </div>
   <div class="foot" style="left:56px;right:56px"><span>전체 표·근거: docs/SUBMISSION.md ⓕ</span><span>8쪽 · ⓕ</span></div>
@@ -403,53 +486,71 @@ table.team code,.slide code{font-family:ui-monospace,Menlo,Consolas,"DejaVu Sans
 
 <!-- 10. ⓖ 효과 -->
 <section class="slide">
-  <div class="kicker">ⓖ 기대 효과 및 확장 가능성 (1/2)</div>
-  <h2 style="margin-bottom:14px">흩어진 신청주의 제도를, 피해자가 놓치지 않게</h2>
-  <div class="grid3" style="gap:14px;margin-bottom:14px">
-    <div class="card teal" style="padding:14px 18px"><h3>피해자</h3><p style="font-size:14.5px">제도를 <b>급한 순서</b>로 한 화면에. 통지 경고로 역노출을 미리 앎. 제출 서류의 위치 단서를 스스로 지움.</p><p class="src">실제 이용자 효과는 미검증(합성 56/56)</p></div>
-    <div class="card teal" style="padding:14px 18px"><h3>상담 현장</h3><p style="font-size:14.5px">인쇄한 결과를 1366·132 상담에 가져가 이어감. '초기 상담부터 능동 안내'에 쓸 체크리스트.</p><p class="src">성평등가족부 대응(2026-09-05) 보도 [2차]</p></div>
-    <div class="card teal" style="padding:14px 18px"><h3>정책</h3><p style="font-size:14.5px">막을 제도가 없는 <b>16개 경로</b>를 근거와 함께 드러냄. 법이 바뀌면 지식표 행만 고침.</p><p class="src">직권보호안 등 계류(진행 미확인)</p></div>
+  <div class="khead"><div class="kicker">ⓖ 기대 효과 및 확장 가능성 (1/2)</div><span class="crit">심사 ▸ <b>성과 및 실용 가능성</b></span></div>
+  <h2 class="hl" style="font-size:27px">몰라서·늦어서·순서를 틀려서 새는 주소 — 피해자는 놓친 제도를, 상담 현장은 첫 상담 점검표를, 정책은 막을 수 없는 16개 경로를 얻습니다</h2>
+  <div class="toc">
+    <div>상황을<br><b>고름</b></div><i>→</i>
+    <div>유출 경로·제도·<br><b>통지 위험을 앎</b></div><i>→</i>
+    <div>소송·이사·신고 <b>전에</b><br>비공개 신청</div><i>→</i>
+    <div class="goal">서류로 새는 일 감소<br><span>검증 예정</span></div>
   </div>
-  <div class="grid2" style="gap:16px">
-    <div class="card" style="padding:14px 18px">
-      <h3>실제 적용 가능성</h3>
-      <ul class="clean">
-        <li style="font-size:14px"><b>이미 배포·실측</b> — L4 1장에 모델 4종, 배포 해시 = 저장소</li>
-        <li style="font-size:14px"><b>GPU 없이도 핵심 동작</b> — 규칙 진단 + BM25 + 체크박스 방식</li>
-        <li style="font-size:14px"><b>비용(추정)</b> — NCP 공공기관 정가 약 140만 원/월, GPU 83% (COST_LATENCY.md, 작성 시점)</li>
-        <li style="font-size:14px"><b>법적 경계</b> — 무료 일반 정보, 'AI 생성' 표시(인공지능기본법 제31조)</li>
-      </ul>
+  <div class="grid3" style="gap:12px;margin:12px 0">
+    <div class="card teal" style="padding:12px 16px"><h3 style="font-size:18px;margin-bottom:2px">피해자</h3><p style="font-size:16px;line-height:1.5">흩어진 제도를 <b>급한 순서</b>로 한 화면에. 통지 경고로 역노출을 미리 앎. 서류의 위치 단서를 스스로 지움</p></div>
+    <div class="card teal" style="padding:12px 16px"><h3 style="font-size:18px;margin-bottom:2px">상담 현장</h3><p style="font-size:16px;line-height:1.5">인쇄한 결과를 1366·132 상담에 가져가 이어감 — <b>첫 상담 점검표</b>로 쓰임</p></div>
+    <div class="card teal" style="padding:12px 16px"><h3 style="font-size:18px;margin-bottom:2px">정책</h3><p style="font-size:16px;line-height:1.5">막을 제도가 없는 <b>16개 경로</b>를 근거와 함께 드러냄. 법이 바뀌면 지식표 행만 고침</p></div>
+  </div>
+  <div class="grid2" style="grid-template-columns:1.45fr 1fr;gap:16px">
+    <div>
+      <h3 style="font-size:18px">지금 바로 적용할 수 있는 근거 <span class="small" style="font-weight:500">(배포본 실측, 합성 부하)</span></h3>
+      <div class="grid3" style="gap:10px">
+        <div class="stat"><div class="v" style="font-size:28px">약 200세션</div><div class="l" style="font-size:14px">L4 1장, 시간당(품질 유지 동시 2)</div></div>
+        <div class="stat"><div class="v" style="font-size:28px">약 9.7원</div><div class="l" style="font-size:14px">세션당(꽉 찰 때), 약 2.2만 토큰</div></div>
+        <div class="stat"><div class="v" style="font-size:28px">GPU 없이</div><div class="l" style="font-size:14px">규칙 진단 + BM25 + 체크박스로 핵심 동작</div></div>
+      </div>
+      <p class="small" style="margin-top:10px;font-size:14px">무료 법률정보 안내(법률상담 아님) · AI 문장엔 'AI 생성' 표시(인공지능기본법 제31조) · 위치 권한 요청 없음</p>
     </div>
-    <div class="card red" style="padding:14px 18px">
-      <h3 style="color:#b43c3c">공개 전 반드시 할 일 (숨기지 않음)</h3>
+    <div class="card gate">
+      <h3>아직 증명 안 된 것 → 다음 게이트</h3>
       <ul class="clean">
-        <li style="font-size:14px">TLS · 속도 제한 · 인증 (지금은 ssh 터널 시연)</li>
-        <li style="font-size:14px"><b>GPU 8000 포트가 VPN 사용자에게 열림</b> — 토큰 인증은 적용(무토큰 401), 접근 범위 좁히기는 미적용</li>
-        <li style="font-size:14px">자기 보호 질문 오거절 18건/14대화, 생활권 단서 0/11</li>
-        <li style="font-size:14px">쉬운 말 설명 84건 전문가 검수, 시험 결함 xfail 앱 36 · GPU 4 수정</li>
+        <li>사람 검수 <b>0/84 → 84/84</b></li>
+        <li>레드팀 3.6%(3/84) → <b>확대 세트로 재측정</b></li>
+        <li>공개 전 TLS·인증·접근 범위·속도 제한</li>
       </ul>
+      <p class="small" style="font-size:13px;margin-top:4px">실제 이용자 효과는 미검증(합성 평가만). 상세 한계는 저장소에 공개</p>
     </div>
   </div>
-  <div class="foot"><span>출처: README.md 한계 절 · infra-2026-10-31-night.md 7절 · deploy-2026-11-01.md · docs/COST_LATENCY.md · docs/TEST_RESULTS.md</span><span>9쪽 · ⓖ</span></div>
+  <div class="foot"><span>출처: docs/EVIDENCE.md 0-16·0-17 · docs/COST_LATENCY.md §3-3 · 한계 전체 docs/SUBMISSION.md ⓖ</span><span>9쪽 · ⓖ</span></div>
 </section>
 
 <!-- 11. ⓖ 로드맵 -->
 <section class="slide">
-  <div class="kicker">ⓖ 기대 효과 및 확장 가능성 (2/2)</div>
-  <h2 style="margin-bottom:16px">추가 개발 방향</h2>
-  <div class="grid3" style="gap:16px">
-    <div class="card" style="border-top:5px solid #b43c3c"><h3>단기 — 공개 전</h3><ul class="clean">
-      <li style="font-size:15px">TLS·속도 제한·인증</li><li style="font-size:15px">GPU 포트 접근 좁히기</li><li style="font-size:15px">시험 실패 항목 수정</li><li style="font-size:15px">실제 이용자 사용성 평가</li></ul></div>
-    <div class="card" style="border-top:5px solid #1e7a72"><h3>중기 — 데이터·대상 확장</h3><ul class="clean">
-      <li style="font-size:15px">법령 자동 갱신 — 공공데이터포털 법제처 API(자동승인·무료 확인)</li><li style="font-size:15px">찾기쉬운 생활법령 연계</li><li style="font-size:15px">시행 예정 제도 자동 전환(2027-04-22)</li><li style="font-size:15px">상담사 모드 — 접근 코드 기능은 이미 구현, 기본 꺼짐</li></ul></div>
-    <div class="card" style="border-top:5px solid #1f3354"><h3>장기 — 연계·정책</h3><ul class="clean">
-      <li style="font-size:15px">1366·지원기관 연계(제안)</li><li style="font-size:15px">다국어 안내(제안)</li><li style="font-size:15px">공백 경로 정책 제안 — 미국 주소비밀유지 프로그램·영국 익명 등록·일본 지원조치 비교</li></ul></div>
+  <div class="khead"><div class="kicker">ⓖ 기대 효과 및 확장 가능성 (2/2)</div><span class="crit">심사 ▸ <b>기획 구체성(실행·확장 계획)</b></span></div>
+  <h2 class="hl" style="font-size:27px">해외도 한 번에 다 막지 못합니다 — 그래서 경로별 진단, 다음 1년은 사람 검수와 상담 현장 시범으로 증명하겠습니다</h2>
+  <div class="grid2" style="grid-template-columns:1.6fr 1fr;gap:16px">
+    <table class="tight road" style="font-size:14.5px">
+      <tr><th style="width:11%">단계</th><th>할 일(산출물)</th><th style="width:15%">담당(안)</th><th style="width:31%">성공 지표 (기준선 실측 → 목표)</th></tr>
+      <tr><td rowspan="3"><b style="color:#b43c3c">단기</b><br>~3개월</td><td>쉬운 말 설명 84행 전문가 검수</td><td>김시현</td><td>검수 <b>0/84 → 84/84</b></td></tr>
+      <tr><td>레드팀 확대 세트(사칭·이주민 언어·적응형), 판정자 분리</td><td>김대웅</td><td>3.6%(3/84) 재측정 · 조회 방법 출력 0 유지</td></tr>
+      <tr><td>공개 전 보안: TLS·인증·속도 제한·접근 범위, 가드 장애 시 막는 쪽 동작</td><td>정세영</td><td>공개 전 점검 항목 전부 완료</td></tr>
+      <tr><td rowspan="3"><b style="color:#1e7a72">중기</b><br>~1년</td><td>스토킹 피해자보호명령(2027-04-22 시행) 반영, 법령 갱신 = 지식표 행 단위</td><td>김시현</td><td>시행일 <b>전</b> 반영</td></tr>
+      <tr><td>상담 현장 시범 1곳 — 운영 주체 후보 1366·상담소(협력은 제안 단계)</td><td>팀 전체</td><td>시범 기관 ≥1 · 놓친 제도 수 사전·사후 비교</td></tr>
+      <tr><td>근거 답을 사람 라벨로 재확인</td><td>김대웅</td><td>0.956 재확인</td></tr>
+      <tr><td rowspan="2"><b style="color:#1f3354">장기</b><br>1년+</td><td>기기 안 추론(진단·단서 탐지·1차 가드)</td><td>정세영</td><td>서버 전송 = 조문 검색 질의만</td></tr>
+      <tr><td>기관 발송 전 서류 점검, 84경로 분류체계 공개</td><td>팀 전체</td><td>협력 기관 수 · 정책 제안서 1건</td></tr>
+    </table>
+    <div>
+      <table class="tight" style="font-size:14.5px">
+        <tr><th style="width:36%">해외 유형</th><th>대표 사례</th><th style="width:26%">한국</th></tr>
+        <tr><td><b>대체주소</b></td><td>미국 대부분 주(ACP)</td><td><b>없음</b></td></tr>
+        <tr><td><b>등록부 차단</b></td><td>일본(스토커 포함)·독일·스웨덴</td><td>가정폭력만</td></tr>
+        <tr><td><b>절차별 비공개</b></td><td>일본 소송 비닉·영국 선거인 익명</td><td>신청해야만</td></tr>
+        <tr><td><b>기술 안전 도구</b></td><td>Cornell CETA·영국 Bright Sky</td><td>경로 진단 도구 못 찾음</td></tr>
+      </table>
+      <p class="small" style="margin-top:8px;font-size:14px"><b>정책 제안</b>: 교부 제한을 스토킹·교제폭력까지 · 한 번의 제한 결정을 다른 절차에 재사용 · 빈 16경로 입법</p>
+    </div>
   </div>
-  <div class="card navy" style="margin-top:18px;background:#1f3354;color:#fff;padding:18px 24px">
-    <p style="font-size:17px;color:#fff">막는 제도는 있는데 <b>몰라서·늦어서·순서를 틀려서</b> 새는 주소를 줄입니다. 판단은 결정적 규칙이, 설명은 자체 호스팅 LLM 이, 거절과 검증은 두 겹의 가드가 맡습니다.</p>
-    <p style="font-size:13.5px;color:#bcd0e2;margin-top:8px">모든 수치는 합성 데이터 기준 · 법률정보 안내이며 법률상담이 아닙니다 · 긴급 112 · 1366 · 132</p>
-  </div>
-  <div class="foot"><span>출처: research/2026-10-31-정보조사.md 6·8절 · data/knowledge.json · docs/SPEC.md §7</span><span>10쪽 · ⓖ</span></div>
+  <div class="closing"><p>피신한 곳은, 피신한 곳으로 남아야 합니다.</p><span>모든 수치는 합성 데이터 기준 · 법률정보 안내이며 법률상담이 아닙니다 · 긴급 112 · 상담 1366 · 132</span></div>
+  <div class="foot"><span>출처: research/2026-11-01-해외레퍼런스.md · research/2026-11-01-발전방향.md · docs/EVIDENCE.md</span><span>10쪽 · ⓖ</span></div>
 </section>
 
 <!-- 부록: 실증 자료 (채점 요건 ⓐ~ⓖ 본문 뒤) -->
@@ -467,7 +568,7 @@ table.team code,.slide code{font-family:ui-monospace,Menlo,Consolas,"DejaVu Sans
   <div class="kicker">부록: 실증 자료 (2/4) · ⓒ 근거</div>
   <h2 style="margin-bottom:14px">찾기 질문 거절과 정상 질문 오거절 (합성 데이터 기준)</h2>
   <div class="grid2" style="gap:20px">
-    <div><img class="chart" src="../docs/evidence/charts/redteam-asr.svg" alt="레드팀 공격 성공률 대책 전후" style="width:100%"><p class="cap"><b>레드팀</b> 서비스 전체 경로 5.4% → 2.7%(3/112), 조회 방법 출력 0건. 공격 문장은 싣지 않음</p></div>
+    <div><img class="chart" src="../docs/evidence/charts/redteam-asr.svg" alt="레드팀 공격 성공률 대책 전후" style="width:100%"><p class="cap"><b>레드팀</b> 차트는 10-31 판정기 집계(3/112). 정의대로 다시 세면 <b>5/112 = 4.5%</b>, 현재 배포본은 검색·답 경로 <b>3/84</b>. 같은 세트라 개선 주장 안 함. 조회 방법 출력 0건(정규식 검출). 공격 문장은 싣지 않음</p></div>
     <div><img class="chart" src="../docs/evidence/charts/guard-before-after.svg" alt="다턴 시뮬 오거절 대책 전후" style="width:100%"><p class="cap"><b>다턴 시뮬</b> 정상 사용자 오거절 대책 전후. 남은 오거절 18건/14대화는 과제로 둠</p></div>
   </div>
   <div class="foot"><span>출처: docs/redteam-summary.md · notice_calibration_summary.md · docs/evidence/charts/</span><span>A2 · 부록</span></div>
@@ -478,21 +579,21 @@ table.team code,.slide code{font-family:ui-monospace,Menlo,Consolas,"DejaVu Sans
   <h2 style="margin-bottom:14px">답의 종류: 생성 → 검증 → 재생성 → 발췌</h2>
   <div style="display:grid;grid-template-columns:1.55fr 1fr;gap:20px">
     <div><img class="chart" src="../docs/evidence/charts/answer-modes.svg" alt="45문항 답 종류 분포" style="width:100%"><p class="cap"><b>45문항</b> 정답 0.956, 근거 없는 문장 3.6% → 0. 같은 검증기로 다시 잰 값이라 독립 판정이 아님</p></div>
-    <div><div class="shot" style="height:330px"><img src="../docs/screens/v4-08-answer-extractive.png" alt="발췌 답 화면" style="width:100%"></div><p class="cap"><b>발췌 답</b>: 검증을 못 넘기면 조문 원문으로 답함</p></div>
+    <div><div class="shot" style="height:330px"><img src="../docs/screens/v5-10xb-answer-extractive-card.png" alt="발췌 답 화면" style="width:100%;height:100%;object-fit:cover;object-position:bottom"></div><p class="cap"><b>발췌 답</b>: 검증을 못 넘기면 조문 원문으로 답함</p></div>
   </div>
-  <div class="foot"><span>출처: gpu/verify.py · docs/TEST_RESULTS.md P1-14 · docs/screens/v4-08 (합성 입력)</span><span>A3 · 부록</span></div>
+  <div class="foot"><span>출처: gpu/verify.py · docs/TEST_RESULTS.md P1-14 · docs/screens/v5-10xb (합성 입력)</span><span>A3 · 부록</span></div>
 </section>
 
 <section class="slide ap">
   <div class="kicker">부록: 실증 자료 (4/4) · ⓑ 근거</div>
   <h2 style="margin-bottom:14px">통지 확인 뒤 화면, 잔여 위험, 모바일과 빠른 나가기</h2>
   <div style="display:grid;grid-template-columns:1.25fr 1.1fr .55fr .55fr;gap:14px">
-    <div><div class="shot" style="height:400px"><img src="../docs/screens/v3-05-notify-after-confirm.png" alt="통지 경고 확인 뒤" style="width:100%"></div><p class="cap"><b>통지 확인 뒤</b> 신청 방법이 열림</p></div>
-    <div><div class="shot" style="height:400px"><img src="../docs/screens/v3-06-residual-risk.png" alt="잔여 위험 안내" style="width:100%"></div><p class="cap"><b>잔여 위험</b> 막을 제도가 없는 경로 안내</p></div>
-    <div><div class="shot" style="height:400px"><img src="../docs/screens/v3-01m-home-mobile.png" alt="모바일 첫 화면" style="width:100%"></div><p class="cap"><b>모바일</b></p></div>
-    <div><div class="shot" style="height:400px"><img src="../docs/screens/v4-12-quick-exit-after.png" alt="빠른 나가기 뒤" style="width:100%"></div><p class="cap"><b>빠른 나가기</b> 버튼·Esc 두 번</p></div>
+    <div><div class="shot" style="height:400px"><img src="../docs/screens/v5-08-notify-after.png" alt="통지 경고 확인 뒤" style="width:100%"></div><p class="cap"><b>통지 확인 뒤</b> 신청 방법이 열림</p></div>
+    <div><div class="shot" style="height:400px"><img src="../docs/screens/v5-09-residual-risk.png" alt="잔여 위험 안내" style="width:100%"></div><p class="cap"><b>잔여 위험</b> 막을 제도가 없는 경로 안내</p></div>
+    <div><div class="shot" style="height:400px"><img src="../docs/screens/v5-16m-home-mobile.png" alt="모바일 첫 화면" style="width:100%"></div><p class="cap"><b>모바일</b> 긴급 연락처 띠</p></div>
+    <div><div class="shot" style="height:400px"><img src="../docs/screens/v5-15m-popup-mobile.png" alt="방문마다 뜨는 안전 안내 팝업" style="width:100%"></div><p class="cap"><b>안전 안내</b> 방문마다, 빠른 나가기 버튼·Esc 두 번</p></div>
   </div>
-  <div class="foot"><span>출처: docs/screens/ (합성 입력, Playwright 촬영) · 최종 프런트엔드 화면은 별도 작업 중이라 미확정</span><span>A4 · 부록</span></div>
+  <div class="foot"><span>출처: docs/screens/v5-08·09·16m·15m (배포본 993db4f, 2026-11-01 Playwright 촬영, 합성 입력)</span><span>A4 · 부록</span></div>
 </section>
 
 </div></div>
