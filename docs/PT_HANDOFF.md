@@ -396,4 +396,4 @@ A. 법률상담이 아니라 무료 법률정보 안내입니다. 모든 안내�
 | `v3-11` 거절 캡처 | 입력칸에 찾기 질문 문장이 보이므로 쓰면 반드시 가림 |
 | 1차 영상(2분) | 샷 리스트·자막은 `tools/demo/README.md` 「2분 영상 샷 리스트와 자막」. 덱 2쪽 흐름과 같은 순서 |
 | 출처 줄 | 숫자 옆 출처 파일 경로 유지 |
-| 저장소 주소 | https://github.com/codyssey-EasyPeasy/sumeunjip |
+| 저장소 주소 | https://github.com/codyssey-EasyPeasy/boan-yebo |
